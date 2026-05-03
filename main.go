@@ -39,7 +39,7 @@ func LoadConfig() (*Config, error) {
         DBHost:     getEnv("DB_HOST", "localhost"),
         DBPort:     port,
         DBUser:     getEnv("DB_USER", "admin"),
-        DBPassword: getEnv("DB_PASSWORD", "falsePass"),
+        DBPassword: getEnv("DB_PASSWORD", "realFalsePass"),
         DBName:     getEnv("DB_NAME", "godb"),
         DBSSLMode:  getEnv("DB_SSLMODE", "disable"),
     }, nil
