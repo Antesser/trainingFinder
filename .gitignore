@@ -36,3 +36,5 @@ go.work.sum
 .env.local
 .env.*.local
 >>>>>>> 4bc4b66 (initial)
+
+/bin
