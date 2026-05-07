@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package auth;
+package auth.v1;
 
 option go_package = "trainingFinder/pkg/api/auth";
 
@@ -9,7 +9,7 @@ import "google/api/annotations.proto";
 service AuthService {
   rpc SignUp (SignUpRequest) returns (SignUpResponse) {
     option (google.api.http) = {
-      post: "api/auth/sign-up"
+      post: "/api/auth/sign-up"
       body: "*"
     };
   }
