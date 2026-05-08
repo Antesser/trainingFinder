@@ -4,16 +4,16 @@ import (
     "context"
     "log"
 
-    authv1 "trainingFinder/pkg/api/auth" 
+    authPkg "trainingFinder/pkg/api/auth"
     "google.golang.org/grpc/codes"
     "google.golang.org/grpc/status"
 )
 
 type Server struct {
-    authv1.UnimplementedAuthServiceServer
+    authPkg.UnimplementedAuthServiceServer
 }
 
-func (s *Server) SignUp(ctx context.Context, req *authv1.SignUpRequest) (*authv1.SignUpResponse, error) {
+func (s *Server) SignUp(ctx context.Context, req *authPkg.SignUpRequest) (*authPkg.SignUpResponse, error) {
     log.Printf("SignUp request: login=%s", req.Login)
 
     if req.Login == "" || req.Password == "" {
@@ -23,7 +23,7 @@ func (s *Server) SignUp(ctx context.Context, req *authv1.SignUpRequest) (*authv1
     accessToken := "some-access-token"
     refreshToken := "some-refresh-token"
 
-    return &authv1.SignUpResponse{
+    return &authPkg.SignUpResponse{
         AccessToken:  accessToken,
         RefreshToken: refreshToken,
     }, nil

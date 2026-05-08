@@ -1,21 +1,28 @@
 package main
 
 import (
-    "context"
-    "log"
-    "net"
-    "net/http"
+	"context"
+	"fmt"
+	"log"
+	"net"
+	"net/http"
 
-    authPkg "trainingFinder/pkg/api/auth"
-    authImpl "trainingFinder/internal/auth"
+	authImpl "trainingFinder/internal/auth"
+	"trainingFinder/internal/config"
+	authPkg "trainingFinder/pkg/api/auth"
 
-    "github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-    "google.golang.org/grpc"
-    "google.golang.org/grpc/credentials/insecure"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
-    grpcPort := ":9090"
+    cfg, err := config.LoadConfig()
+    if err != nil {
+        log.Fatal("Failed to load config:", err)
+    }
+    serverHost := cfg.Server.Host
+    grpcPort := cfg.Server.GRPCPort
     grpcServer := grpc.NewServer()
     authServer := &authImpl.Server{}
     authPkg.RegisterAuthServiceServer(grpcServer, authServer)
@@ -31,11 +38,13 @@ func main() {
         }
     }()
 
-    httpPort := ":8080"
+    httpPort := cfg.Server.HTTPPort
     ctx := context.Background()
     mux := runtime.NewServeMux()
     opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
-    err := authPkg.RegisterAuthServiceHandlerFromEndpoint(ctx, mux, "localhost"+grpcPort, opts)
+    fmt.Println("hohohoh",serverHost)
+    fmt.Println("popopo",grpcPort)
+    err = authPkg.RegisterAuthServiceHandlerFromEndpoint(ctx, mux, serverHost+grpcPort, opts)
     if err != nil {
         log.Fatal("Registration error", err)
     }
