@@ -1,10 +1,23 @@
 package auth
 
+import "context"
+
+type authRepository interface{}
+
 type service struct {
+	authRepo authRepository
 }
 
-func (s *service) SignUp() {
-	// bussines logic
+func New(authRepo authRepository) *service {
+	return &service{
+		authRepo: authRepo,
+	}
+}
 
+func (s *service) SignUp(ctx context.Context, login, password string) (string, string, error) {
+	// bussines logic
+	// s.authRepo.
 	// call repostory (interface)
+
+	return "", "", nil
 }

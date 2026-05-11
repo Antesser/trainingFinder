@@ -1,10 +1,9 @@
-package users
+package auth
 
 import (
 	"log"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/vzglad-smerti/password_hash"
 )
@@ -17,7 +16,7 @@ type user struct {
 	ID int `db:"id"`
 }
 
-func CreateRepository(pool *pgxpool.Pool) *repository {
+func New(pool *pgxpool.Pool) *repository {
 	return &repository{pool: pool}
 }
 
@@ -52,6 +51,7 @@ func (r *repository) CreateUser(username string, userpassword string) error {
 	if err != nil {
 		log.Print(err)
 	}
+
 	qb := sq.Insert("users").
 		Columns("name", "password").
 		Values(username, hashPassword).
