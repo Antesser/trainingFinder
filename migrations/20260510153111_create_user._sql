@@ -1,0 +1,6 @@
+-- +goose Up
+INSERT INTO users (username, password) 
+VALUES (your_username, hashPassword);
+
+-- +goose Down
+SELECT 'down SQL query';

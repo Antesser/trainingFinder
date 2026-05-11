@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 
@@ -20,12 +21,12 @@ type ServerConfig struct {
 }
 
 type DBConfig struct {
-	Host     string `envconfig:"HOST"`
-	Port     int    `envconfig:"PORT"`
-	User     string `envconfig:"USER"`
-	Password string ``
-	Name     string
-	SSLMode  string
+	Host     string `envconfig:"DB_HOST"`
+	Port     int    `envconfig:"DB_PORT"`
+	User     string `envconfig:"DB_USER"`
+	Password string `envconfig:"DB_PASSWORD"`
+	Name     string `envconfig:"DB_NAME"`
+	SSLMode  string `envconfig:"DB_SSLMODE"`
 }
 
 func (c Config) PostgresURL() string {
@@ -38,36 +39,27 @@ func LoadConfig() (*Config, error) {
 		return nil, fmt.Errorf("error loading .env: %w", err)
 	}
 
+	portStr := os.Getenv("DB_PORT")
+	dbPort, err := strconv.Atoi(portStr)
+	if err != nil {
+		log.Fatalf("BIP BOP Port should be str: %v", err)
+	}
+
 	cfg := &Config{
 		Server: ServerConfig{
-			GRPCPort: (getEnv("GRPC_PORT", ":9090")),
-			HTTPPort: (getEnv("HTTP_PORT", ":8080")),
-			Host:     (getEnv("HOST", "localhost")),
+			GRPCPort: (os.Getenv("GRPC_PORT")),
+			HTTPPort: (os.Getenv("HTTP_PORT")),
+			Host:     (os.Getenv("HOST")),
 		},
 		DB: DBConfig{
-			Host:     getEnv("DB_HOST", "localhost"),
-			Port:     getIntEnv("DB_PORT", 5432),
-			User:     getEnv("DB_USER", "admin"),
-			Password: getEnv("DB_PASSWORD", ""),
-			Name:     getEnv("DB_NAME", "godb"),
-			SSLMode:  getEnv("DB_SSLMODE", "disable"),
+			Host:     os.Getenv("DB_HOST"),
+			Port:     dbPort,
+			User:     os.Getenv("DB_USER"),
+			Password: os.Getenv("DB_PASSWORD"),
+			Name:     os.Getenv("DB_NAME"),
+			SSLMode:  os.Getenv("DB_SSLMODE"),
 		},
 	}
 
 	return cfg, nil
-}
-
-func getEnv(key, defaultValue string) string {
-	if value := os.Getenv(key); value != "" {
-		return value
-	}
-	return defaultValue
-}
-func getIntEnv(key string, defaultValue int) int {
-	if val := os.Getenv(key); val != "" {
-		if i, err := strconv.Atoi(val); err == nil {
-			return i
-		}
-	}
-	return defaultValue
 }

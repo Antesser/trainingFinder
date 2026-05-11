@@ -1,4 +1,4 @@
-package main
+package client
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 	authPkg "trainingFinder/pkg/api/auth"
 )
 
-func main() {
+func startClient() {
 	cfg, err := config.LoadConfig()
 	if err != nil {
 		log.Fatal("Failed to load config:", err)
