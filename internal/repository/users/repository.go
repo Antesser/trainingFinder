@@ -48,7 +48,7 @@ func CreateRepository(pool *pgxpool.Pool) *repository {
 //		pgxscan.Get(ctx, r.c, &user, sql, args...)
 //	}
 func (r *repository) CreateUser(username string, userpassword string) error {
-		hashPassword, err := password.Hash(userpassword)
+	hashPassword, err := password.Hash(userpassword)
 	if err != nil {
 		log.Print(err)
 	}
