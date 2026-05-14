@@ -1,5 +1,6 @@
+github.com/bufbuild/pexdate v0.0.0-20260427140837-6f020e0413e2527563d7ac96c93fd727075679da h1:wAZGT3Yi9O9rpJoXe35vqwJK5w/xYs2XY+h7SxUtorQ=
 github.com/bufbuild/protoc-gen-validate v1.3.3 h1:ZZ5JyUkmrj9OBHM+gOCzeL5L/pAKVbsUl051yhhJTjU=
-github.com/bufbuild/protovalidate v0.0.0-20260427140837-6f020e0413e2527563d7ac96c93fd727075679da h1:wAZGT3Yi9O9rpJoXe35vqwJK5w/xYs2XY+h7SxUtorQ=
-github.com/googleapis/googleapis v0.0.0-20260506133050-c2648728afb6deff882cfc4167a21abd382870fa h1:uJjIUExAaAhPK/69tVBZBifgFlARdxq4vPOizFyYu84=
+github.com/bufbuild/protovalidate v0.0.0-20260427140837-6f020e0413e2527563d7ac96c93fd727075679da h1:WY6X72Uu94Ni7JDIBjZJCYDK6vA/3eehiXc1FiaAJ9Y=
+github.com/googleapis/googleapis v0.0.0-20260514074226-84009fb6ad8975910a5cb62d32e7f35e48c9da02 h1:VR+7z15WpUagpqkT9zul7XzkuoRW2BsphVAzYEhmg7w=
 github.com/grpc-ecosystem/grpc-gateway v2.20.0 h1:/ph0MlmEHKJQ1XUKWZFuI9cTAOfVXGD0WNMcCAbdnkM=
 github.com/planetscale/vtprotobuf v0.0.0-20250313115119-ba97887b0a2597d20399eb70221c99c95520e8c1 h1:Qv0EIziauhnxz8IlEYP+yN9+GdwiNwDY1J8qRCLh3XQ=

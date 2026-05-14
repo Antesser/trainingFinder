@@ -33,6 +33,11 @@ generate:
         paths: source_relative
         generate_unbound_methods: true
         allow_delete_body: true
+    - name: validate
+      out: pkg
+      opts:
+        paths: source_relative
+        lang: go
 breaking:
   ignore: []
   against_git_ref: ""

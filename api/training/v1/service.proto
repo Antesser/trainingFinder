@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package training.v1;
+
+option go_package = "trainingFinder/pkg/api/training/v1";
+
+import "google/api/annotations.proto";
+import  "google/protobuf/timestamp.proto"; // указываем структуру, как используемый тип (по сути google.protobuf)
+import  "proto/protovalidate/buf/validate/validate.proto";
+
+service TrainingService {
+  rpc CreateTraining (CreateTrainingSRequest) returns (CreateTrainingSResponse) {
+    option (google.api.http) = {
+      post: "/api/training/create"
+      body: "*"
+    };
+  }
+}
+
+message CreateTrainingRequest {
+ string trainer_id = 1 [(buf.validate.field).string.uuid = true];
+ string user_id = 2 [(buf.validate.field).required = true];
+ google.protobuf.Timestamp started_at = 3; // указываем полный путь до структуры
+ google.protobuf.Timestamp ended_at = 4; 
+ string additional_info = 5;
+}
+
+message CreateTrainingResponse {
+string training_id = 1;
+}
