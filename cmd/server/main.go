@@ -3,13 +3,13 @@ package main
 import (
 	"context"
 	"log"
-	"net"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
 	authImpl "trainingFinder/internal/app/auth"
+	"trainingFinder/internal/app/controller"
 	"trainingFinder/internal/config"
 	authPkg "trainingFinder/pkg/api/auth"
 
@@ -19,7 +19,6 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
@@ -36,45 +35,59 @@ func main() {
 	defer pool.Close()
 
 	authRepo := authRepository.New(pool)
-
+// usersRepo := users.New(pool)   
 	authSrv := authService.New(authRepo)
+	//  usersSrv := users.NewService(usersRepo)
 
-	serverHost := cfg.Server.Host
-	grpcPort := cfg.Server.GRPCPort
-	grpcServer := grpc.NewServer()
 
 	// TODO:
 	// Создать структуру controller в app/controller, которая будет реализовывать RunGRPC, RunHTTP и прокинуть в конструктор все grpc сервера
 	// Для grpc сервера users повторить реализацию методов Register на примере auth
 	// Закрепить чистую архитектуру
 
-	go func() {
-		lis, err := net.Listen("tcp", grpcPort)
-		if err != nil {
-			log.Fatal("failure with listen:", err)
-		}
-		log.Printf("grpc server listening on %s", grpcPort)
-		if err := grpcServer.Serve(lis); err != nil {
-			log.Fatal("grpc server error:", err)
-		}
-	}()
 
-	ctx := context.Background()
-	mux := runtime.NewServeMux()
-	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+    grpcServer := grpc.NewServer()
+    httpMux := runtime.NewServeMux()
 
-	log.Printf("http server listening on %s", cfg.Server.HTTPPort)
-	if err := http.ListenAndServe(cfg.Server.HTTPPort, mux); err != nil {
-		log.Fatal("HTTP error:", err)
-	}
+    ctrl := controller.New(cfg, grpcServer, httpMux)
 
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
+    if err := ctrl.RegisterServices(authSrv); err != nil {
+        log.Fatal("Failed to register services:", err)
+    }
+    ctx, cancel := context.WithCancel(context.Background())
+    defer cancel()
 
-	<-c
+    if err := ctrl.RunGRPC(ctx); err != nil {
+        log.Fatal("Failed to start gRPC server:", err)
+    }
+    log.Printf("gRPC server listening on %s", cfg.Server.GRPCPort)
 
-	ctx, shutdown := context.WithTimeout(ctx, 5*time.Second)
-	defer shutdown()
+    if err := ctrl.RunHTTP(ctx); err != nil {
+        log.Fatal("Failed to start HTTP server:", err)
+    }
+    log.Printf("HTTP server listening on %s", cfg.Server.HTTPPort)
 
-	// shutdown
+    с := make(chan os.Signal, 1)
+    signal.Notify(с, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
+    <-с
+
+    log.Println("Shutting down gracefully...")
+
+    cancel()
+
+    done := make(chan struct{})
+    go func() {
+        ctrl.Wait()
+        close(done)
+    }()
+
+    select {
+    case <-done:
+        log.Println("All servers stopped gracefully")
+    case <-time.After(10 * time.Second):
+        log.Println("Shutdown timeout exceeded, forcing exit")
+    }
+
+    log.Println("Application exited")
+
 }
