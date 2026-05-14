@@ -9,7 +9,7 @@ import  "google/protobuf/timestamp.proto"; // указываем структу�
 import  "proto/protovalidate/buf/validate/validate.proto";
 
 service TrainingService {
-  rpc CreateTraining (CreateTrainingSRequest) returns (CreateTrainingSResponse) {
+  rpc CreateTraining (CreateTrainingRequest) returns (CreateTrainingResponse) {
     option (google.api.http) = {
       post: "/api/training/create"
       body: "*"
