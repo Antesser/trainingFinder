@@ -1,0 +1,11 @@
+package training
+
+import "time"
+
+type Training struct {
+	string trainer_id 
+ string user_id 
+ time started_at 
+ time ended_at
+ string additional_info = 5;
+}
