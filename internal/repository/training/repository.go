@@ -26,6 +26,5 @@ func (r *repository) CreateTraining(ctx context.Context, training model.Training
 	if _, err = r.pool.Exec(ctx, query, args...); err != nil {
 		return err
 	}
-
 	return nil
 }
