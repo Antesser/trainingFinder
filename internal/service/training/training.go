@@ -21,6 +21,5 @@ func (t *trainingService) CreateTraining(ctx context.Context, trainingModel *mod
 	if err := t.repo.CreateTraining(ctx, *trainingModel); err != nil {
 		return err
 	}
-
 	return nil
 }
