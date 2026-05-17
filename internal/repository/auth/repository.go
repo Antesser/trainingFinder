@@ -23,6 +23,7 @@ func (r *repository) SignUp(ctx context.Context, login, password string) (string
 	qb := sq.Insert("users").
 		Columns("name", "password").
 		Values(login, password).
+		Suffix("RETURNING id").
 		PlaceholderFormat(sq.Dollar)
 
 	query, args, err := qb.ToSql()
