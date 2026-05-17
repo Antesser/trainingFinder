@@ -2,8 +2,6 @@ package auth
 
 import "context"
 
-type authRepository interface{}
-
 type service struct {
 	authRepo authRepository
 }

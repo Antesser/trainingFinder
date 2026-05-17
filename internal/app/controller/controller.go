@@ -71,4 +71,3 @@ func (c *Controller) RunHTTP(ctx context.Context) error {
 func (c *Controller) Wait() {
 	c.wg.Wait()
 }
-

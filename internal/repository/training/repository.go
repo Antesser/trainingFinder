@@ -12,6 +12,10 @@ type repository struct {
 	pool *pgxpool.Pool
 }
 
+func New(pool *pgxpool.Pool) *repository {
+	return &repository{pool: pool}
+}
+
 func (r *repository) CreateTraining(ctx context.Context, training model.Training) error {
 	qb := sq.Insert("training").
 		Columns("trainer_id", "user_id", "started_at", "ended_at", "additional_info").
