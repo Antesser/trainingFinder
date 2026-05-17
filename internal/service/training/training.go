@@ -18,6 +18,9 @@ func (t *trainingService) CreateTraining(ctx context.Context, trainingModel *mod
 	if trainingModel == nil {
 		return errors.New("training model cannot be nil")
 	}
-	t.repo.CreateTraining(ctx, *trainingModel)
+	if err := t.repo.CreateTraining(ctx, *trainingModel); err != nil {
+		return err
+	}
+
 	return nil
 }
