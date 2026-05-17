@@ -13,9 +13,9 @@ func New(authRepo authRepository) *service {
 }
 
 func (s *service) SignUp(ctx context.Context, login, password string) (string, string, error) {
-	// bussines logic
-	// s.authRepo.
-	// call repostory (interface)
-
-	return "", "", nil
+	log, pass, err := s.authRepo.SignUp(ctx, login, password)
+	if err != nil {
+		return "", "", err
+	}
+	return log, pass, nil
 }

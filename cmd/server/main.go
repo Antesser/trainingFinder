@@ -86,6 +86,6 @@ func main() {
 		log.Println("Shutdown timeout exceeded, forcing exit")
 	}
 
-	log.Println("Application exited")
+	log.Println("Application ex")
 
 }

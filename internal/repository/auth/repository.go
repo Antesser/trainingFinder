@@ -1,23 +1,45 @@
 package auth
 
 import (
+	"context"
+	"fmt"
 	"log"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/vzglad-smerti/password_hash"
 )
 
 type repository struct {
 	pool *pgxpool.Pool
 }
-
 type user struct {
-	ID int `db:"id"`
+	ID string `db:"id"`
 }
 
 func New(pool *pgxpool.Pool) *repository {
 	return &repository{pool: pool}
+}
+func (r *repository) SignUp(ctx context.Context, login, password string) (string, string, error) {
+	qb := sq.Insert("users").
+		Columns("name", "password").
+		Values(login, password).
+		PlaceholderFormat(sq.Dollar)
+
+	query, args, err := qb.ToSql()
+	if err != nil {
+		log.Print("Got an error:", err)
+		return "", "", err
+	}
+
+	var userID string
+	err = r.pool.QueryRow(ctx, query, args...).Scan(&userID)
+	if err != nil {
+		return "", "", fmt.Errorf("execute insert: %w", err)
+	}
+
+	accessToken, refreshToken := "", ""
+
+	return accessToken, refreshToken, nil
 }
 
 // func (r *repository) SignIn(username string, userPassword string) (string, error) {
@@ -46,25 +68,3 @@ func New(pool *pgxpool.Pool) *repository {
 //		// Только одна строка
 //		pgxscan.Get(ctx, r.c, &user, sql, args...)
 //	}
-func (r *repository) CreateUser(username string, userpassword string) error {
-	hashPassword, err := password.Hash(userpassword)
-	if err != nil {
-		log.Print(err)
-	}
-
-	qb := sq.Insert("users").
-		Columns("name", "password").
-		Values(username, hashPassword).
-		PlaceholderFormat(sq.Dollar)
-
-	query, args, err := qb.ToSql()
-	if err != nil {
-		log.Print("Got an error:", err)
-		return err
-	}
-
-	log.Print("SQL:", query)
-	log.Print("Args:", args)
-
-	return nil
-}
