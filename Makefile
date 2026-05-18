@@ -37,3 +37,9 @@ migration-up:
 migration:
 	mkdir -p $(migrations_dir)
 	$(LOCAL_BIN)/goose -dir ./migrations create $(shell bash -c 'read -p "Migration name: " migration_name; echo $$migration_name') sql
+
+vet:
+	go vet ./...
+
+run:
+	go run cmd/server/main.go

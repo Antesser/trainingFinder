@@ -38,6 +38,14 @@ generate:
       opts:
         paths: source_relative
         lang: go
+    - name: openapiv2
+      out: pkg
+      opts:
+        allow_merge: true # для нескольких сервисов итоговая документация в 1 файл, иначе отдельная для каждого в api
+        merge_file_name: ../swagger/docs
+        generate_unbound_methods: true
+        json_names_for_fields: false
+        allow_delete_body: true
 breaking:
   ignore: []
   against_git_ref: ""

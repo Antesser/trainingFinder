@@ -12,9 +12,13 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-type Server struct {
-	authPkg.UnimplementedAuthServiceServer
-	AuthService authService
+type Server struct { // структура для домена auth и тд
+	authPkg.UnimplementedAuthServiceServer // реализуем имплементацию, хранящуюся внутри grpc (которая там сгенерирована, не реализована)
+	AuthService                            authService
+}
+
+func NewServer(s authService) *Server {
+	return &Server{AuthService: s}
 }
 
 func (s *Server) RegisterServer(server *grpc.Server) {
@@ -31,7 +35,7 @@ func (s *Server) RegisterHandlerFromEndpoint(
 	if err != nil {
 		log.Fatal("Registration error", err)
 	}
-	
+
 	return err
 }
 

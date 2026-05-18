@@ -1,4 +1,3 @@
-// internal/app/controller/controller.go
 package controller
 
 import (
@@ -6,68 +5,103 @@ import (
 	"log"
 	"net"
 	"net/http"
-	"sync"
-	"time"
 
+	//"github.com/chudik63/test-service/internal/app/controller/middleware"
 	"trainingFinder/internal/config"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/rs/cors"
+	"go.uber.org/multierr"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/reflection"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
-type Controller struct {
-	grpcServer *grpc.Server
-	httpMux    *runtime.ServeMux
-	cfg        *config.Config
-	wg         sync.WaitGroup
+type ImplementationAdapter interface {
+	RegisterHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error
+	RegisterServer(grpcServer *grpc.Server)
 }
 
-func New(cfg *config.Config, grpcServer *grpc.Server, httpMux *runtime.ServeMux) *Controller {
-	return &Controller{cfg: cfg, grpcServer: grpcServer, httpMux: httpMux}
+type Controller interface {
+	ServeHTTP(ctx context.Context)
+	ServeGRPC()
+	Run(ctx context.Context)
 }
 
-func (c *Controller) RegisterServices(registerFuncs ...func(*grpc.Server, *runtime.ServeMux) error) error {
-	for _, f := range registerFuncs {
-		if err := f(c.grpcServer, c.httpMux); err != nil {
-			return err
-		}
+type controller struct {
+	cfg             config.ServerConfig
+	implementations []ImplementationAdapter
+}
+
+func New(cfg config.ServerConfig, implementations ...ImplementationAdapter) Controller {
+	return &controller{
+		cfg:             cfg,
+		implementations: implementations,
 	}
-	return nil
 }
 
-func (c *Controller) RunGRPC(ctx context.Context) error {
-	grpcPort := c.cfg.Server.GRPCPort
-	go func() {
-		lis, err := net.Listen("tcp", grpcPort)
-		if err != nil {
-			log.Fatal("failure with listen:", err)
-		}
-		log.Printf("grpc server listening on %s", grpcPort)
-		if err := c.grpcServer.Serve(lis); err != nil {
-			log.Fatal("grpc server error:", err)
-		}
-	}()
-	return nil
+func (c *controller) Run(ctx context.Context) {
+	c.ServeGRPC()
+	c.ServeHTTP(ctx)
 }
 
-func (c *Controller) RunHTTP(ctx context.Context) error {
-	srv := &http.Server{Addr: c.cfg.Server.HTTPPort, Handler: c.httpMux}
-	c.wg.Add(1)
+func (c *controller) ServeGRPC() {
+	lis, err := net.Listen("tcp", c.cfg.GRPCPort)
+	if err != nil {
+		log.Fatalf("failed with error %v to listen grpc port: %s", err, c.cfg.GRPCPort)
+	}
+
+	s := grpc.NewServer(
+	//grpc.ChainUnaryInterceptor(
+	//	middleware.WithValidation(),
+	//),
+	)
+
+	for _, imp := range c.implementations {
+		imp.RegisterServer(s)
+	}
+
 	go func() {
-		defer c.wg.Done()
-		<-ctx.Done()
-		ctxShutdown, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-		srv.Shutdown(ctxShutdown)
-	}()
-	go func() {
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatal("http server error:", err)
+		reflection.Register(s)
+		log.Printf("grpc addr: %s", lis.Addr())
+		if err = s.Serve(lis); err != nil {
+			log.Fatal(err, "failed to serve grpc")
 		}
 	}()
-	return nil
 }
 
-func (c *Controller) Wait() {
-	c.wg.Wait()
+func (c *controller) ServeHTTP(ctx context.Context) {
+	runtimeMux := runtime.NewServeMux(
+		runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{
+			MarshalOptions: protojson.MarshalOptions{UseProtoNames: true, EmitUnpopulated: true},
+		}),
+	)
+	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+
+	var err error
+	for _, imp := range c.implementations {
+		err = multierr.Append(err, imp.RegisterHandlerFromEndpoint(ctx, runtimeMux, c.cfg.GRPCPort, opts))
+	}
+
+	if err != nil {
+		log.Fatal(err, "failed to register gateway")
+	}
+
+	httpMux := http.NewServeMux()
+	httpMux.Handle("/", runtimeMux)
+	prefix := "/docs/"
+
+	fs := http.FileServer(http.Dir("./swagger/"))
+	httpMux.Handle(prefix, http.StripPrefix(prefix, fs))
+
+	// main http
+	go func() {
+		log.Printf("http addr: %s", c.cfg.HTTPPort)
+		log.Printf("swagger addr: %s/docs", c.cfg.HTTPPort)
+		if err = http.ListenAndServe(c.cfg.HTTPPort,
+			cors.AllowAll().Handler(httpMux)); err != nil {
+			log.Fatal(err, "failed to serve http")
+		}
+	}()
 }
