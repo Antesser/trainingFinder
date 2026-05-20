@@ -1,3 +1,6 @@
+include .env
+export
+
 
 LOCAL_BIN := $(CURDIR)/bin
 PROTOC_VERSION := 31.1
@@ -27,13 +30,11 @@ bin-deps:
 generate-proto:
 	PATH=$(LOCAL_BIN):$$PATH easyp generate
 
-migration-down:
-	$(LOCAL_BIN)/goose $(opts) -dir ./migrations postgres "host=${} user=${} password =${} port=${} dbname=${}"
-
 migration-up:
-		set -a; . .env; set +a; \
-    	$(LOCAL_BIN)/goose $(opts) -dir ./migrations postgres \
-    	"host=$${DB_HOST} user=$${DB_USER} password=$${DB_PASSWORD} port=$${DB_PORT} dbname=$${DB_NAME}"
+	$(LOCAL_BIN)/goose $(opts) -allow-missing -dir ./migrations postgres "host=$$DB_HOST port=$$DB_PORT user=$$DB_USER password=$$DB_PASSWORD dbname=$$DB_NAME sslmode=disable" up
+
+migration-down:
+	$(LOCAL_BIN)/goose $(opts) -dir ./migrations postgres "host=$$DB_HOST port=$$DB_PORT user=$$DB_USER password=$$DB_PASSWORD dbname=$$DB_NAME sslmode=disable" down
 
 migration:
 	mkdir -p $(migrations_dir)
