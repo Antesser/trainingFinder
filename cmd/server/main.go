@@ -35,13 +35,7 @@ func main() {
 	authSrv := authService.New(authRepo)
 	//trainingSrv := trainingService.New(trainingRepo)
 
-	// TODO:
-	// Создать структуру controller в app/controller, которая будет реализовывать RunGRPC, RunHTTP и прокинуть в конструктор все grpc сервера
-	// Для grpc сервера users повторить реализацию методов Register на примере auth
-	// Закрепить чистую архитектуру
-	grpcController := authGRPS.NewServer(authSrv)
-
-	ctrl := controller.New(cfg.Server, grpcController)
+	ctrl := controller.New(cfg.Server, authGRPS.NewServer(authSrv))
 	ctrl.Run(ctx)
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)

@@ -2,6 +2,8 @@ package auth
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
 	"log"
 
@@ -19,10 +21,18 @@ type user struct {
 func New(pool *pgxpool.Pool) *repository {
 	return &repository{pool: pool}
 }
+func generateRandomHash(n int) (string, error) {
+	bytes := make([]byte, n)
+	if _, err := rand.Read(bytes); err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(bytes), nil
+}
 func (r *repository) SignUp(ctx context.Context, login, password string) (string, string, error) {
+	hash, _ := generateRandomHash(16)
 	qb := sq.Insert("users").
-		Columns("name", "password").
-		Values(login, password).
+		Columns("id", "username", "password").
+		Values(hash, login, password).
 		Suffix("RETURNING id").
 		PlaceholderFormat(sq.Dollar)
 

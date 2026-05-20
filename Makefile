@@ -1,9 +1,8 @@
-# запустить контейнер с базой данных:
-#	docker compose up -d
 
 LOCAL_BIN := $(CURDIR)/bin
 PROTOC_VERSION := 31.1
 PROTOC_ZIP := protoc-$(PROTOC_VERSION)-linux-x86_64.zip
+migrations_dir:= $(CURDIR)/migrations
 
 ifeq ($(PLATFORM),Darwin)
     PROTOC_ZIP = protoc-$(PROTOC_VERSION)-osx-x86_64.zip
@@ -32,7 +31,9 @@ migration-down:
 	$(LOCAL_BIN)/goose $(opts) -dir ./migrations postgres "host=${} user=${} password =${} port=${} dbname=${}"
 
 migration-up:
-	$(LOCAL_BIN)/goose $(opts) -dir ./migrations postgres "host=${} user=${} password =${} port=${} dbname=${}"
+		set -a; . .env; set +a; \
+    	$(LOCAL_BIN)/goose $(opts) -dir ./migrations postgres \
+    	"host=$${DB_HOST} user=$${DB_USER} password=$${DB_PASSWORD} port=$${DB_PORT} dbname=$${DB_NAME}"
 
 migration:
 	mkdir -p $(migrations_dir)
@@ -41,5 +42,7 @@ migration:
 vet:
 	go vet ./...
 
+start-db:
+	docker compose up -d
 run:
 	go run cmd/server/main.go
