@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	authPkg "trainingFinder/pkg/api/auth"
+	authPkg "trainingFinder/pkg/api/auth/v1"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"

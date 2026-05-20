@@ -52,30 +52,3 @@ func (r *repository) SignUp(ctx context.Context, login, password string) (string
 
 	return accessToken, refreshToken, nil
 }
-
-// func (r *repository) SignIn(username string, userPassword string) (string, error) {
-// 	hash, err := password.Hash(userPassword)
-// 	if err != nil {
-// 		log.Print(err)
-// 	}
-// 	qb := squirrel.Select("id").From("table").Where(
-// 		squirrel.And{
-// 			squirrel.Eq{"username": username},
-// 			squirrel.Or{
-// 				squirrel.Neq{"username": nil},
-// 				squirrel.Eq{"username": username},
-// 			},
-// 		})
-
-// 	sql, args, err := qb.PlaceholderFormat(squirrel.Dollar).ToSql()
-
-// 	pool.Exec(sql, args...) // - Выполнение запроса UPDATE/DELETE если нет RETURNING
-
-// 	var user user
-// 	// Чтение - SELECT, есть RETURNING
-// 	// Несколько строк
-// 	pgxscan.Select(ctx, r.c, &user, sql, args...)
-
-//		// Только одна строка
-//		pgxscan.Get(ctx, r.c, &user, sql, args...)
-//	}

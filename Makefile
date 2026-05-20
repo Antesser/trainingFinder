@@ -1,5 +1,5 @@
 include .env
-export
+export # делает доступными переменные окружения для гуся
 
 
 LOCAL_BIN := $(CURDIR)/bin
