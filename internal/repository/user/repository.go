@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 
@@ -41,7 +42,6 @@ func (r *repository) GetUser(ctx context.Context, id string) (string, error) {
 }
 
 func (r *repository) UpdateUser(ctx context.Context, userID, username string) error {
-
 	qb := sq.Update("users").
 		Where(sq.Eq{"id": userID}).
 		Set("username", username).
@@ -53,8 +53,13 @@ func (r *repository) UpdateUser(ctx context.Context, userID, username string) er
 		return err
 	}
 
-	if _, err = r.pool.Exec(ctx, query, args...); err != nil {
+	returnData, err := r.pool.Exec(ctx, query, args...)
+	if err != nil {
 		return err
+	}
+
+	if returnData.RowsAffected() == 0 {
+		return errors.New("user not found")
 	}
 	return nil
 }

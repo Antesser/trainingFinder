@@ -1,7 +1,7 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS training (
-                                        id TEXT NOT NULL,
+                                        id SERIAL,
                                         trainer_id TEXT NOT NULL,
                                         user_id TEXT NOT NULL,
                                         started_at TIMESTAMP  NOT NULL,
