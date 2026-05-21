@@ -6,5 +6,5 @@ import (
 )
 
 type trainingService interface {
-	CreateTraining(ctx context.Context, training model.Training) error
+	CreateTraining(ctx context.Context, training *model.Training) error
 }
