@@ -20,7 +20,7 @@ func New(pool *pgxpool.Pool) *repository {
 	return &repository{pool: pool}
 }
 
-func (r *repository) SignUp(ctx context.Context, hash, login, password string) (string, string, error) {
+func (r *repository) SignUp(ctx context.Context, hash, login, password string) (string, error) {
 	qb := sq.Insert("users").
 		Columns("id", "username", "password").
 		Values(hash, login, password).
@@ -30,16 +30,35 @@ func (r *repository) SignUp(ctx context.Context, hash, login, password string) (
 	query, args, err := qb.ToSql()
 	if err != nil {
 		log.Print("Got an error:", err)
-		return "", "", err
+		return "", err
 	}
 
 	var userID string
 	err = r.pool.QueryRow(ctx, query, args...).Scan(&userID)
 	if err != nil {
-		return "", "", fmt.Errorf("execute insert: %w", err)
+		return "", fmt.Errorf("execute insert: %w", err)
 	}
 
-	accessToken, refreshToken := "", ""
+	return userID, nil
+}
+func (r *repository) UserAuthInfo(ctx context.Context, hash, login, password string) (string, error) { // в транзакцию вставка в таблицу сессий
+	qb := sq.Insert("users").
+		Columns("id", "username", "password").
+		Values(hash, login, password).
+		Suffix("RETURNING id").
+		PlaceholderFormat(sq.Dollar)
 
-	return accessToken, refreshToken, nil
+	query, args, err := qb.ToSql()
+	if err != nil {
+		log.Print("Got an error:", err)
+		return "", err
+	}
+
+	var userID string
+	err = r.pool.QueryRow(ctx, query, args...).Scan(&userID)
+	if err != nil {
+		return "", fmt.Errorf("execute insert: %w", err)
+	}
+
+	return userID, nil
 }

@@ -2,6 +2,7 @@ package training
 
 import (
 	"context"
+	"errors"
 	"log"
 	model "trainingFinder/internal/model/training"
 
@@ -9,6 +10,9 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Server struct { // структура для домена
@@ -47,10 +51,70 @@ func (s *Server) CreateTraining(ctx context.Context, req *trainingPkg.CreateTrai
 		EndedAt:        req.EndedAt.AsTime(),
 		AdditionalInfo: req.AdditionalInfo,
 	}
-	err := s.TrainingService.CreateTraining(ctx, &trainingModel)
+	err := s.TrainingService.CreateTraining(ctx, trainingModel)
 	if err != nil {
 		return nil, err
 	}
 
 	return &trainingPkg.CreateTrainingResponse{}, nil
+}
+func (s *Server) GetTraining(ctx context.Context, req *trainingPkg.GetTrainingRequest) (*trainingPkg.GetTrainingResponse, error) {
+
+	mod, err := s.TrainingService.GetTraining(ctx, req.Id)
+	if err != nil {
+		if errors.Is(err, model.ErrNotFound) {
+			return nil, status.Error(codes.NotFound, err.Error())
+		}
+		return nil, err
+	}
+
+	return &trainingPkg.GetTrainingResponse{Id: mod.ID,
+			TrainerId:      mod.TrainerID,
+			UserId:         mod.UserID,
+			StartedAt:      timestamppb.New(mod.StartedAt),
+			EndedAt:        timestamppb.New(mod.EndedAt),
+			AdditionalInfo: mod.AdditionalInfo},
+		nil
+}
+func (s *Server) UpdateTraining(ctx context.Context, req *trainingPkg.UpdateTrainingRequest) (*trainingPkg.UpdateTrainingResponse, error) {
+
+	trainingModel := model.UpdateTrainingRequest{
+		ID:        req.Id,
+		TrainerID: req.TrainerId,
+		UserID:    req.UserId,
+		//StartedAt:      req.StartedAt.AsTime(),
+		//EndedAt:        req.EndedAt.AsTime(),
+		AdditionalInfo: req.AdditionalInfo,
+	}
+	if req.StartedAt != nil {
+		trainingModel.StartedAt = new(req.StartedAt.AsTime())
+	}
+	if req.EndedAt != nil {
+		trainingModel.EndedAt = new(req.EndedAt.AsTime())
+	}
+	err := s.TrainingService.UpdateTraining(ctx, trainingModel)
+	if err != nil {
+		if errors.Is(err, model.ErrNotFound) {
+			return nil, status.Error(codes.NotFound, err.Error())
+		}
+		return nil, err
+	}
+
+	return &trainingPkg.UpdateTrainingResponse{},
+		nil
+}
+func (s *Server) DeleteTraining(ctx context.Context, req *trainingPkg.DeleteTrainingRequest) (*trainingPkg.DeleteTrainingResponse, error) {
+	if req.Id == "" {
+		return nil, status.Error(codes.InvalidArgument, "Training ID is required")
+	}
+	err := s.TrainingService.DeleteTraining(ctx, req.Id)
+	if err != nil {
+		if errors.Is(err, model.ErrNotFound) {
+			return nil, status.Error(codes.NotFound, err.Error())
+		}
+		return nil, err
+	}
+
+	return &trainingPkg.DeleteTrainingResponse{},
+		nil
 }

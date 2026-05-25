@@ -8,8 +8,6 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type Server struct { // структура для домена auth и тд
@@ -39,20 +37,28 @@ func (s *Server) RegisterHandlerFromEndpoint(
 	return err
 }
 
-func (s *Server) SignUp(ctx context.Context, req *authPkg.SignUpRequest) (*authPkg.SignUpResponse, error) {
-	log.Printf("SignUp request: login=%s", req.Login)
+func (s *Server) SignIn(ctx context.Context, req *authPkg.SignInRequest) (*authPkg.SignInResponse, error) {
+	log.Printf("SignIn request: login=%s", req.Login)
 
-	if req.Login == "" || req.Password == "" {
-		return nil, status.Error(codes.InvalidArgument, "login and password required")
+	accessToken, refreshToken, err := s.AuthService.SignIn(ctx, req.Login, req.Password)
+	if err != nil {
+		return nil, err
 	}
 
-	accessToken, refreshToken, err := s.AuthService.SignUp(ctx, req.Login, req.Password)
+	return &authPkg.SignInResponse{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}, nil
+}
+func (s *Server) SignUp(ctx context.Context, req *authPkg.SignUpRequest) (*authPkg.SignUpResponse, error) { // вынести в отдельный файл, Виталий негодует
+	log.Printf("SignUp request: login=%s", req.Login)
+
+	id, err := s.AuthService.SignUp(ctx, req.Login, req.Password)
 	if err != nil {
 		return nil, err
 	}
 
 	return &authPkg.SignUpResponse{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
+		Id: id,
 	}, nil
 }

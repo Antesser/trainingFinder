@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -15,9 +16,11 @@ type Config struct {
 }
 
 type ServerConfig struct {
-	GRPCPort string `envconfig:"GRPC_PORT"`
-	HTTPPort string `envconfig:"HTTP_PORT"`
-	Host     string `envconfig:"HOST"`
+	GRPCPort            string        `envconfig:"GRPC_PORT"`
+	HTTPPort            string        `envconfig:"HTTP_PORT"`
+	Host                string        `envconfig:"HOST"`
+	Secret              string        `envconfig:"SECRET"`
+	AccessTokenDuration time.Duration `envconfig:"ACCESS_TOKEN_DURATION"`
 }
 
 type DBConfig struct {

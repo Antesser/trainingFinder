@@ -20,6 +20,9 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	TrainingService_CreateTraining_FullMethodName = "/training.v1.TrainingService/CreateTraining"
+	TrainingService_DeleteTraining_FullMethodName = "/training.v1.TrainingService/DeleteTraining"
+	TrainingService_UpdateTraining_FullMethodName = "/training.v1.TrainingService/UpdateTraining"
+	TrainingService_GetTraining_FullMethodName    = "/training.v1.TrainingService/GetTraining"
 )
 
 // TrainingServiceClient is the client API for TrainingService service.
@@ -27,6 +30,9 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TrainingServiceClient interface {
 	CreateTraining(ctx context.Context, in *CreateTrainingRequest, opts ...grpc.CallOption) (*CreateTrainingResponse, error)
+	DeleteTraining(ctx context.Context, in *DeleteTrainingRequest, opts ...grpc.CallOption) (*DeleteTrainingResponse, error)
+	UpdateTraining(ctx context.Context, in *UpdateTrainingRequest, opts ...grpc.CallOption) (*UpdateTrainingResponse, error)
+	GetTraining(ctx context.Context, in *GetTrainingRequest, opts ...grpc.CallOption) (*GetTrainingResponse, error)
 }
 
 type trainingServiceClient struct {
@@ -46,11 +52,41 @@ func (c *trainingServiceClient) CreateTraining(ctx context.Context, in *CreateTr
 	return out, nil
 }
 
+func (c *trainingServiceClient) DeleteTraining(ctx context.Context, in *DeleteTrainingRequest, opts ...grpc.CallOption) (*DeleteTrainingResponse, error) {
+	out := new(DeleteTrainingResponse)
+	err := c.cc.Invoke(ctx, TrainingService_DeleteTraining_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *trainingServiceClient) UpdateTraining(ctx context.Context, in *UpdateTrainingRequest, opts ...grpc.CallOption) (*UpdateTrainingResponse, error) {
+	out := new(UpdateTrainingResponse)
+	err := c.cc.Invoke(ctx, TrainingService_UpdateTraining_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *trainingServiceClient) GetTraining(ctx context.Context, in *GetTrainingRequest, opts ...grpc.CallOption) (*GetTrainingResponse, error) {
+	out := new(GetTrainingResponse)
+	err := c.cc.Invoke(ctx, TrainingService_GetTraining_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TrainingServiceServer is the server API for TrainingService service.
 // All implementations must embed UnimplementedTrainingServiceServer
 // for forward compatibility
 type TrainingServiceServer interface {
 	CreateTraining(context.Context, *CreateTrainingRequest) (*CreateTrainingResponse, error)
+	DeleteTraining(context.Context, *DeleteTrainingRequest) (*DeleteTrainingResponse, error)
+	UpdateTraining(context.Context, *UpdateTrainingRequest) (*UpdateTrainingResponse, error)
+	GetTraining(context.Context, *GetTrainingRequest) (*GetTrainingResponse, error)
 	mustEmbedUnimplementedTrainingServiceServer()
 }
 
@@ -60,6 +96,15 @@ type UnimplementedTrainingServiceServer struct {
 
 func (UnimplementedTrainingServiceServer) CreateTraining(context.Context, *CreateTrainingRequest) (*CreateTrainingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTraining not implemented")
+}
+func (UnimplementedTrainingServiceServer) DeleteTraining(context.Context, *DeleteTrainingRequest) (*DeleteTrainingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteTraining not implemented")
+}
+func (UnimplementedTrainingServiceServer) UpdateTraining(context.Context, *UpdateTrainingRequest) (*UpdateTrainingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateTraining not implemented")
+}
+func (UnimplementedTrainingServiceServer) GetTraining(context.Context, *GetTrainingRequest) (*GetTrainingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTraining not implemented")
 }
 func (UnimplementedTrainingServiceServer) mustEmbedUnimplementedTrainingServiceServer() {}
 
@@ -92,6 +137,60 @@ func _TrainingService_CreateTraining_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TrainingService_DeleteTraining_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteTrainingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TrainingServiceServer).DeleteTraining(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TrainingService_DeleteTraining_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TrainingServiceServer).DeleteTraining(ctx, req.(*DeleteTrainingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TrainingService_UpdateTraining_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateTrainingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TrainingServiceServer).UpdateTraining(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TrainingService_UpdateTraining_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TrainingServiceServer).UpdateTraining(ctx, req.(*UpdateTrainingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TrainingService_GetTraining_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTrainingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TrainingServiceServer).GetTraining(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TrainingService_GetTraining_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TrainingServiceServer).GetTraining(ctx, req.(*GetTrainingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TrainingService_ServiceDesc is the grpc.ServiceDesc for TrainingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -102,6 +201,18 @@ var TrainingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateTraining",
 			Handler:    _TrainingService_CreateTraining_Handler,
+		},
+		{
+			MethodName: "DeleteTraining",
+			Handler:    _TrainingService_DeleteTraining_Handler,
+		},
+		{
+			MethodName: "UpdateTraining",
+			Handler:    _TrainingService_UpdateTraining_Handler,
+		},
+		{
+			MethodName: "GetTraining",
+			Handler:    _TrainingService_GetTraining_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

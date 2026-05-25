@@ -22,6 +22,38 @@
     "application/json"
   ],
   "paths": {
+    "/api/auth/sign-in": {
+      "post": {
+        "operationId": "AuthService_SignIn",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1SignInResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1SignInRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AuthService"
+        ]
+      }
+    },
     "/api/auth/sign-up": {
       "post": {
         "operationId": "AuthService_SignUp",
@@ -54,7 +86,7 @@
         ]
       }
     },
-    "/api/training/create": {
+    "/api/training/v1/trainings": {
       "post": {
         "operationId": "TrainingService_CreateTraining",
         "responses": {
@@ -78,6 +110,100 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/v1CreateTrainingRequest"
+            }
+          }
+        ],
+        "tags": [
+          "TrainingService"
+        ]
+      }
+    },
+    "/api/training/v1/trainings/{id}": {
+      "get": {
+        "operationId": "TrainingService_GetTraining",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetTrainingResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "TrainingService"
+        ]
+      },
+      "delete": {
+        "operationId": "TrainingService_DeleteTraining",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteTrainingResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "TrainingService"
+        ]
+      },
+      "patch": {
+        "operationId": "TrainingService_UpdateTraining",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateTrainingResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TrainingServiceUpdateTrainingBody"
             }
           }
         ],
@@ -182,6 +308,28 @@
     }
   },
   "definitions": {
+    "TrainingServiceUpdateTrainingBody": {
+      "type": "object",
+      "properties": {
+        "trainer_id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "started_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ended_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "additional_info": {
+          "type": "string"
+        }
+      }
+    },
     "UserServiceUpdateUserBody": {
       "type": "object",
       "properties": {
@@ -244,13 +392,41 @@
     "v1CreateTrainingResponse": {
       "type": "object",
       "properties": {
-        "training_id": {
+        "id": {
           "type": "string"
         }
       }
     },
+    "v1DeleteTrainingResponse": {
+      "type": "object"
+    },
     "v1DeleteUserResponse": {
       "type": "object"
+    },
+    "v1GetTrainingResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "trainer_id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "started_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ended_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "additional_info": {
+          "type": "string"
+        }
+      }
     },
     "v1GetUserResponse": {
       "type": "object",
@@ -259,6 +435,28 @@
           "type": "string"
         },
         "login": {
+          "type": "string"
+        }
+      }
+    },
+    "v1SignInRequest": {
+      "type": "object",
+      "properties": {
+        "login": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "v1SignInResponse": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string"
+        },
+        "refresh_token": {
           "type": "string"
         }
       }
@@ -277,13 +475,13 @@
     "v1SignUpResponse": {
       "type": "object",
       "properties": {
-        "access_token": {
-          "type": "string"
-        },
-        "refresh_token": {
+        "id": {
           "type": "string"
         }
       }
+    },
+    "v1UpdateTrainingResponse": {
+      "type": "object"
     },
     "v1UpdateUserResponse": {
       "type": "object"

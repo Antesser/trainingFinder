@@ -11,20 +11,67 @@ import  "proto/protovalidate/buf/validate/validate.proto";
 service TrainingService {
   rpc CreateTraining (CreateTrainingRequest) returns (CreateTrainingResponse) {
     option (google.api.http) = {
-      post: "/api/training/create"
+      post: "/api/training/v1/trainings"
       body: "*"
+    };
+  }
+  rpc DeleteTraining (DeleteTrainingRequest) returns (DeleteTrainingResponse) {
+    option (google.api.http) = {
+      delete: "/api/training/v1/trainings/{id}"
+    };
+  }
+  rpc UpdateTraining (UpdateTrainingRequest) returns (UpdateTrainingResponse) {
+    option (google.api.http) = {
+      patch: "/api/training/v1/trainings/{id}"
+      body: "*"
+    };
+  }
+  rpc GetTraining (GetTrainingRequest) returns (GetTrainingResponse) {
+    option (google.api.http) = {
+      get: "/api/training/v1/trainings/{id}"
     };
   }
 }
 
 message CreateTrainingRequest {
- string trainer_id = 1 [(buf.validate.field).string.uuid = true];
- string user_id = 2 [(buf.validate.field).required = true];
- google.protobuf.Timestamp started_at = 3; // указываем полный путь до структуры
- google.protobuf.Timestamp ended_at = 4; 
- string additional_info = 5;
+  string trainer_id = 1 [(buf.validate.field).string.uuid = true];
+  string user_id = 2 [(buf.validate.field).required = true];
+  google.protobuf.Timestamp started_at = 3; // указываем полный путь до структуры
+  google.protobuf.Timestamp ended_at = 4;
+  string additional_info = 5;
 }
 
 message CreateTrainingResponse {
-string training_id = 1;
+  string id = 1;
+}
+
+
+message DeleteTrainingRequest {
+  string id = 1;
+}
+
+message DeleteTrainingResponse {
+}
+message UpdateTrainingRequest {
+  string id = 1;
+  optional string trainer_id = 2 [(buf.validate.field).string.uuid = true];
+  optional string user_id = 3 [(buf.validate.field).required = true];
+  optional google.protobuf.Timestamp started_at = 4;
+  optional google.protobuf.Timestamp ended_at = 5;
+  optional string additional_info = 6;
+}
+
+message UpdateTrainingResponse {
+}
+message GetTrainingRequest {
+  string id = 1;
+}
+
+message GetTrainingResponse {
+  string id = 1;
+  string trainer_id = 2 ;
+  string user_id = 3 ;
+  google.protobuf.Timestamp started_at = 4;
+  google.protobuf.Timestamp ended_at = 5;
+  string additional_info = 6;
 }

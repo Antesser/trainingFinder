@@ -31,7 +31,7 @@ type Controller interface {
 
 type controller struct {
 	cfg             config.ServerConfig
-	implementations []ImplementationAdapter
+	implementations []ImplementationAdapter // можно запихнуть все серверы в этот интерфейс и сделать по красоте
 }
 
 func New(cfg config.ServerConfig, implementations ...ImplementationAdapter) Controller {
@@ -51,11 +51,11 @@ func (c *controller) ServeGRPC() {
 	if err != nil {
 		log.Fatalf("failed with error %v to listen grpc port: %s", err, c.cfg.GRPCPort)
 	}
-
+	// создать структуру middleware, прокинуть сюда secret token из контроллера (взять из cfg.Secret main)
 	s := grpc.NewServer(
-	//grpc.ChainUnaryInterceptor(
-	//	middleware.WithValidation(),
-	//),
+		grpc.ChainUnaryInterceptor(
+		//middleware.WithAuth(), вызвать функцию, которая возможно даже будет работать (далеко не факт)
+		),
 	)
 
 	for _, imp := range c.implementations {

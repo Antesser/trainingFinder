@@ -39,7 +39,7 @@ func main() {
 	authRepo := authRepository.New(pool)
 	userRepo := userRepository.New(pool)
 	trainingRepo := trainingRepository.New(pool)
-	authSrv := authService.New(authRepo)
+	authSrv := authService.New(authRepo, cfg.Server.Secret, cfg.Server.AccessTokenDuration)
 	userSrv := userService.New(userRepo)
 	trainingSrv := trainingService.New(trainingRepo)
 
