@@ -51,7 +51,7 @@ func (s *Server) CreateTraining(ctx context.Context, req *trainingPkg.CreateTrai
 		EndedAt:        req.EndedAt.AsTime(),
 		AdditionalInfo: req.AdditionalInfo,
 	}
-	err := s.TrainingService.CreateTraining(ctx, trainingModel)
+	err := s.TrainingService.CreateTraining(ctx, &trainingModel)
 	if err != nil {
 		return nil, err
 	}

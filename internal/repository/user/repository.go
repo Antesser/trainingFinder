@@ -5,8 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	model "trainingFinder/internal/model/training"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -35,6 +37,9 @@ func (r *repository) GetUser(ctx context.Context, id string) (string, error) {
 	var username string
 	err = r.pool.QueryRow(ctx, query, args...).Scan(&username)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return "", model.ErrNotFound
+		}
 		return "", fmt.Errorf("execute insert: %w", err)
 	}
 
@@ -74,7 +79,11 @@ func (r *repository) DeleteUser(ctx context.Context, id string) error {
 		return err
 	}
 
-	if _, err = r.pool.Exec(ctx, query, args...); err != nil {
+	if tags, err := r.pool.Exec(ctx, query, args...); err != nil {
+
+		if tags.RowsAffected() == 0 {
+			return model.ErrNotFound
+		}
 		return err
 	}
 	return nil

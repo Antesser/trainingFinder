@@ -6,6 +6,7 @@ import (
 )
 
 var ErrNotFound = errors.New("not found")
+var ErrAlreadyExists = errors.New("user already exists")
 
 type Training struct {
 	ID             string

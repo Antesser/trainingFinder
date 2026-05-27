@@ -2,10 +2,13 @@ package auth
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
+	model "trainingFinder/internal/model/training"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -50,7 +53,10 @@ func (r *repository) UserAuthInfo(ctx context.Context, hash, login, password str
 
 	query, args, err := qb.ToSql()
 	if err != nil {
-		log.Print("Got an error:", err)
+		// извлекаем конкретный тип из ошибки, проходим по цепочке ошибок и сравниваем, если то, что нужно - AlreadyExists, то возвращаем нашу созданную ошибку
+		if pgErr, ok := errors.AsType[*pgconn.PgError](err); ok && pgErr.Code == "23505" {
+			return "", model.ErrAlreadyExists
+		}
 		return "", err
 	}
 
