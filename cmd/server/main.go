@@ -8,6 +8,7 @@ import (
 	"syscall"
 	"trainingFinder/internal/app/controller"
 	"trainingFinder/internal/config"
+	your_topic_name "trainingFinder/internal/kafka/producer/your-topic-name"
 
 	trainingGRPS "trainingFinder/internal/app/training"
 	userGRPS "trainingFinder/internal/app/users"
@@ -38,7 +39,7 @@ func main() {
 	trainingRepo := trainingRepository.New(pool)
 	//authSrv := authService.New(authRepo, cfg.Server.Secret, cfg.Server.AccessTokenDuration)
 	userSrv := userService.New(userRepo)
-	trainingSrv := trainingService.New(trainingRepo)
+	trainingSrv := trainingService.New(trainingRepo, your_topic_name.MarshalCreateTrainingEvent)
 
 	//ctrl := controller.New(cfg.Server, authGRPS.NewServer(authSrv), userGRPS.NewServer(userSrv), trainingGRPS.NewServer(trainingSrv))
 	ctrl := controller.New(cfg.Server, userGRPS.NewServer(userSrv), trainingGRPS.NewServer(trainingSrv))

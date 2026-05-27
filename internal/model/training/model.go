@@ -16,3 +16,7 @@ type Training struct {
 	EndedAt        time.Time
 	AdditionalInfo string
 }
+
+type CreateTrainingEvent struct {
+	TrainingID string
+}
