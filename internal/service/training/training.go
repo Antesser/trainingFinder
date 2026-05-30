@@ -19,25 +19,33 @@ func New(t trainingRepository, trainingMarshaller trainingMarshaller, outboxRepo
 }
 
 func (t *trainingService) CreateTraining(ctx context.Context, trainingModel *model.Training) error {
-	if err := t.repo.CreateTraining(ctx, *trainingModel); err != nil {
-		return err
-	}
+	err := t.repo.InTx(ctx, func(ctx context.Context) error {
+		if err := t.repo.CreateTraining(ctx, *trainingModel); err != nil {
+			return err
+		}
 
-	event := model.CreateTrainingEvent{
-		TrainingID: trainingModel.ID,
-	}
+		event := model.CreateTrainingEvent{
+			TrainingID: trainingModel.ID,
+		}
 
-	msg, err := t.trainingMarshaller(event)
+		msg, err := t.trainingMarshaller(event)
+		if err != nil {
+			return err
+		}
+
+		err = t.outboxRepo.CreateOutboxItem(ctx, outbox.OutboxItem{
+			Msg:   string(msg),
+			Key:   trainingModel.ID,
+			Topic: "someTopic",
+		})
+		if err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return err
 	}
-
-	t.outboxRepo.CreateOutboxItem(ctx, outbox.OutboxItem{
-		Msg:   string(msg),
-		Key:   trainingModel.ID,
-		Topic: "someTopic",
-	})
-
 	return nil
 }
 func (t *trainingService) GetTraining(ctx context.Context, id string) (*model.Training, error) {

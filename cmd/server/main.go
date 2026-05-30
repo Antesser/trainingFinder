@@ -12,12 +12,14 @@ import (
 
 	trainingGRPS "trainingFinder/internal/app/training"
 	userGRPS "trainingFinder/internal/app/users"
+	authRepository "trainingFinder/internal/repository/auth"
 	outboxRepository "trainingFinder/internal/repository/outbox"
 	trainingRepository "trainingFinder/internal/repository/training"
 	userRepository "trainingFinder/internal/repository/user"
 	trainingService "trainingFinder/internal/service/training"
 	userService "trainingFinder/internal/service/users"
 
+	"github.com/golangmonster/pgxtransactor"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -29,13 +31,14 @@ func main() {
 	dbURL := cfg.PostgresURL()
 	log.Println("dbURL", dbURL)
 	ctx := context.Background()
-	pool, err := pgxpool.New(ctx, dbURL)
+	oldPool, err := pgxpool.New(ctx, dbURL)
 	if err != nil {
 		log.Fatal("Unable to create connection pool:", err)
 	}
-	defer pool.Close()
+	defer oldPool.Close()
+	pool := pgxtransactor.New(oldPool)
 
-	//authRepo := authRepository.New(pool)
+	authRepo := authRepository.New(pool)
 	userRepo := userRepository.New(pool)
 	trainingRepo := trainingRepository.New(pool)
 	outboxRepo := outboxRepository.New(pool)

@@ -7,14 +7,14 @@ import (
 	model "trainingFinder/internal/model/training"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/golangmonster/pgxtransactor"
 )
 
 type repository struct {
-	pool *pgxpool.Pool
+	pool *pgxtransactor.Pool
 }
 
-func New(pool *pgxpool.Pool) *repository {
+func New(pool *pgxtransactor.Pool) *repository {
 	return &repository{pool: pool}
 }
 
@@ -30,7 +30,7 @@ func (r *repository) CreateOutboxItem(ctx context.Context, item outbox.OutboxIte
 		return err
 	}
 
-	if _, err = r.pool.Exec(ctx, query, args...); err != nil {
+	if _, err = r.pool.Querier(ctx).Exec(ctx, query, args...); err != nil {
 		return err
 	}
 	return nil

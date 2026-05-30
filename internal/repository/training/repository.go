@@ -9,7 +9,7 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/georgysavva/scany/v2/pgxscan"
-	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/golangmonster/pgxtransactor"
 )
 
 type training struct {
@@ -21,11 +21,12 @@ type training struct {
 	AdditionalInfo string    `db:"additional_info"`
 }
 type repository struct {
-	pool *pgxpool.Pool
+	pool *pgxtransactor.Pool
+	pgxtransactor.Transactor
 }
 
-func New(pool *pgxpool.Pool) *repository {
-	return &repository{pool: pool}
+func New(pool *pgxtransactor.Pool) *repository {
+	return &repository{pool: pool, Transactor: pool}
 }
 
 func (r *repository) CreateTraining(ctx context.Context, training model.Training) error {

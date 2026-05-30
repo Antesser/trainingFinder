@@ -8,15 +8,15 @@ import (
 	model "trainingFinder/internal/model/user"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/golangmonster/pgxtransactor"
 	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type repository struct {
-	pool *pgxpool.Pool
+	pool *pgxtransactor.Pool
 }
 
-func New(pool *pgxpool.Pool) *repository {
+func New(pool *pgxtransactor.Pool) *repository {
 	return &repository{pool: pool}
 }
 
