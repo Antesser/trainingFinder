@@ -13,8 +13,8 @@ func New(userRepo userRepository) *service {
 	return &service{userRepo: userRepo}
 }
 
-func (s *service) GetUser(ctx context.Context, userID string) (string, error) {
-	user, err := s.userRepo.GetUser(ctx, userID)
+func (s *service) GetUserByID(ctx context.Context, userID string) (string, error) {
+	user, err := s.userRepo.GetUserByID(ctx, userID)
 	if err != nil {
 		return "", fmt.Errorf("failed to get user by id: %w", err)
 	}

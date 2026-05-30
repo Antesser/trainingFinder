@@ -62,7 +62,7 @@ func (r *repository) GetTraining(ctx context.Context, id string) (*model.Trainin
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, model.ErrNotFound
+			return nil, model.ErrTrainingNotFound
 		}
 	}
 
@@ -97,7 +97,7 @@ func (r *repository) UpdateTraining(ctx context.Context, updateTraining model.Up
 		return err
 	}
 	if tags.RowsAffected() == 0 {
-		return model.ErrNotFound
+		return model.ErrTrainingNotFound
 	}
 	return nil
 }
@@ -117,7 +117,7 @@ func (r *repository) DeleteTraining(ctx context.Context, id string) error {
 
 	}
 	if tags.RowsAffected() == 0 {
-		return model.ErrNotFound
+		return model.ErrTrainingNotFound
 	}
 	return nil
 }

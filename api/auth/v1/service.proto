@@ -10,13 +10,13 @@ import  "proto/protovalidate/buf/validate/validate.proto";
 service AuthService {
   rpc SignUp (SignUpRequest) returns (SignUpResponse) {
     option (google.api.http) = {
-      post: "/api/auth/sign-up"
+      post: "/api/auth/v1/sign-up"
       body: "*"
     };
   }
   rpc SignIn (SignInRequest) returns (SignInResponse) {
     option (google.api.http) = {
-      post: "/api/auth/sign-in"
+      post: "/api/auth/v1/sign-in"
       body: "*"
     };
   }

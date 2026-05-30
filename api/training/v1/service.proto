@@ -38,7 +38,9 @@ message CreateTrainingRequest {
   string user_id = 2 [(buf.validate.field).required = true];
   google.protobuf.Timestamp started_at = 3; // указываем полный путь до структуры
   google.protobuf.Timestamp ended_at = 4;
-  string additional_info = 5;
+  string additional_info = 5 [
+    (buf.validate.field).string = {min_len: 1, max_len: 1000}
+  ];
 }
 
 message CreateTrainingResponse {
@@ -47,24 +49,26 @@ message CreateTrainingResponse {
 
 
 message DeleteTrainingRequest {
-  string id = 1;
+  string id = 1[(buf.validate.field).required = true];
 }
 
 message DeleteTrainingResponse {
 }
 message UpdateTrainingRequest {
-  string id = 1;
+  string id = 1[(buf.validate.field).required = true];
   optional string trainer_id = 2 [(buf.validate.field).string.uuid = true];
   optional string user_id = 3 [(buf.validate.field).required = true];
   optional google.protobuf.Timestamp started_at = 4;
   optional google.protobuf.Timestamp ended_at = 5;
-  optional string additional_info = 6;
+  optional string additional_info = 6[
+    (buf.validate.field).string = {min_len: 1, max_len: 1000}
+  ];
 }
 
 message UpdateTrainingResponse {
 }
 message GetTrainingRequest {
-  string id = 1;
+  string id = 1[(buf.validate.field).required = true];
 }
 
 message GetTrainingResponse {

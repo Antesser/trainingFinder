@@ -17,11 +17,11 @@ import (
 
 type Server struct { // структура для домена
 	trainingPkg.UnimplementedTrainingServiceServer // реализуем имплементацию, хранящуюся внутри grpc (которая там сгенерирована, не реализована)
-	TrainingService                                trainingService
+	trainingService                                trainingService
 }
 
 func NewServer(s trainingService) *Server {
-	return &Server{TrainingService: s}
+	return &Server{trainingService: s}
 }
 
 func (s *Server) RegisterServer(server *grpc.Server) {
@@ -51,7 +51,7 @@ func (s *Server) CreateTraining(ctx context.Context, req *trainingPkg.CreateTrai
 		EndedAt:        req.EndedAt.AsTime(),
 		AdditionalInfo: req.AdditionalInfo,
 	}
-	err := s.TrainingService.CreateTraining(ctx, &trainingModel)
+	err := s.trainingService.CreateTraining(ctx, &trainingModel)
 	if err != nil {
 		return nil, err
 	}
@@ -60,9 +60,9 @@ func (s *Server) CreateTraining(ctx context.Context, req *trainingPkg.CreateTrai
 }
 func (s *Server) GetTraining(ctx context.Context, req *trainingPkg.GetTrainingRequest) (*trainingPkg.GetTrainingResponse, error) {
 
-	mod, err := s.TrainingService.GetTraining(ctx, req.Id)
+	mod, err := s.trainingService.GetTraining(ctx, req.Id)
 	if err != nil {
-		if errors.Is(err, model.ErrNotFound) {
+		if errors.Is(err, model.ErrTrainingNotFound) {
 			return nil, status.Error(codes.NotFound, err.Error())
 		}
 		return nil, err
@@ -92,9 +92,9 @@ func (s *Server) UpdateTraining(ctx context.Context, req *trainingPkg.UpdateTrai
 	if req.EndedAt != nil {
 		trainingModel.EndedAt = new(req.EndedAt.AsTime())
 	}
-	err := s.TrainingService.UpdateTraining(ctx, trainingModel)
+	err := s.trainingService.UpdateTraining(ctx, trainingModel)
 	if err != nil {
-		if errors.Is(err, model.ErrNotFound) {
+		if errors.Is(err, model.ErrTrainingNotFound) {
 			return nil, status.Error(codes.NotFound, err.Error())
 		}
 		return nil, err
@@ -107,9 +107,9 @@ func (s *Server) DeleteTraining(ctx context.Context, req *trainingPkg.DeleteTrai
 	if req.Id == "" {
 		return nil, status.Error(codes.InvalidArgument, "Training ID is required")
 	}
-	err := s.TrainingService.DeleteTraining(ctx, req.Id)
+	err := s.trainingService.DeleteTraining(ctx, req.Id)
 	if err != nil {
-		if errors.Is(err, model.ErrNotFound) {
+		if errors.Is(err, model.ErrTrainingNotFound) {
 			return nil, status.Error(codes.NotFound, err.Error())
 		}
 		return nil, err

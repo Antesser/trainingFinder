@@ -2,7 +2,6 @@ package training
 
 import (
 	"context"
-	"errors"
 	"trainingFinder/internal/model/outbox"
 	model "trainingFinder/internal/model/training"
 )
@@ -15,15 +14,11 @@ type trainingService struct {
 	trainingMarshaller trainingMarshaller
 }
 
-func New(t trainingRepository, trainingMarshaller trainingMarshaller) *trainingService {
-	return &trainingService{repo: t, trainingMarshaller: trainingMarshaller}
+func New(t trainingRepository, trainingMarshaller trainingMarshaller, outboxRepository outboxRepository) *trainingService {
+	return &trainingService{repo: t, trainingMarshaller: trainingMarshaller, outboxRepo: outboxRepository}
 }
 
 func (t *trainingService) CreateTraining(ctx context.Context, trainingModel *model.Training) error {
-	if trainingModel == nil {
-		return errors.New("training model cannot be nil")
-	}
-
 	if err := t.repo.CreateTraining(ctx, *trainingModel); err != nil {
 		return err
 	}
@@ -38,15 +33,14 @@ func (t *trainingService) CreateTraining(ctx context.Context, trainingModel *mod
 	}
 
 	t.outboxRepo.CreateOutboxItem(ctx, outbox.OutboxItem{
-		Msg: string(msg),
+		Msg:   string(msg),
+		Key:   trainingModel.ID,
+		Topic: "someTopic",
 	})
 
 	return nil
 }
 func (t *trainingService) GetTraining(ctx context.Context, id string) (*model.Training, error) {
-	if id == "" {
-		return nil, errors.New("id cannot be empty")
-	}
 	model, err := t.repo.GetTraining(ctx, id)
 	if err != nil {
 		return model, err
@@ -54,7 +48,6 @@ func (t *trainingService) GetTraining(ctx context.Context, id string) (*model.Tr
 	return model, nil
 }
 func (t *trainingService) UpdateTraining(ctx context.Context, updateTraining model.UpdateTrainingRequest) error {
-
 	err := t.repo.UpdateTraining(ctx, updateTraining)
 	if err != nil {
 		return err
@@ -62,12 +55,10 @@ func (t *trainingService) UpdateTraining(ctx context.Context, updateTraining mod
 	return nil
 }
 func (t *trainingService) DeleteTraining(ctx context.Context, id string) error {
-	if id == "" {
-		return errors.New("id cannot be empty")
-	}
 	err := t.repo.DeleteTraining(ctx, id)
 	if err != nil {
 		return err
 	}
+	t.outboxRepo.DeleteOutboxItem(ctx, id)
 	return nil
 }

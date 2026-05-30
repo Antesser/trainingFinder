@@ -2,12 +2,10 @@ package config
 
 import (
 	"fmt"
-	"log"
-	"os"
-	"strconv"
 	"time"
 
 	"github.com/joho/godotenv"
+	"github.com/kelseyhightower/envconfig"
 )
 
 type Config struct {
@@ -42,27 +40,10 @@ func LoadConfig() (*Config, error) {
 		return nil, fmt.Errorf("error loading .env: %w", err)
 	}
 
-	portStr := os.Getenv("DB_PORT")
-	dbPort, err := strconv.Atoi(portStr)
+	var cfg Config
+	err := envconfig.Process("", &cfg)
 	if err != nil {
-		log.Fatalf("BIP BOP Port should be str: %v", err)
+		return nil, fmt.Errorf("failed to process envconfig: %w", err)
 	}
-
-	cfg := &Config{
-		Server: ServerConfig{
-			GRPCPort: (os.Getenv("GRPC_PORT")),
-			HTTPPort: (os.Getenv("HTTP_PORT")),
-			Host:     (os.Getenv("HOST")),
-		},
-		DB: DBConfig{
-			Host:     os.Getenv("DB_HOST"),
-			Port:     dbPort,
-			User:     os.Getenv("DB_USER"),
-			Password: os.Getenv("DB_PASSWORD"),
-			Name:     os.Getenv("DB_NAME"),
-			SSLMode:  os.Getenv("DB_SSLMODE"),
-		},
-	}
-
-	return cfg, nil
+	return &cfg, nil
 }

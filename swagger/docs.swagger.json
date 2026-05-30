@@ -22,7 +22,7 @@
     "application/json"
   ],
   "paths": {
-    "/api/auth/sign-in": {
+    "/api/auth/v1/sign-in": {
       "post": {
         "operationId": "AuthService_SignIn",
         "responses": {
@@ -54,7 +54,7 @@
         ]
       }
     },
-    "/api/auth/sign-up": {
+    "/api/auth/v1/sign-up": {
       "post": {
         "operationId": "AuthService_SignUp",
         "responses": {
@@ -214,12 +214,12 @@
     },
     "/api/user/v1/users/{id}": {
       "get": {
-        "operationId": "UserService_GetUser",
+        "operationId": "UserService_GetUserByID",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1GetUserResponse"
+              "$ref": "#/definitions/v1GetUserByIDResponse"
             }
           },
           "default": {
@@ -428,7 +428,7 @@
         }
       }
     },
-    "v1GetUserResponse": {
+    "v1GetUserByIDResponse": {
       "type": "object",
       "properties": {
         "id": {

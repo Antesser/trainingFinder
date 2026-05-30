@@ -3,5 +3,5 @@ package outbox
 type OutboxItem struct {
 	Msg   string
 	Topic string
-	// TODO
+	Key   string // записать сюда trASININGididididid
 }

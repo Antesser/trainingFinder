@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-var ErrNotFound = errors.New("not found")
+var ErrTrainingNotFound = errors.New("training not found")
 var ErrAlreadyExists = errors.New("user already exists")
 
 type Training struct {

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	model "trainingFinder/internal/model/training"
+	model "trainingFinder/internal/model/user"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5"
@@ -20,7 +20,7 @@ func New(pool *pgxpool.Pool) *repository {
 	return &repository{pool: pool}
 }
 
-func (r *repository) GetUser(ctx context.Context, id string) (string, error) {
+func (r *repository) GetUserByID(ctx context.Context, id string) (string, error) {
 	qb := sq.Select(
 		"id",
 		"username",
@@ -34,11 +34,11 @@ func (r *repository) GetUser(ctx context.Context, id string) (string, error) {
 		return "", err
 	}
 
-	var username string
-	err = r.pool.QueryRow(ctx, query, args...).Scan(&username)
+	var username, userid string
+	err = r.pool.QueryRow(ctx, query, args...).Scan(&username, &userid)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return "", model.ErrNotFound
+			return "", model.ErrUserNotFound
 		}
 		return "", fmt.Errorf("execute insert: %w", err)
 	}
@@ -64,7 +64,7 @@ func (r *repository) UpdateUser(ctx context.Context, userID, username string) er
 	}
 
 	if returnData.RowsAffected() == 0 {
-		return errors.New("user not found")
+		return model.ErrUserNotFound
 	}
 	return nil
 }
@@ -82,7 +82,7 @@ func (r *repository) DeleteUser(ctx context.Context, id string) error {
 	if tags, err := r.pool.Exec(ctx, query, args...); err != nil {
 
 		if tags.RowsAffected() == 0 {
-			return model.ErrNotFound
+			return model.ErrUserNotFound
 		}
 		return err
 	}

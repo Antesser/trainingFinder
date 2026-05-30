@@ -2,9 +2,15 @@ syntax = "proto3";
 
 package kafka.v1;
 
-option go_package = "trainingFinder/pkg/api/kafka/v1";
+option go_package = "trainingFinder/pkg/api/outbox/v1";
 
 
 message CreateTrainingEvent {
-  int64 training_id = 1;
+  string training_id = 1;
+}
+
+message DeleteTrainingEvent {
+  string training_id = 1;
+}
+message ListOutboxItems {
 }

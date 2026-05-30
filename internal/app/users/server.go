@@ -47,19 +47,19 @@ func (s *Server) DeleteUser(ctx context.Context, req *userPkg.DeleteUserRequest)
 }
 func (s *Server) UpdateUser(ctx context.Context, req *userPkg.UpdateUserRequest) (*userPkg.UpdateUserResponse, error) { //вынести в отдельные файлы, ибо надо
 
-	err := s.UserService.UpdateUser(ctx, req.GetId(), req.GetUsername())
+	err := s.UserService.UpdateUser(ctx, req.GetId(), req.GetUserByIDname())
 	if err != nil {
 		return nil, err
 	}
 
 	return &userPkg.UpdateUserResponse{}, nil
 }
-func (s *Server) GetUser(ctx context.Context, req *userPkg.GetUserRequest) (*userPkg.GetUserResponse, error) {
+func (s *Server) GetUserByID(ctx context.Context, req *userPkg.GetUserByIDRequest) (*userPkg.GetUserByIDResponse, error) {
 
-	//id,login, err := s.UserService.GetUser(ctx, req.GetId())
+	//id,login, err := s.UserService.GetUserByID(ctx, req.GetId())
 	//if err != nil {
 	//	return nil, err
 	//}
 
-	return &userPkg.GetUserResponse{Id: "sdasg", Login: "sdkjgfh"}, nil
+	return &userPkg.GetUserByIDResponse{Id: "sdasg", Login: "sdkjgfh"}, nil
 }

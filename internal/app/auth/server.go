@@ -2,12 +2,17 @@ package auth
 
 import (
 	"context"
+	"errors"
 	"log"
 
 	authPkg "trainingFinder/pkg/api/auth/v1"
 
+	model "trainingFinder/internal/model/training"
+
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type Server struct { // структура для домена auth и тд
@@ -42,6 +47,10 @@ func (s *Server) SignIn(ctx context.Context, req *authPkg.SignInRequest) (*authP
 
 	accessToken, refreshToken, err := s.AuthService.SignIn(ctx, req.Login, req.Password)
 	if err != nil {
+
+		if errors.Is(err, model.ErrAlreadyExists) {
+			return nil, status.Error(codes.AlreadyExists, "user already exists")
+		}
 		return nil, err
 	}
 

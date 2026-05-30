@@ -35,22 +35,22 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on GetUserRequest with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *GetUserRequest) Validate() error {
+// Validate checks the field values on GetUserByIDRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetUserByIDRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on GetUserRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in GetUserRequestMultiError,
-// or nil if none found.
-func (m *GetUserRequest) ValidateAll() error {
+// ValidateAll checks the field values on GetUserByIDRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetUserByIDRequestMultiError, or nil if none found.
+func (m *GetUserByIDRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *GetUserRequest) validate(all bool) error {
+func (m *GetUserByIDRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -60,19 +60,19 @@ func (m *GetUserRequest) validate(all bool) error {
 	// no validation rules for Id
 
 	if len(errors) > 0 {
-		return GetUserRequestMultiError(errors)
+		return GetUserByIDRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// GetUserRequestMultiError is an error wrapping multiple validation errors
-// returned by GetUserRequest.ValidateAll() if the designated constraints
+// GetUserByIDRequestMultiError is an error wrapping multiple validation errors
+// returned by GetUserByIDRequest.ValidateAll() if the designated constraints
 // aren't met.
-type GetUserRequestMultiError []error
+type GetUserByIDRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m GetUserRequestMultiError) Error() string {
+func (m GetUserByIDRequestMultiError) Error() string {
 	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -81,11 +81,11 @@ func (m GetUserRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m GetUserRequestMultiError) AllErrors() []error { return m }
+func (m GetUserByIDRequestMultiError) AllErrors() []error { return m }
 
-// GetUserRequestValidationError is the validation error returned by
-// GetUserRequest.Validate if the designated constraints aren't met.
-type GetUserRequestValidationError struct {
+// GetUserByIDRequestValidationError is the validation error returned by
+// GetUserByIDRequest.Validate if the designated constraints aren't met.
+type GetUserByIDRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -93,22 +93,24 @@ type GetUserRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e GetUserRequestValidationError) Field() string { return e.field }
+func (e GetUserByIDRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e GetUserRequestValidationError) Reason() string { return e.reason }
+func (e GetUserByIDRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e GetUserRequestValidationError) Cause() error { return e.cause }
+func (e GetUserByIDRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e GetUserRequestValidationError) Key() bool { return e.key }
+func (e GetUserByIDRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e GetUserRequestValidationError) ErrorName() string { return "GetUserRequestValidationError" }
+func (e GetUserByIDRequestValidationError) ErrorName() string {
+	return "GetUserByIDRequestValidationError"
+}
 
 // Error satisfies the builtin error interface
-func (e GetUserRequestValidationError) Error() string {
+func (e GetUserByIDRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -120,14 +122,14 @@ func (e GetUserRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sGetUserRequest.%s: %s%s",
+		"invalid %sGetUserByIDRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = GetUserRequestValidationError{}
+var _ error = GetUserByIDRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -135,24 +137,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = GetUserRequestValidationError{}
+} = GetUserByIDRequestValidationError{}
 
-// Validate checks the field values on GetUserResponse with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *GetUserResponse) Validate() error {
+// Validate checks the field values on GetUserByIDResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetUserByIDResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on GetUserResponse with the rules
+// ValidateAll checks the field values on GetUserByIDResponse with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// GetUserResponseMultiError, or nil if none found.
-func (m *GetUserResponse) ValidateAll() error {
+// GetUserByIDResponseMultiError, or nil if none found.
+func (m *GetUserByIDResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *GetUserResponse) validate(all bool) error {
+func (m *GetUserByIDResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -164,19 +166,19 @@ func (m *GetUserResponse) validate(all bool) error {
 	// no validation rules for Login
 
 	if len(errors) > 0 {
-		return GetUserResponseMultiError(errors)
+		return GetUserByIDResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// GetUserResponseMultiError is an error wrapping multiple validation errors
-// returned by GetUserResponse.ValidateAll() if the designated constraints
-// aren't met.
-type GetUserResponseMultiError []error
+// GetUserByIDResponseMultiError is an error wrapping multiple validation
+// errors returned by GetUserByIDResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetUserByIDResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m GetUserResponseMultiError) Error() string {
+func (m GetUserByIDResponseMultiError) Error() string {
 	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -185,11 +187,11 @@ func (m GetUserResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m GetUserResponseMultiError) AllErrors() []error { return m }
+func (m GetUserByIDResponseMultiError) AllErrors() []error { return m }
 
-// GetUserResponseValidationError is the validation error returned by
-// GetUserResponse.Validate if the designated constraints aren't met.
-type GetUserResponseValidationError struct {
+// GetUserByIDResponseValidationError is the validation error returned by
+// GetUserByIDResponse.Validate if the designated constraints aren't met.
+type GetUserByIDResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -197,22 +199,24 @@ type GetUserResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e GetUserResponseValidationError) Field() string { return e.field }
+func (e GetUserByIDResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e GetUserResponseValidationError) Reason() string { return e.reason }
+func (e GetUserByIDResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e GetUserResponseValidationError) Cause() error { return e.cause }
+func (e GetUserByIDResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e GetUserResponseValidationError) Key() bool { return e.key }
+func (e GetUserByIDResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e GetUserResponseValidationError) ErrorName() string { return "GetUserResponseValidationError" }
+func (e GetUserByIDResponseValidationError) ErrorName() string {
+	return "GetUserByIDResponseValidationError"
+}
 
 // Error satisfies the builtin error interface
-func (e GetUserResponseValidationError) Error() string {
+func (e GetUserByIDResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -224,14 +228,14 @@ func (e GetUserResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sGetUserResponse.%s: %s%s",
+		"invalid %sGetUserByIDResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = GetUserResponseValidationError{}
+var _ error = GetUserByIDResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -239,7 +243,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = GetUserResponseValidationError{}
+} = GetUserByIDResponseValidationError{}
 
 // Validate checks the field values on DeleteUserRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the

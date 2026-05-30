@@ -12,6 +12,7 @@ import (
 
 	trainingGRPS "trainingFinder/internal/app/training"
 	userGRPS "trainingFinder/internal/app/users"
+	outboxRepository "trainingFinder/internal/repository/outbox"
 	trainingRepository "trainingFinder/internal/repository/training"
 	userRepository "trainingFinder/internal/repository/user"
 	trainingService "trainingFinder/internal/service/training"
@@ -37,9 +38,10 @@ func main() {
 	//authRepo := authRepository.New(pool)
 	userRepo := userRepository.New(pool)
 	trainingRepo := trainingRepository.New(pool)
+	outboxRepo := outboxRepository.New(pool)
 	//authSrv := authService.New(authRepo, cfg.Server.Secret, cfg.Server.AccessTokenDuration)
 	userSrv := userService.New(userRepo)
-	trainingSrv := trainingService.New(trainingRepo, your_topic_name.MarshalCreateTrainingEvent)
+	trainingSrv := trainingService.New(trainingRepo, your_topic_name.MarshalCreateTrainingEvent, outboxRepo)
 
 	//ctrl := controller.New(cfg.Server, authGRPS.NewServer(authSrv), userGRPS.NewServer(userSrv), trainingGRPS.NewServer(trainingSrv))
 	ctrl := controller.New(cfg.Server, userGRPS.NewServer(userSrv), trainingGRPS.NewServer(trainingSrv))

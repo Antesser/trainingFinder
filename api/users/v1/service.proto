@@ -8,7 +8,7 @@ import "google/api/annotations.proto";
 import  "proto/protovalidate/buf/validate/validate.proto";
 
 service UserService {
-  rpc GetUser(GetUserRequest) returns (GetUserResponse) {
+  rpc GetUserByID(GetUserByIDRequest) returns (GetUserByIDResponse) {
     option (google.api.http) = {
       get: "/api/user/v1/users/{id}"
     };
@@ -28,11 +28,11 @@ service UserService {
   }
 }
 
-message GetUserRequest {
+message GetUserByIDRequest {
   string id = 1 ;
 }
 
-message GetUserResponse {
+message GetUserByIDResponse {
   string id = 1;
   string login = 2;
 }
