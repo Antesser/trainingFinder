@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 )
 
@@ -36,9 +35,6 @@ func (c Config) PostgresURL() string {
 }
 
 func LoadConfig() (*Config, error) {
-	if err := godotenv.Load(); err != nil {
-		return nil, fmt.Errorf("error loading .env: %w", err)
-	}
 
 	var cfg Config
 	err := envconfig.Process("", &cfg)

@@ -17,11 +17,11 @@ import (
 
 type Server struct { // структура для домена auth и тд
 	authPkg.UnimplementedAuthServiceServer // реализуем имплементацию, хранящуюся внутри grpc (которая там сгенерирована, не реализована)
-	AuthService                            authService
+	authService                            authService
 }
 
 func NewServer(s authService) *Server {
-	return &Server{AuthService: s}
+	return &Server{authService: s}
 }
 
 func (s *Server) RegisterServer(server *grpc.Server) {
@@ -45,7 +45,7 @@ func (s *Server) RegisterHandlerFromEndpoint(
 func (s *Server) SignIn(ctx context.Context, req *authPkg.SignInRequest) (*authPkg.SignInResponse, error) {
 	log.Printf("SignIn request: login=%s", req.Login)
 
-	accessToken, refreshToken, err := s.AuthService.SignIn(ctx, req.Login, req.Password)
+	accessToken, refreshToken, err := s.authService.SignIn(ctx, req.Login, req.Password)
 	if err != nil {
 
 		if errors.Is(err, model.ErrAlreadyExists) {
@@ -62,7 +62,7 @@ func (s *Server) SignIn(ctx context.Context, req *authPkg.SignInRequest) (*authP
 func (s *Server) SignUp(ctx context.Context, req *authPkg.SignUpRequest) (*authPkg.SignUpResponse, error) { // вынести в отдельный файл, Виталий негодует
 	log.Printf("SignUp request: login=%s", req.Login)
 
-	id, err := s.AuthService.SignUp(ctx, req.Login, req.Password)
+	id, err := s.authService.SignUp(ctx, req.Login, req.Password)
 	if err != nil {
 		return nil, err
 	}

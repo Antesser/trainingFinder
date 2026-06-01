@@ -12,7 +12,6 @@ import (
 
 	trainingGRPS "trainingFinder/internal/app/training"
 	userGRPS "trainingFinder/internal/app/users"
-	authRepository "trainingFinder/internal/repository/auth"
 	outboxRepository "trainingFinder/internal/repository/outbox"
 	trainingRepository "trainingFinder/internal/repository/training"
 	userRepository "trainingFinder/internal/repository/user"
@@ -38,7 +37,7 @@ func main() {
 	defer oldPool.Close()
 	pool := pgxtransactor.New(oldPool)
 
-	authRepo := authRepository.New(pool)
+	//authRepo := authRepository.New(pool)
 	userRepo := userRepository.New(pool)
 	trainingRepo := trainingRepository.New(pool)
 	outboxRepo := outboxRepository.New(pool)

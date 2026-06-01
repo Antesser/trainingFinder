@@ -40,7 +40,7 @@ func (r *repository) CreateTraining(ctx context.Context, training model.Training
 		return err
 	}
 
-	if _, err = r.pool.Exec(ctx, query, args...); err != nil {
+	if _, err = r.pool.Querier(ctx).Exec(ctx, query, args...); err != nil {
 		return err
 	}
 	return nil
@@ -59,7 +59,7 @@ func (r *repository) GetTraining(ctx context.Context, id string) (*model.Trainin
 		return nil, err
 	}
 	var t training
-	err = pgxscan.Get(ctx, r.pool, &t, query, args...)
+	err = pgxscan.Get(ctx, r.pool.Querier(ctx), &t, query, args...)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -75,16 +75,16 @@ func (r *repository) UpdateTraining(ctx context.Context, updateTraining model.Up
 	if updateTraining.AdditionalInfo != nil {
 		qb = qb.Set("additional_info", updateTraining.AdditionalInfo)
 	}
-	if updateTraining.AdditionalInfo != nil {
+	if updateTraining.TrainerID != nil {
 		qb = qb.Set("trainer_id", updateTraining.TrainerID)
 	}
-	if updateTraining.AdditionalInfo != nil {
+	if updateTraining.UserID != nil {
 		qb = qb.Set("user_id", updateTraining.UserID)
 	}
-	if updateTraining.AdditionalInfo != nil {
+	if updateTraining.StartedAt != nil {
 		qb = qb.Set("started_at", updateTraining.StartedAt)
 	}
-	if updateTraining.AdditionalInfo != nil {
+	if updateTraining.EndedAt != nil {
 		qb = qb.Set("ended_at", updateTraining.EndedAt)
 	}
 
@@ -93,7 +93,7 @@ func (r *repository) UpdateTraining(ctx context.Context, updateTraining model.Up
 		return err
 	}
 
-	tags, err := r.pool.Exec(ctx, query, args...)
+	tags, err := r.pool.Querier(ctx).Exec(ctx, query, args...)
 	if err != nil {
 		return err
 	}
@@ -112,7 +112,7 @@ func (r *repository) DeleteTraining(ctx context.Context, id string) error {
 		return err
 	}
 
-	tags, err := r.pool.Exec(ctx, query, args...)
+	tags, err := r.pool.Querier(ctx).Exec(ctx, query, args...)
 	if err != nil {
 		return err
 

@@ -22,10 +22,10 @@ func New(pool *pgxtransactor.Pool) *repository {
 	return &repository{pool: pool}
 }
 
-func (r *repository) SignUp(ctx context.Context, hash, login, password string) (string, error) {
+func (r *repository) SignUp(ctx context.Context, hash []byte, id, login string) (string, error) {
 	qb := sq.Insert("users").
 		Columns("id", "username", "password").
-		Values(hash, login, password).
+		Values(id, login, hash).
 		Suffix("RETURNING id").
 		PlaceholderFormat(sq.Dollar)
 

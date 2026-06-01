@@ -104,9 +104,6 @@ func (s *Server) UpdateTraining(ctx context.Context, req *trainingPkg.UpdateTrai
 		nil
 }
 func (s *Server) DeleteTraining(ctx context.Context, req *trainingPkg.DeleteTrainingRequest) (*trainingPkg.DeleteTrainingResponse, error) {
-	if req.Id == "" {
-		return nil, status.Error(codes.InvalidArgument, "Training ID is required")
-	}
 	err := s.trainingService.DeleteTraining(ctx, req.Id)
 	if err != nil {
 		if errors.Is(err, model.ErrTrainingNotFound) {
