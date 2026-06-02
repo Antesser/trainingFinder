@@ -79,11 +79,10 @@ func (r *repository) DeleteOutboxItem(ctx context.Context, id string) error {
 	}
 
 	if tags, err := r.pool.Exec(ctx, query, args...); err != nil {
-
-		if tags.RowsAffected() == 0 {
-			return model.ErrTrainingNotFound
-		}
 		return err
 	}
+	if tags.RowsAffected() == 0 {
+			return model.ErrTrainingNotFound
+		}
 	return nil
 }
