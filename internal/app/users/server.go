@@ -11,11 +11,11 @@ import (
 
 type Server struct { // структура для домена auth и тд
 	userPkg.UnimplementedUserServiceServer // реализуем имплементацию, хранящуюся внутри grpc (которая там сгенерирована, не реализована)
-	UserService                            userService
+	userService                            userService
 }
 
 func NewServer(s userService) *Server {
-	return &Server{UserService: s}
+	return &Server{userService: s}
 }
 
 func (s *Server) RegisterServer(server *grpc.Server) {
@@ -38,7 +38,7 @@ func (s *Server) RegisterHandlerFromEndpoint(
 
 func (s *Server) DeleteUser(ctx context.Context, req *userPkg.DeleteUserRequest) (*userPkg.DeleteUserResponse, error) {
 
-	err := s.UserService.DeleteUser(ctx, req.GetId())
+	err := s.userService.DeleteUser(ctx, req.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (s *Server) DeleteUser(ctx context.Context, req *userPkg.DeleteUserRequest)
 }
 func (s *Server) UpdateUser(ctx context.Context, req *userPkg.UpdateUserRequest) (*userPkg.UpdateUserResponse, error) { //вынести в отдельные файлы, ибо надо
 
-	err := s.UserService.UpdateUser(ctx, req.GetId(), req.GetUserByIDname())
+	err := s.userService.UpdateUser(ctx, req.GetId(), req.GetUsername())
 	if err != nil {
 		return nil, err
 	}
