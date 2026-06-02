@@ -1,0 +1,73 @@
+package auth
+
+import (
+	"context"
+	"errors"
+	"log"
+
+	authPkg "trainingFinder/pkg/api/auth/v1"
+
+	model "trainingFinder/internal/model/training"
+
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+)
+
+type Server struct { // структура для домена auth и тд
+	authPkg.UnimplementedAuthServiceServer // реализуем имплементацию, хранящуюся внутри grpc (которая там сгенерирована, не реализована)
+	authService                            authService
+}
+
+func NewServer(s authService) *Server {
+	return &Server{authService: s}
+}
+
+func (s *Server) RegisterServer(server *grpc.Server) {
+	authPkg.RegisterAuthServiceServer(server, s)
+}
+
+func (s *Server) RegisterHandlerFromEndpoint(
+	ctx context.Context,
+	mux *runtime.ServeMux,
+	addrGRPC string,
+	opts []grpc.DialOption,
+) error {
+	err := authPkg.RegisterAuthServiceHandlerFromEndpoint(ctx, mux, addrGRPC, opts)
+	if err != nil {
+		log.Fatal("Registration error", err)
+	}
+
+	return err
+}
+
+func (s *Server) SignIn(ctx context.Context, req *authPkg.SignInRequest) (*authPkg.SignInResponse, error) {
+	log.Printf("SignIn request: login=%s", req.Login)
+
+	accessToken, refreshToken, err := s.authService.SignIn(ctx, req.Login, req.Password)
+	if err != nil {
+
+		if errors.Is(err, model.ErrAlreadyExists) {
+			return nil, status.Error(codes.AlreadyExists, "user already exists")
+		}
+		return nil, err
+	}
+
+	return &authPkg.SignInResponse{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}, nil
+}
+func (s *Server) SignUp(ctx context.Context, req *authPkg.SignUpRequest) (*authPkg.SignUpResponse, error) { // вынести в отдельный файл, Виталий негодует
+	log.Printf("SignUp request: login=%s", req.Login)
+
+	id, err := s.authService.SignUp(ctx, req.Login, req.Password)
+	if err != nil {
+		return nil, err
+	}
+
+	return &authPkg.SignUpResponse{
+		Id: id,
+	}, nil
+}

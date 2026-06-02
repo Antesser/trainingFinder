@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package users.v1;
+
+option go_package = "trainingFinder/pkg/api/users/v1";
+
+import "google/api/annotations.proto";
+import  "proto/protovalidate/buf/validate/validate.proto";
+
+service UserService {
+  rpc GetUserByID(GetUserByIDRequest) returns (GetUserByIDResponse) {
+    option (google.api.http) = {
+      get: "/api/user/v1/users/{id}"
+    };
+  }
+
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {
+    option (google.api.http) = {
+      delete: "/api/user/v1/users/{id}"
+    };
+  }
+
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {
+    option (google.api.http) = {
+      put: "/api/user/v1/users/{id}"
+      body: "*"
+    };
+  }
+}
+
+message GetUserByIDRequest {
+  string id = 1 [(buf.validate.field).uuid = true];
+}
+
+message GetUserByIDResponse {
+  string id = 1;
+  string login = 2;
+}
+
+message DeleteUserRequest {
+  string id = 1 ;
+}
+
+message DeleteUserResponse{}
+
+message UpdateUserRequest {
+  string id = 1 [(buf.validate.field).uuid = true];
+  string username = 2 [(buf.validate.field).string = {
+    max_len: 10,
+    min_len: 5
+  }];
+
+}
+
+message UpdateUserResponse{}

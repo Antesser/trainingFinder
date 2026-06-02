@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package auth.v1;
+
+option go_package = "trainingFinder/pkg/api/auth/v1";
+
+import "google/api/annotations.proto";
+import  "proto/protovalidate/buf/validate/validate.proto";
+
+service AuthService {
+  rpc SignUp (SignUpRequest) returns (SignUpResponse) {
+    option (google.api.http) = {
+      post: "/api/auth/v1/sign-up"
+      body: "*"
+    };
+  }
+  rpc SignIn (SignInRequest) returns (SignInResponse) {
+    option (google.api.http) = {
+      post: "/api/auth/v1/sign-in"
+      body: "*"
+    };
+  }
+}
+message SignUpRequest {
+ string login = 1[(buf.validate.field).required = true];
+ string password = 2[(buf.validate.field).required = true];
+}
+
+message SignUpResponse {
+   string id = 1;
+}
+
+message SignInRequest {
+ string login = 1[(buf.validate.field).required = true];
+ string password = 2[(buf.validate.field).required = true];
+}
+
+message SignInResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+}
+
+

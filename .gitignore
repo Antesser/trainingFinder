@@ -29,10 +29,12 @@ go.work.sum
 .env
 
 # Editor/IDE
-# .idea/
-# .vscode/
+.idea/
+.vscode/
 =======
 .env
 .env.local
 .env.*.local
 >>>>>>> 4bc4b66 (initial)
+
+/bin
