@@ -15,7 +15,9 @@ type repository struct {
 	pool *pgxtransactor.Pool
 }
 type user struct {
-	ID string `db:"id"`
+	ID             string    `db:"id"`
+	Username      string    `db:"username"`
+	Password         string    `db:"password"`
 }
 
 func New(pool *pgxtransactor.Pool) *repository {
@@ -35,8 +37,8 @@ func (r *repository) SignUp(ctx context.Context, hash []byte, id, login string) 
 		return "", err
 	}
 
-	var userID string
-	err = r.pool.QueryRow(ctx, query, args...).Scan(&userID)
+	var u user
+	err = pgxscan.Get(ctx, r.pool.Querier(ctx), &u, query, args...)
 	if err != nil {
 		return "", fmt.Errorf("execute insert: %w", err)
 	}
