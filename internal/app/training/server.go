@@ -8,6 +8,7 @@ import (
 
 	trainingPkg "trainingFinder/pkg/api/training/v1"
 
+	"github.com/google/uuid"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -45,6 +46,7 @@ func (s *Server) RegisterHandlerFromEndpoint(
 func (s *Server) CreateTraining(ctx context.Context, req *trainingPkg.CreateTrainingRequest) (*trainingPkg.CreateTrainingResponse, error) {
 
 	trainingModel := model.Training{
+		ID:             uuid.New().String(),
 		TrainerID:      req.TrainerId,
 		UserID:         req.UserId,
 		StartedAt:      req.StartedAt.AsTime(),

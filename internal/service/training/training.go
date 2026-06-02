@@ -19,6 +19,7 @@ func New(t trainingRepository, trainingMarshaller trainingMarshaller, outboxRepo
 }
 
 func (t *trainingService) CreateTraining(ctx context.Context, trainingModel *model.Training) error {
+
 	err := t.repo.InTx(ctx, func(ctx context.Context) error {
 		if err := t.repo.CreateTraining(ctx, *trainingModel); err != nil {
 			return err
@@ -67,6 +68,5 @@ func (t *trainingService) DeleteTraining(ctx context.Context, id string) error {
 	if err != nil {
 		return err
 	}
-	t.outboxRepo.DeleteOutboxItem(ctx, id)
 	return nil
 }

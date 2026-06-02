@@ -19,6 +19,5 @@ type trainingRepository interface {
 
 type outboxRepository interface {
 	CreateOutboxItem(ctx context.Context, item outbox.OutboxItem) error
-	DeleteOutboxItem(ctx context.Context, id string) error
-	ListOutboxItems(ctx context.Context) ([]outbox.OutboxItem, error)
+	DeleteOutboxItem(ctx context.Context, id []string) error
 }

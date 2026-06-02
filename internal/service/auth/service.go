@@ -3,13 +3,12 @@ package auth
 import (
 	"context"
 	"crypto/rand"
-	"crypto/sha256"
 	"encoding/hex"
-	"fmt"
 	"time"
 	model "trainingFinder/internal/model/auth"
 	"trainingFinder/internal/utils"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -54,7 +53,7 @@ func (s *service) SignIn(ctx context.Context, login, password string) (model.Tok
 }
 func (s *service) SignUp(ctx context.Context, login, password string) (string, error) {
 	hash, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	userId := GenerateHashFromID(login)
+	userId := uuid.New().String()
 	id, err := s.authRepo.SignUp(ctx, hash, userId, login) // пароль захешировать, Виталий снова негодует
 	if err != nil {
 		return "", err
@@ -64,8 +63,4 @@ func (s *service) SignUp(ctx context.Context, login, password string) (string, e
 		return "", err
 	}
 	return id, nil
-}
-func GenerateHashFromID(login string) string {
-	hash := sha256.Sum256([]byte(login))
-	return fmt.Sprintf("%x", hash)
 }

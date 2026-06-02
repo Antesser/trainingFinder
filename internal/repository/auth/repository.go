@@ -6,6 +6,7 @@ import (
 	"log"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/golangmonster/pgxtransactor"
 )
 
@@ -15,9 +16,9 @@ type repository struct {
 	pool *pgxtransactor.Pool
 }
 type user struct {
-	ID             string    `db:"id"`
-	Username      string    `db:"username"`
-	Password         string    `db:"password"`
+	ID       string `db:"id"`
+	Username string `db:"username"`
+	Password string `db:"password"`
 }
 
 func New(pool *pgxtransactor.Pool) *repository {
@@ -43,5 +44,5 @@ func (r *repository) SignUp(ctx context.Context, hash []byte, id, login string) 
 		return "", fmt.Errorf("execute insert: %w", err)
 	}
 
-	return userID, nil
+	return u.ID, nil
 }

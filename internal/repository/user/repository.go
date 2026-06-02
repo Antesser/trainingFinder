@@ -8,6 +8,7 @@ import (
 	model "trainingFinder/internal/model/user"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/golangmonster/pgxtransactor"
 	"github.com/jackc/pgx/v5"
 )
@@ -15,16 +16,16 @@ import (
 type repository struct {
 	pool *pgxtransactor.Pool
 }
-type training struct {
-	ID             string    `db:"id"`
-	username      string    `db:"username"`
+type user struct {
+	ID       string `db:"id"`
+	username string `db:"username"`
 }
 
 func New(pool *pgxtransactor.Pool) *repository {
 	return &repository{pool: pool}
 }
 
-func (r *repository) GetUserByID(ctx context.Context, id string) (string, error) {
+func (r *repository) GetUserByID(ctx context.Context, id string) (model.User, error) {
 	qb := sq.Select(
 		"id",
 		"username",
@@ -35,19 +36,19 @@ func (r *repository) GetUserByID(ctx context.Context, id string) (string, error)
 	query, args, err := qb.ToSql()
 	if err != nil {
 		log.Print("Got an error:", err)
-		return "", err
+		return model.User{}, err
 	}
 
 	var u user
 	err = pgxscan.Get(ctx, r.pool.Querier(ctx), &u, query, args...)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return "", model.ErrUserNotFound
+			return model.User{}, model.ErrUserNotFound
 		}
-		return "", fmt.Errorf("execute insert: %w", err)
+		return model.User{}, fmt.Errorf("execute insert: %w", err)
 	}
 
-	return username, nil
+	return model.User{Id: u.ID, Username: u.username}, nil
 }
 
 func (r *repository) UpdateUser(ctx context.Context, userID, username string) error {
@@ -62,7 +63,7 @@ func (r *repository) UpdateUser(ctx context.Context, userID, username string) er
 		return err
 	}
 
-	returnData, err := r.pool.Exec(ctx, query, args...)
+	returnData, err := r.pool.Querier(ctx).Exec(ctx, query, args...)
 	if err != nil {
 		return err
 	}
@@ -83,7 +84,7 @@ func (r *repository) DeleteUser(ctx context.Context, id string) error {
 		return err
 	}
 
-	if tags, err := r.pool.Exec(ctx, query, args...); err != nil {
+	if tags, err := r.pool.Querier(ctx).Exec(ctx, query, args...); err != nil {
 
 		if tags.RowsAffected() == 0 {
 			return model.ErrUserNotFound
