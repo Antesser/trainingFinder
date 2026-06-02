@@ -15,6 +15,10 @@ import (
 type repository struct {
 	pool *pgxtransactor.Pool
 }
+type training struct {
+	ID             string    `db:"id"`
+	username      string    `db:"username"`
+}
 
 func New(pool *pgxtransactor.Pool) *repository {
 	return &repository{pool: pool}
@@ -34,8 +38,8 @@ func (r *repository) GetUserByID(ctx context.Context, id string) (string, error)
 		return "", err
 	}
 
-	var username, userid string
-	err = r.pool.QueryRow(ctx, query, args...).Scan(&username, &userid)
+	var u user
+	err = pgxscan.Get(ctx, r.pool.Querier(ctx), &u, query, args...)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return "", model.ErrUserNotFound
