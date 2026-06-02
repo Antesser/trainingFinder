@@ -14,6 +14,12 @@ type repository struct {
 	pool *pgxtransactor.Pool
 }
 
+type outboxItem struct {
+	ID             string    `db:"id"`
+	key         string    `db:"key"`
+	message_value      string `db:"message_value"`
+}
+
 func New(pool *pgxtransactor.Pool) *repository {
 	return &repository{pool: pool}
 }
@@ -36,9 +42,10 @@ func (r *repository) CreateOutboxItem(ctx context.Context, item outbox.OutboxIte
 	return nil
 }
 
-func (r *repository) ListOutboxItems(ctx context.Context) ([]outbox.OutboxItem, error) {
+func (r *repository) ListOutboxItems(ctx context.Context, limit uint64) ([]outbox.OutboxItem, error) {
 	qb := sq.Select("message_value", "channel", "key").
 		From("outbox").
+		Limit("limit").
 		PlaceholderFormat(sq.Dollar)
 
 	query, args, err := qb.ToSql()
@@ -52,14 +59,13 @@ func (r *repository) ListOutboxItems(ctx context.Context) ([]outbox.OutboxItem, 
 	}
 	defer rows.Close()
 
-	var items []outbox.OutboxItem
-	for rows.Next() {
+var items []outboxItem
+err = pgxscan.Select(ctx, r.pool, &items, query, args...){
 		var item outbox.OutboxItem
 		if err := rows.Scan(&item.Msg, &item.Topic, &item.Key); err != nil {
 			return nil, fmt.Errorf("scan row: %w", err)
 		}
-		items = append(items, item)
-	}
+	
 
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("rows iteration: %w", err)
