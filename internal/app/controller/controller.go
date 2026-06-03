@@ -6,6 +6,7 @@ import (
 	"net"
 	"net/http"
 
+	authMiddlewere "trainingFinder/internal/app/controller/middleware/grpc"
 	//"github.com/chudik63/test-service/internal/app/controller/middleware"
 	"trainingFinder/internal/config"
 
@@ -54,7 +55,7 @@ func (c *controller) ServeGRPC() {
 	// создать структуру middleware, прокинуть сюда secret token из контроллера (взять из cfg.Secret main)
 	s := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
-		//middleware.WithAuth(), вызвать функцию, которая возможно даже будет работать (далеко не факт)
+			authMiddlewere.WithAuth(c.cfg.Secret, c.cfg.AuthConfigPath),
 		),
 	)
 

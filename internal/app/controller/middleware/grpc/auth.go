@@ -2,7 +2,10 @@ package grpc
 
 import (
 	"context"
+	"fmt"
 	"strings"
+
+	"trainingFinder/internal/config"
 
 	"github.com/golang-jwt/jwt/v5"
 	"google.golang.org/grpc"
@@ -28,8 +31,22 @@ var (
 	errFailedToDecodeClaims = status.Error(codes.Unauthenticated, "failed to decode token claims")
 )
 
-func (m *middleware) WithAuth() grpc.UnaryServerInterceptor { //создать структуру middleware и проверить внутри secret
+type userIDKey struct{}
+
+var userID userIDKey
+
+func WithAuth(secretKey, authPath string) grpc.UnaryServerInterceptor { //создать структуру middleware и проверить внутри secret
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+		fmt.Println("info", info.FullMethod)
+		cfgAuth, err := config.NewAuthConfig(authPath)
+		fmt.Println("cfg", cfgAuth.BearerSet)
+		if err != nil {
+			panic(fmt.Sprintf("failed to load auth config: %v", err))
+		}
+		if !cfgAuth.HasAvailableMethod(info.FullMethod) {
+			return handler(ctx, req)
+		}
+
 		md, ok := metadata.FromIncomingContext(ctx)
 		if !ok {
 			return nil, errNoMetadata
@@ -54,7 +71,7 @@ func (m *middleware) WithAuth() grpc.UnaryServerInterceptor { //создать �
 				return nil, errUnexpectedSigningMethod
 			}
 
-			return m.secret, nil // взять из структуры, которую создам
+			return secretKey, nil // взять из структуры, которую создам
 		})
 		if err != nil {
 			return nil, errClientUnathenticated
@@ -68,14 +85,10 @@ func (m *middleware) WithAuth() grpc.UnaryServerInterceptor { //создать �
 		if !ok {
 			return nil, errFailedToDecodeClaims
 		}
-		//id := claims["id"]
-		ctx = context.WithValue(ctx, userIDKey, userID)
-		// для ключа создать новый тип type userIDKey struct{} type userIDKeyType struct{}
-		//
-		//var UserIDKey userIDKeyType
-		//
-		//ctx = context.WithValue(ctx, userIDKey, 123)
+		id := claims["id"]
 
-		return nil, errInvalidAuthHeader
+		ctx = context.WithValue(ctx, userID, id)
+
+		return handler(ctx, req)
 	}
 }

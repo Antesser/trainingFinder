@@ -18,6 +18,7 @@ type ServerConfig struct {
 	Host                string        `envconfig:"HOST"`
 	Secret              string        `envconfig:"SECRET"`
 	AccessTokenDuration time.Duration `envconfig:"ACCESS_TOKEN_DURATION"`
+	AuthConfigPath      string        `envconfig:"AUTH_CONFIG_PATH"`
 }
 
 type DBConfig struct {
@@ -35,7 +36,6 @@ func (c Config) PostgresURL() string {
 }
 
 func LoadConfig() (*Config, error) {
-
 	var cfg Config
 	err := envconfig.Process("", &cfg)
 	if err != nil {
