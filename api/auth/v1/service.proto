@@ -20,24 +20,36 @@ service AuthService {
       body: "*"
     };
   }
+  rpc RefreshToken (RefreshTokenRequest) returns (RefreshTokenResponse) {
+    option (google.api.http) = {
+      post: "/api/auth/v1/refresh-token"
+      body: "*"
+    };
+  }
 }
 message SignUpRequest {
- string login = 1[(buf.validate.field).required = true];
- string password = 2[(buf.validate.field).required = true];
+  string login = 1[(buf.validate.field).required = true];
+  string password = 2[(buf.validate.field).required = true];
 }
 
 message SignUpResponse {
-   string id = 1;
+  string id = 1;
 }
 
 message SignInRequest {
- string login = 1[(buf.validate.field).required = true];
- string password = 2[(buf.validate.field).required = true];
+  string login = 1[(buf.validate.field).required = true];
+  string password = 2[(buf.validate.field).required = true];
 }
 
 message SignInResponse {
+  string access_token = 1; // везде поудалять нахер RefreshToken
+}
+message RefreshTokenRequest {
+  string refresh_token = 1[(buf.validate.field).required = true, (buf.validate.field).string.uuid = true];
+}
+
+message RefreshTokenResponse {
   string access_token = 1;
-  string refresh_token = 2;
 }
 
 

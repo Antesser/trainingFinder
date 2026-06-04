@@ -55,3 +55,17 @@ func (s *service) SignUp(ctx context.Context, login, password string) (string, e
 	}
 	return id, nil
 }
+func (s *service) RefreshSession(ctx context.Context, refreshToken uuid.UUID) (accessToken string, err error) {
+	session, err := s.authRepo.GetSessionByRefreshToken(ctx, refreshToken)
+	if err != nil {
+		return "", err
+	}
+	if !session.IsActive() {
+		return "", model.ErrSessionExpired
+	}
+	aToken, err := utils.GenerateToken(session.UserID, []byte(s.secretKey), s.accessTokenDuration)
+	if err != nil {
+		return "", err
+	}
+	return aToken, nil
+}

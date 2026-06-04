@@ -22,6 +22,38 @@
     "application/json"
   ],
   "paths": {
+    "/api/auth/v1/refresh-token": {
+      "post": {
+        "operationId": "AuthService_RefreshToken",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1RefreshTokenResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1RefreshTokenRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AuthService"
+        ]
+      }
+    },
     "/api/auth/v1/sign-in": {
       "post": {
         "operationId": "AuthService_SignIn",
@@ -439,6 +471,22 @@
         }
       }
     },
+    "v1RefreshTokenRequest": {
+      "type": "object",
+      "properties": {
+        "refresh_token": {
+          "type": "string"
+        }
+      }
+    },
+    "v1RefreshTokenResponse": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string"
+        }
+      }
+    },
     "v1SignInRequest": {
       "type": "object",
       "properties": {
@@ -454,10 +502,8 @@
       "type": "object",
       "properties": {
         "access_token": {
-          "type": "string"
-        },
-        "refresh_token": {
-          "type": "string"
+          "type": "string",
+          "title": "везде поудалять нахер RefreshToken"
         }
       }
     },

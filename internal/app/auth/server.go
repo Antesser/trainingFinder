@@ -9,6 +9,7 @@ import (
 
 	model "trainingFinder/internal/model/training"
 
+	"github.com/google/uuid"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -53,10 +54,9 @@ func (s *Server) SignIn(ctx context.Context, req *authPkg.SignInRequest) (*authP
 		}
 		return nil, err
 	}
-
+	// добавить печеньки, в которые я положу refreshToken, проблема в том, что всё может пойти по ...
 	return &authPkg.SignInResponse{
-		AccessToken:  accessToken.AccessToken,
-		RefreshToken: accessToken.RefreshToken,
+		AccessToken: accessToken.AccessToken,
 	}, nil
 }
 func (s *Server) SignUp(ctx context.Context, req *authPkg.SignUpRequest) (*authPkg.SignUpResponse, error) { // вынести в отдельный файл, Виталий негодует
@@ -69,5 +69,20 @@ func (s *Server) SignUp(ctx context.Context, req *authPkg.SignUpRequest) (*authP
 
 	return &authPkg.SignUpResponse{
 		Id: id,
+	}, nil
+}
+
+func (s *Server) RefreshToken(ctx context.Context, req *authPkg.RefreshTokenRequest) (*authPkg.RefreshTokenResponse, error) {
+	refToken, err := uuid.Parse(req.RefreshToken)
+	if err != nil {
+		return nil, err
+	}
+	accessToken, err := s.authService.RefreshSession(ctx, refToken)
+	if err != nil {
+		return nil, err
+	}
+
+	return &authPkg.RefreshTokenResponse{
+		AccessToken: accessToken,
 	}, nil
 }
