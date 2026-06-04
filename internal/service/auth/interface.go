@@ -7,5 +7,5 @@ import (
 
 type authRepository interface {
 	SignUp(ctx context.Context, hash []byte, id, login string) (string, error)
-	GetUserByIDAuthInfo(ctx context.Context, login string) (model.UserAuthInfo, error)
+	GetUserAuthInfoByLogin(ctx context.Context, login string) (model.UserAuthInfo, error)
 }

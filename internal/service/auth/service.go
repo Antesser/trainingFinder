@@ -2,8 +2,6 @@ package auth
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/hex"
 	"time"
 	model "trainingFinder/internal/model/auth"
 	"trainingFinder/internal/utils"
@@ -25,18 +23,11 @@ func New(authRepo authRepository, skey string, atd time.Duration) *service {
 		secretKey:           skey,
 	}
 }
-func generateRandomHash(n int) (string, error) { // перенести в utils/helper (pkg, если переиспользоваться в других сервисах)
-	bytes := make([]byte, n)
-	if _, err := rand.Read(bytes); err != nil {
-		return "", err
-	}
-	return hex.EncodeToString(bytes), nil
-}
 
 func (s *service) SignIn(ctx context.Context, login, password string) (model.Tokens, error) {
 	// создать модельку userauthinfo (внутри репозитория) и работать с ней, проверять хешированный пароль из базы с переданным
 	// refresh token через uuid сделать отдельной таблицей в БД по гайду от негодующего Виталия из ТГ
-	authInfo, err := s.authRepo.GetUserByIDAuthInfo(ctx, login) // пароль захешировать прям тута, Виталий снова негодует
+	authInfo, err := s.authRepo.GetUserAuthInfoByLogin(ctx, login) // пароль захешировать прям тута, Виталий снова негодует
 	if err != nil {
 		return model.Tokens{}, err
 	}

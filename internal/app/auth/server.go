@@ -45,7 +45,7 @@ func (s *Server) RegisterHandlerFromEndpoint(
 func (s *Server) SignIn(ctx context.Context, req *authPkg.SignInRequest) (*authPkg.SignInResponse, error) {
 	log.Printf("SignIn request: login=%s", req.Login)
 
-	accessToken, refreshToken, err := s.authService.SignIn(ctx, req.Login, req.Password)
+	accessToken, err := s.authService.SignIn(ctx, req.Login, req.Password)
 	if err != nil {
 
 		if errors.Is(err, model.ErrAlreadyExists) {
@@ -55,8 +55,8 @@ func (s *Server) SignIn(ctx context.Context, req *authPkg.SignInRequest) (*authP
 	}
 
 	return &authPkg.SignInResponse{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
+		AccessToken:  accessToken.AccessToken,
+		RefreshToken: accessToken.RefreshToken,
 	}, nil
 }
 func (s *Server) SignUp(ctx context.Context, req *authPkg.SignUpRequest) (*authPkg.SignUpResponse, error) { // вынести в отдельный файл, Виталий негодует
