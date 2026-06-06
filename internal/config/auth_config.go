@@ -7,20 +7,13 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type AuthConfig struct {
+type authYamlConfig struct {
 	Endpoints struct {
 		Bearer []string `yaml:"bearer"`
 	} `yaml:"auth-endpoints"`
-	BearerSet map[string]struct{}
 }
-
-func (a *AuthConfig) HasAvailableMethod(method string) bool {
-	for k := range a.BearerSet {
-		if k == method {
-			return true
-		}
-	}
-	return false
+type AuthConfig struct {
+	BearerSet map[string]struct{}
 }
 
 // NewAuthConfig loads and parses the auth configuration from file
@@ -29,12 +22,13 @@ func NewAuthConfig(path string) (*AuthConfig, error) {
 	if err != nil {
 		return nil, err
 	}
-	var cfg AuthConfig
-	if err := yaml.Unmarshal(data, &cfg); err != nil {
+	var fileCfg authYamlConfig
+	if err := yaml.Unmarshal(data, &fileCfg); err != nil {
 		return nil, err
 	}
-	cfg.BearerSet = make(map[string]struct{}, len(cfg.Endpoints.Bearer))
-	for _, m := range cfg.Endpoints.Bearer {
+	var cfg AuthConfig
+	cfg.BearerSet = make(map[string]struct{}, len(fileCfg.Endpoints.Bearer))
+	for _, m := range fileCfg.Endpoints.Bearer {
 		cfg.BearerSet[m] = struct{}{}
 	}
 	return &cfg, nil

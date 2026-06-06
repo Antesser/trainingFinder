@@ -502,8 +502,10 @@
       "type": "object",
       "properties": {
         "access_token": {
-          "type": "string",
-          "title": "везде поудалять нахер RefreshToken"
+          "type": "string"
+        },
+        "refresh_token": {
+          "type": "string"
         }
       }
     },

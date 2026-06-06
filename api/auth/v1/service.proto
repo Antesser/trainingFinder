@@ -42,7 +42,8 @@ message SignInRequest {
 }
 
 message SignInResponse {
-  string access_token = 1; // везде поудалять нахер RefreshToken
+  string access_token = 1;
+  string refresh_token = 2;
 }
 message RefreshTokenRequest {
   string refresh_token = 1[(buf.validate.field).required = true, (buf.validate.field).string.uuid = true];

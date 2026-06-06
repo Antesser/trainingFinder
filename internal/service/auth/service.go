@@ -40,7 +40,13 @@ func (s *service) SignIn(ctx context.Context, login, password string) (model.Tok
 		return model.Tokens{}, err
 	}
 	// refToken создать токен, модельку сессии, сохранить сессию в БД и вернуть оба токена пользователю
-	return model.Tokens{AccessToken: aToken}, nil
+	refToken := uuid.New()
+	refreshTokenModel := model.Sessions{Token: refToken, UserID: authInfo.ID, Active: true, CreatedAt: time.Now(), ExpiresAt: time.Now().Add(s.accessTokenDuration)}
+	err = s.authRepo.SaveRefreshToken(ctx, refreshTokenModel) // пароль захешировать прям тута, Виталий снова негодует
+	if err != nil {
+		return model.Tokens{}, err
+	}
+	return model.Tokens{AccessToken: aToken, RefreshToken: refToken.String()}, nil
 }
 func (s *service) SignUp(ctx context.Context, login, password string) (string, error) {
 	hash, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)

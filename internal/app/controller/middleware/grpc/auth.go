@@ -2,7 +2,6 @@ package grpc
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	"trainingFinder/internal/config"
@@ -31,19 +30,13 @@ var (
 	errFailedToDecodeClaims = status.Error(codes.Unauthenticated, "failed to decode token claims")
 )
 
-type userIDKey struct{}
+type userIDKeyType struct{}
 
-var userID userIDKey
+var userIDKey userIDKeyType
 
-func WithAuth(secretKey, authPath string) grpc.UnaryServerInterceptor { //создать структуру middleware и проверить внутри secret
+func WithAuth(secretKey string, cfg config.AuthConfig) grpc.UnaryServerInterceptor { //создать структуру middleware и проверить внутри secret
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-		fmt.Println("info", info.FullMethod)
-		cfgAuth, err := config.NewAuthConfig(authPath)
-		fmt.Println("cfg", cfgAuth.BearerSet)
-		if err != nil {
-			panic(fmt.Sprintf("failed to load auth config: %v", err))
-		}
-		if !cfgAuth.HasAvailableMethod(info.FullMethod) {
+		if _, needsAuth := cfg.BearerSet[info.FullMethod]; !needsAuth {
 			return handler(ctx, req)
 		}
 
@@ -87,7 +80,7 @@ func WithAuth(secretKey, authPath string) grpc.UnaryServerInterceptor { //соз
 		}
 		id := claims["id"]
 
-		ctx = context.WithValue(ctx, userID, id)
+		ctx = context.WithValue(ctx, userIDKey, id)
 
 		return handler(ctx, req)
 	}

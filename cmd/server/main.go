@@ -47,9 +47,12 @@ func main() {
 	authSrv := authService.New(authRepo, cfg.Server.Secret, cfg.Server.AccessTokenDuration)
 	userSrv := userService.New(userRepo)
 	trainingSrv := trainingService.New(trainingRepo, your_topic_name.MarshalCreateTrainingEvent, outboxRepo)
-
+	cfgAuth, err := config.NewAuthConfig(cfg.Server.AuthConfigPath)
+	if err != nil {
+		log.Fatal("failed to load auth config: %v", err)
+	}
 	//ctrl := controller.New(cfg.Server, authGRPS.NewServer(authSrv), userGRPS.NewServer(userSrv), trainingGRPS.NewServer(trainingSrv))
-	ctrl := controller.New(cfg.Server, userGRPS.NewServer(userSrv), trainingGRPS.NewServer(trainingSrv), authGRPS.NewServer(authSrv))
+	ctrl := controller.New(cfg.Server, *cfgAuth, userGRPS.NewServer(userSrv), trainingGRPS.NewServer(trainingSrv), authGRPS.NewServer(authSrv))
 	ctrl.Run(ctx)
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)

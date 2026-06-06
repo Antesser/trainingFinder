@@ -4,8 +4,6 @@ auth-endpoints:
     - /training.v1.TrainingService/GetTraining
     - /training.v1.TrainingService/UpdateTraining
     - /training.v1.TrainingService/DeleteTraining
-    - /training.v1.TrainingService/InTx
-    - /training.v1.TrainingService/InTxWithIsoLevel
     - /users.v1.UserService/GetUserByID
     - /users.v1.UserService/DeleteUser
     - /users.v1.UserService/UpdateUser

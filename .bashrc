@@ -1,0 +1,11 @@
+DB_HOST=localhost
+HOST=localhost
+DB_PORT=5432
+DB_USER=admin
+DB_PASSWORD=admin
+DB_NAME=godb
+DB_SSLMODE=disable
+GRPC_PORT=:9090
+HTTP_PORT=:8080
+SECRET=super_secret_token
+ACCESS_TOKEN_DURATION=1h
