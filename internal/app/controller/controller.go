@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	authMiddlewere "trainingFinder/internal/app/controller/middleware/grpc"
-	//"github.com/chudik63/test-service/internal/app/controller/middleware"
+	loggerMiddlewere "trainingFinder/internal/app/controller/middleware/logger"
 	"trainingFinder/internal/config"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -58,6 +58,7 @@ func (c *controller) ServeGRPC() {
 	s := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
 			authMiddlewere.WithAuth(c.cfg.Secret, *c.authCfg),
+			loggerMiddlewere.WithLogging(),
 		),
 	)
 
