@@ -56,8 +56,7 @@ func (s *Server) SignIn(ctx context.Context, req *authPkg.SignInRequest) (*authP
 	}
 	// добавить печеньки, в которые я положу refreshToken, проблема в том, что всё может пойти по ...
 	return &authPkg.SignInResponse{
-		AccessToken:  tokens.AccessToken,
-		RefreshToken: tokens.RefreshToken,
+		AccessToken: tokens.AccessToken,
 	}, nil
 }
 func (s *Server) SignUp(ctx context.Context, req *authPkg.SignUpRequest) (*authPkg.SignUpResponse, error) { // вынести в отдельный файл, Виталий негодует
