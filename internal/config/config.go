@@ -10,6 +10,9 @@ import (
 type Config struct {
 	Server ServerConfig
 	DB     DBConfig
+
+	TrainingOutboxProcessEnabled  bool          `envconfig:"TRAINING_OUTBOX_PROCESS_ENABLED" default:"false"`
+	TrainingOutboxProcessDuration time.Duration `envconfig:"TRAINING_OUTBOX_PROCESS_DURATION"` // 5s 2h
 }
 
 type ServerConfig struct {

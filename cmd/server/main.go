@@ -8,7 +8,9 @@ import (
 	"syscall"
 	"trainingFinder/internal/app/controller"
 	"trainingFinder/internal/config"
+	"trainingFinder/internal/kafka"
 	your_topic_name "trainingFinder/internal/kafka/producer/your-topic-name"
+	"trainingFinder/internal/process/outbox"
 
 	authGRPS "trainingFinder/internal/app/auth"
 	trainingGRPS "trainingFinder/internal/app/training"
@@ -21,6 +23,7 @@ import (
 	trainingService "trainingFinder/internal/service/training"
 	userService "trainingFinder/internal/service/users"
 
+	"github.com/go-co-op/gocron/v2"
 	"github.com/golangmonster/pgxtransactor"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -54,10 +57,30 @@ func main() {
 	//ctrl := controller.New(cfg.Server, authGRPS.NewServer(authSrv), userGRPS.NewServer(userSrv), trainingGRPS.NewServer(trainingSrv))
 	ctrl := controller.New(cfg.Server, *cfgAuth, userGRPS.NewServer(userSrv), trainingGRPS.NewServer(trainingSrv), authGRPS.NewServer(authSrv))
 	ctrl.Run(ctx)
+
+	outboxProcess := outbox.New(outboxRepo, nil)
+
+	s, err := gocron.NewScheduler()
+	if err != nil {
+		return
+	}
+
+	if cfg.TrainingOutboxProcessEnabled {
+		_, err := s.NewJob(
+			gocron.DurationJob(cfg.TrainingOutboxProcessDuration),
+			gocron.NewTask(outboxProcess.ProduceOutboxMessages, ctx, kafka.TrainingTopic),
+			gocron.WithSingletonMode(gocron.LimitModeReschedule),
+		)
+		if err != nil {
+			return
+		}
+	}
+
+	s.Start()
+
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	<-c
 
 	log.Println("Application ex")
-
 }
