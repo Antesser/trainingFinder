@@ -8,7 +8,7 @@ import (
 )
 
 func (r *repository) SaveRefreshToken(ctx context.Context, session model.Sessions) error {
-	qb := sq.Insert("sessions").
+	qb := sq.Insert("session").
 		Columns("refresh_token", "user_id", "is_active", "created_at", "expires_at").
 		Values(session.Token, session.UserID, session.Active, session.CreatedAt, session.ExpiresAt).
 		PlaceholderFormat(sq.Dollar)

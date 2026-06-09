@@ -1,6 +1,6 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TABLE IF NOT EXISTS token (
+CREATE TABLE IF NOT EXISTS session (
                                      refresh_token UUID PK,
                                      user_id UUID REFERENCES users(id) ON DELETE CASCADE,
                                         is_active BOOLEAN NOT NULL DEFAULT true,
@@ -11,5 +11,5 @@ CREATE TABLE IF NOT EXISTS token (
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE token;
+DROP TABLE session;
 -- +goose StatementEnd
