@@ -45,7 +45,7 @@ message DeleteUserResponse{}
 
 message UpdateUserRequest {
   string id = 1 [(buf.validate.field).string.uuid = true];
-  string username = 2 [(buf.validate.field).string = {
+  string login = 2 [(buf.validate.field).string = {
     max_len: 10,
     min_len: 5
   }];

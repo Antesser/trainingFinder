@@ -47,7 +47,7 @@ func (s *Server) DeleteUser(ctx context.Context, req *userPkg.DeleteUserRequest)
 }
 func (s *Server) UpdateUser(ctx context.Context, req *userPkg.UpdateUserRequest) (*userPkg.UpdateUserResponse, error) { //вынести в отдельные файлы, ибо надо
 
-	err := s.userService.UpdateUser(ctx, req.GetId(), req.GetUsername())
+	err := s.userService.UpdateUser(ctx, req.GetId(), req.GetLogin())
 	if err != nil {
 		return nil, err
 	}

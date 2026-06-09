@@ -365,7 +365,7 @@
     "UserServiceUpdateUserBody": {
       "type": "object",
       "properties": {
-        "username": {
+        "login": {
           "type": "string"
         }
       }

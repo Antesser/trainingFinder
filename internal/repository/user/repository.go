@@ -17,8 +17,8 @@ type repository struct {
 	pool *pgxtransactor.Pool
 }
 type user struct {
-	ID       string `db:"id"`
-	username string `db:"username"`
+	ID    string `db:"id"`
+	login string `db:"login"`
 }
 
 func New(pool *pgxtransactor.Pool) *repository {
@@ -28,7 +28,7 @@ func New(pool *pgxtransactor.Pool) *repository {
 func (r *repository) GetUserByID(ctx context.Context, id string) (model.User, error) {
 	qb := sq.Select(
 		"id",
-		"username",
+		"login",
 	).From("users").
 		Where(sq.Eq{"id": id}).
 		PlaceholderFormat(sq.Dollar)
@@ -48,13 +48,13 @@ func (r *repository) GetUserByID(ctx context.Context, id string) (model.User, er
 		return model.User{}, fmt.Errorf("execute insert: %w", err)
 	}
 
-	return model.User{Id: u.ID, Username: u.username}, nil
+	return model.User{Id: u.ID, Username: u.login}, nil
 }
 
-func (r *repository) UpdateUser(ctx context.Context, userID, username string) error {
+func (r *repository) UpdateUser(ctx context.Context, userID, login string) error {
 	qb := sq.Update("users").
 		Where(sq.Eq{"id": userID}).
-		Set("username", username).
+		Set("login", login).
 		PlaceholderFormat(sq.Dollar)
 
 	query, args, err := qb.ToSql()

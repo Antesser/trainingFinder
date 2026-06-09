@@ -475,7 +475,7 @@ func (m *UpdateUserRequest) validate(all bool) error {
 
 	// no validation rules for Id
 
-	// no validation rules for Username
+	// no validation rules for Login
 
 	if len(errors) > 0 {
 		return UpdateUserRequestMultiError(errors)

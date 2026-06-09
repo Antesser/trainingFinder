@@ -22,7 +22,8 @@ type sessions struct {
 }
 
 func (r *repository) GetSessionByRefreshToken(ctx context.Context, refreshToken uuid.UUID) (*model.Sessions, error) { // в транзакцию вставка в таблицу сессий
-	qb := sq.Select("session").
+	qb := sq.Select("refresh_token", "user_id", "is_active", "created_at", "expires_at").
+		From("session").
 		Where(sq.And{sq.Eq{"refresh_token": refreshToken}, sq.Eq{"is_active": true}}).
 		PlaceholderFormat(sq.Dollar)
 
