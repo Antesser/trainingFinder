@@ -18,7 +18,7 @@ type repository struct {
 }
 type user struct {
 	ID    string `db:"id"`
-	login string `db:"login"`
+	Login string `db:"login"`
 }
 
 func New(pool *pgxtransactor.Pool) *repository {
@@ -32,7 +32,6 @@ func (r *repository) GetUserByID(ctx context.Context, id string) (model.User, er
 	).From("users").
 		Where(sq.Eq{"id": id}).
 		PlaceholderFormat(sq.Dollar)
-
 	query, args, err := qb.ToSql()
 	if err != nil {
 		log.Print("Got an error:", err)
@@ -48,7 +47,7 @@ func (r *repository) GetUserByID(ctx context.Context, id string) (model.User, er
 		return model.User{}, fmt.Errorf("execute insert: %w", err)
 	}
 
-	return model.User{Id: u.ID, Username: u.login}, nil
+	return model.User{Id: u.ID, Login: u.Login}, nil
 }
 
 func (r *repository) UpdateUser(ctx context.Context, userID, login string) error {

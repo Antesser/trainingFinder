@@ -34,7 +34,7 @@ type userIDKeyType struct{}
 
 var userIDKey userIDKeyType
 
-func WithAuth(secretKey string, cfg config.AuthConfig) grpc.UnaryServerInterceptor { //создать структуру middleware и проверить внутри secret
+func WithAuth(secretKey string, cfg config.AuthConfig) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		if _, needsAuth := cfg.BearerSet[info.FullMethod]; !needsAuth {
 			return handler(ctx, req)
@@ -51,29 +51,24 @@ func WithAuth(secretKey string, cfg config.AuthConfig) grpc.UnaryServerIntercept
 		}
 
 		authHeader := authMD[0]
-
 		const bearerPrefix = "Bearer "
 		token := strings.TrimPrefix(authHeader, bearerPrefix)
-
 		if len(token) == 0 {
 			return nil, errInvalidAuthHeader
 		}
 
 		jwToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
-			if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, errUnexpectedSigningMethod
 			}
-
-			return secretKey, nil // взять из структуры, которую создам
+			return []byte(secretKey), nil
 		})
 		if err != nil {
 			return nil, errClientUnathenticated
 		}
-
 		if !jwToken.Valid {
 			return nil, errInvalidToken
 		}
-
 		claims, ok := jwToken.Claims.(jwt.MapClaims)
 		if !ok {
 			return nil, errFailedToDecodeClaims

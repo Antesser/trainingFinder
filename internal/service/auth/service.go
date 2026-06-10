@@ -25,9 +25,7 @@ func New(authRepo authRepository, skey string, atd time.Duration) *service {
 }
 
 func (s *service) SignIn(ctx context.Context, login, password string) (model.Tokens, error) {
-	// создать модельку userauthinfo (внутри репозитория) и работать с ней, проверять хешированный пароль из базы с переданным
-	// refresh token через uuid сделать отдельной таблицей в БД по гайду от негодующего Виталия из ТГ
-	authInfo, err := s.authRepo.GetUserAuthInfoByLogin(ctx, login) // пароль захешировать прям тута, Виталий снова негодует
+	authInfo, err := s.authRepo.GetUserAuthInfoByLogin(ctx, login)
 	if err != nil {
 		return model.Tokens{}, err
 	}
@@ -39,10 +37,9 @@ func (s *service) SignIn(ctx context.Context, login, password string) (model.Tok
 	if err != nil {
 		return model.Tokens{}, err
 	}
-	// refToken создать токен, модельку сессии, сохранить сессию в БД и вернуть оба токена пользователю
 	refToken := uuid.New()
 	refreshTokenModel := model.Sessions{Token: refToken, UserID: authInfo.ID, Active: true, CreatedAt: time.Now(), ExpiresAt: time.Now().Add(s.accessTokenDuration)}
-	err = s.authRepo.SaveRefreshToken(ctx, refreshTokenModel) // пароль захешировать прям тута, Виталий снова негодует
+	err = s.authRepo.SaveRefreshToken(ctx, refreshTokenModel)
 	if err != nil {
 		return model.Tokens{}, err
 	}
@@ -51,11 +48,7 @@ func (s *service) SignIn(ctx context.Context, login, password string) (model.Tok
 func (s *service) SignUp(ctx context.Context, login, password string) (string, error) {
 	hash, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	userId := uuid.New().String()
-	id, err := s.authRepo.SignUp(ctx, hash, userId, login) // пароль захешировать, Виталий снова негодует
-	if err != nil {
-		return "", err
-	}
-	//aToken, err := utils.GenerateToken(hash, []byte(s.secretKey), s.accessTokenDuration)
+	id, err := s.authRepo.SignUp(ctx, hash, userId, login)
 	if err != nil {
 		return "", err
 	}

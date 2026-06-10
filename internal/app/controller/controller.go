@@ -5,8 +5,8 @@ import (
 	"log"
 	"net"
 	"net/http"
-
 	authMiddlewere "trainingFinder/internal/app/controller/middleware/grpc"
+
 	loggerMiddlewere "trainingFinder/internal/app/controller/middleware/logger"
 	"trainingFinder/internal/config"
 
@@ -54,7 +54,6 @@ func (c *controller) ServeGRPC() {
 	if err != nil {
 		log.Fatalf("failed with error %v to listen grpc port: %s", err, c.cfg.GRPCPort)
 	}
-	// создать структуру middleware, прокинуть сюда secret token из контроллера (взять из cfg.Secret main)
 	s := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
 			authMiddlewere.WithAuth(c.cfg.Secret, *c.authCfg),

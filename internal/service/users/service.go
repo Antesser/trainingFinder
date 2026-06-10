@@ -23,8 +23,8 @@ func (s *service) GetUserByID(ctx context.Context, userID string) (model.User, e
 	return user, nil
 }
 
-func (s *service) UpdateUser(ctx context.Context, userID, username string) error {
-	err := s.userRepo.UpdateUser(ctx, userID, username)
+func (s *service) UpdateUser(ctx context.Context, userID, login string) error {
+	err := s.userRepo.UpdateUser(ctx, userID, login)
 	if err != nil {
 		return fmt.Errorf("failed to update user: %w", err)
 	}

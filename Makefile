@@ -45,7 +45,7 @@ vet:
 
 start-db:
 	docker compose up -d
-run:
+start:
 	go run cmd/server/main.go
 
 export:

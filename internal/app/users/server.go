@@ -56,10 +56,10 @@ func (s *Server) UpdateUser(ctx context.Context, req *userPkg.UpdateUserRequest)
 }
 func (s *Server) GetUserByID(ctx context.Context, req *userPkg.GetUserByIDRequest) (*userPkg.GetUserByIDResponse, error) {
 
-	//id,login, err := s.UserService.GetUserByID(ctx, req.GetId())
-	//if err != nil {
-	//	return nil, err
-	//}
+	user, err := s.userService.GetUserByID(ctx, req.GetId())
+	if err != nil {
+		return nil, err
+	}
 
-	return &userPkg.GetUserByIDResponse{Id: "sdasg", Login: "sdkjgfh"}, nil
+	return &userPkg.GetUserByIDResponse{Id: user.Id, Login: user.Login}, nil
 }

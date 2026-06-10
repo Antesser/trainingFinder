@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"net/http"
 
 	authPkg "trainingFinder/pkg/api/auth/v1"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
 
@@ -44,8 +46,6 @@ func (s *Server) RegisterHandlerFromEndpoint(
 }
 
 func (s *Server) SignIn(ctx context.Context, req *authPkg.SignInRequest) (*authPkg.SignInResponse, error) {
-	log.Printf("SignIn request: login=%s", req.Login)
-
 	tokens, err := s.authService.SignIn(ctx, req.Login, req.Password)
 	if err != nil {
 
@@ -55,6 +55,17 @@ func (s *Server) SignIn(ctx context.Context, req *authPkg.SignInRequest) (*authP
 		return nil, err
 	}
 	// добавить печеньки, в которые я положу refreshToken, проблема в том, что всё может пойти по ...
+	cookie := &http.Cookie{
+		Name:     "refresh_token",
+		Value:    tokens.RefreshToken,
+		Path:     "/api/auth/v1/sign-in",
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
+	}
+	cookieStr := cookie.String()
+	header := metadata.Pairs("Set-Cookie", cookieStr)
+	grpc.SendHeader(ctx, header)
 	return &authPkg.SignInResponse{
 		AccessToken: tokens.AccessToken,
 	}, nil
