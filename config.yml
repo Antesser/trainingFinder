@@ -1,0 +1,10 @@
+auth-endpoints:
+  bearer:
+    - /training.v1.TrainingService/CreateTraining
+    - /training.v1.TrainingService/GetTraining
+    - /training.v1.TrainingService/UpdateTraining
+    - /training.v1.TrainingService/DeleteTraining
+    - /users.v1.UserService/GetUserByID
+    - /users.v1.UserService/DeleteUser
+    - /users.v1.UserService/UpdateUser
+

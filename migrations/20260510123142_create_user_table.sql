@@ -2,8 +2,8 @@
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS users (
     id TEXT,
-    username VARCHAR(20) NOT NULL,
-    password VARCHAR(15) NOT NULL,
+    login VARCHAR(20) NOT NULL,
+    password VARCHAR(50) NOT NULL,
     PRIMARY KEY(id)
 );
 -- +goose StatementEnd

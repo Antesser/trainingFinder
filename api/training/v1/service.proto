@@ -44,9 +44,7 @@ message CreateTrainingRequest {
 }
 
 message CreateTrainingResponse {
-  string id = 1;
 }
-
 
 message DeleteTrainingRequest {
   string id = 1[(buf.validate.field).required = true];
@@ -55,7 +53,7 @@ message DeleteTrainingRequest {
 message DeleteTrainingResponse {
 }
 message UpdateTrainingRequest {
-  string id = 1[(buf.validate.field).required = true, (buf.validate.field).uuid = true];
+  string id = 1[(buf.validate.field).required = true, (buf.validate.field).string.uuid = true];
   optional string trainer_id = 2 [(buf.validate.field).string.uuid = true];
   optional string user_id = 3 [(buf.validate.field).required = true];
   optional google.protobuf.Timestamp started_at = 4;
@@ -68,7 +66,7 @@ message UpdateTrainingRequest {
 message UpdateTrainingResponse {
 }
 message GetTrainingRequest {
-  string id = 1[(buf.validate.field).required = true, (buf.validate.field).uuid = true];
+  string id = 1[(buf.validate.field).required = true, (buf.validate.field).string.uuid = true];
 }
 
 message GetTrainingResponse {

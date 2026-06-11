@@ -4,14 +4,17 @@ import (
 	"context"
 	"errors"
 	"log"
+	"net/http"
 
 	authPkg "trainingFinder/pkg/api/auth/v1"
 
 	model "trainingFinder/internal/model/training"
 
+	"github.com/google/uuid"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
 
@@ -43,9 +46,7 @@ func (s *Server) RegisterHandlerFromEndpoint(
 }
 
 func (s *Server) SignIn(ctx context.Context, req *authPkg.SignInRequest) (*authPkg.SignInResponse, error) {
-	log.Printf("SignIn request: login=%s", req.Login)
-
-	accessToken, refreshToken, err := s.authService.SignIn(ctx, req.Login, req.Password)
+	tokens, err := s.authService.SignIn(ctx, req.Login, req.Password)
 	if err != nil {
 
 		if errors.Is(err, model.ErrAlreadyExists) {
@@ -53,10 +54,20 @@ func (s *Server) SignIn(ctx context.Context, req *authPkg.SignInRequest) (*authP
 		}
 		return nil, err
 	}
-
+	// добавить печеньки, в которые я положу refreshToken, проблема в том, что всё может пойти по ...
+	cookie := &http.Cookie{
+		Name:     "refresh_token",
+		Value:    tokens.RefreshToken,
+		Path:     "/api/auth",
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
+	}
+	cookieStr := cookie.String()
+	header := metadata.Pairs("Set-Cookie", cookieStr)
+	grpc.SendHeader(ctx, header)
 	return &authPkg.SignInResponse{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
+		AccessToken: tokens.AccessToken,
 	}, nil
 }
 func (s *Server) SignUp(ctx context.Context, req *authPkg.SignUpRequest) (*authPkg.SignUpResponse, error) { // вынести в отдельный файл, Виталий негодует
@@ -69,5 +80,20 @@ func (s *Server) SignUp(ctx context.Context, req *authPkg.SignUpRequest) (*authP
 
 	return &authPkg.SignUpResponse{
 		Id: id,
+	}, nil
+}
+
+func (s *Server) RefreshToken(ctx context.Context, req *authPkg.RefreshTokenRequest) (*authPkg.RefreshTokenResponse, error) {
+	refToken, err := uuid.Parse(req.RefreshToken)
+	if err != nil {
+		return nil, err
+	}
+	accessToken, err := s.authService.RefreshSession(ctx, refToken)
+	if err != nil {
+		return nil, err
+	}
+
+	return &authPkg.RefreshTokenResponse{
+		AccessToken: accessToken,
 	}, nil
 }

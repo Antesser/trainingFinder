@@ -4,6 +4,8 @@ import (
 	"context"
 	"strings"
 
+	"trainingFinder/internal/config"
+
 	"github.com/golang-jwt/jwt/v5"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -28,8 +30,16 @@ var (
 	errFailedToDecodeClaims = status.Error(codes.Unauthenticated, "failed to decode token claims")
 )
 
-func (m *middleware) WithAuth() grpc.UnaryServerInterceptor { //создать структуру middleware и проверить внутри secret
+type userIDKeyType struct{}
+
+var userIDKey userIDKeyType
+
+func WithAuth(secretKey string, cfg config.AuthConfig) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+		if _, needsAuth := cfg.BearerSet[info.FullMethod]; !needsAuth {
+			return handler(ctx, req)
+		}
+
 		md, ok := metadata.FromIncomingContext(ctx)
 		if !ok {
 			return nil, errNoMetadata
@@ -41,41 +51,32 @@ func (m *middleware) WithAuth() grpc.UnaryServerInterceptor { //создать �
 		}
 
 		authHeader := authMD[0]
-
 		const bearerPrefix = "Bearer "
 		token := strings.TrimPrefix(authHeader, bearerPrefix)
-
 		if len(token) == 0 {
 			return nil, errInvalidAuthHeader
 		}
 
 		jwToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
-			if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, errUnexpectedSigningMethod
 			}
-
-			return m.secret, nil // взять из структуры, которую создам
+			return []byte(secretKey), nil
 		})
 		if err != nil {
 			return nil, errClientUnathenticated
 		}
-
 		if !jwToken.Valid {
 			return nil, errInvalidToken
 		}
-
 		claims, ok := jwToken.Claims.(jwt.MapClaims)
 		if !ok {
 			return nil, errFailedToDecodeClaims
 		}
-		//id := claims["id"]
-		ctx = context.WithValue(ctx, userIDKey, userID)
-		// для ключа создать новый тип type userIDKey struct{} type userIDKeyType struct{}
-		//
-		//var UserIDKey userIDKeyType
-		//
-		//ctx = context.WithValue(ctx, userIDKey, 123)
+		id := claims["id"]
 
-		return nil, errInvalidAuthHeader
+		ctx = context.WithValue(ctx, userIDKey, id)
+
+		return handler(ctx, req)
 	}
 }

@@ -22,6 +22,38 @@
     "application/json"
   ],
   "paths": {
+    "/api/auth/v1/refresh-token": {
+      "post": {
+        "operationId": "AuthService_RefreshToken",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1RefreshTokenResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1RefreshTokenRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AuthService"
+        ]
+      }
+    },
     "/api/auth/v1/sign-in": {
       "post": {
         "operationId": "AuthService_SignIn",
@@ -333,7 +365,7 @@
     "UserServiceUpdateUserBody": {
       "type": "object",
       "properties": {
-        "username": {
+        "login": {
           "type": "string"
         }
       }
@@ -390,12 +422,7 @@
       }
     },
     "v1CreateTrainingResponse": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        }
-      }
+      "type": "object"
     },
     "v1DeleteTrainingResponse": {
       "type": "object"
@@ -439,6 +466,22 @@
         }
       }
     },
+    "v1RefreshTokenRequest": {
+      "type": "object",
+      "properties": {
+        "refresh_token": {
+          "type": "string"
+        }
+      }
+    },
+    "v1RefreshTokenResponse": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string"
+        }
+      }
+    },
     "v1SignInRequest": {
       "type": "object",
       "properties": {
@@ -454,9 +497,6 @@
       "type": "object",
       "properties": {
         "access_token": {
-          "type": "string"
-        },
-        "refresh_token": {
           "type": "string"
         }
       }
@@ -486,5 +526,18 @@
     "v1UpdateUserResponse": {
       "type": "object"
     }
-  }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "description": "Authentication token, prefixed by Bearer: Bearer \u003ctoken\u003e",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
 }

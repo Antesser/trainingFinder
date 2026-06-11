@@ -5,8 +5,9 @@ import (
 	"log"
 	"net"
 	"net/http"
+	authMiddlewere "trainingFinder/internal/app/controller/middleware/grpc"
 
-	//"github.com/chudik63/test-service/internal/app/controller/middleware"
+	loggerMiddlewere "trainingFinder/internal/app/controller/middleware/logger"
 	"trainingFinder/internal/config"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -31,12 +32,14 @@ type Controller interface {
 
 type controller struct {
 	cfg             config.ServerConfig
+	authCfg         config.AuthConfig
 	implementations []ImplementationAdapter // можно запихнуть все серверы в этот интерфейс и сделать по красоте
 }
 
-func New(cfg config.ServerConfig, implementations ...ImplementationAdapter) Controller {
+func New(cfg config.ServerConfig, authCfg config.AuthConfig, implementations ...ImplementationAdapter) Controller {
 	return &controller{
 		cfg:             cfg,
+		authCfg:         authCfg,
 		implementations: implementations,
 	}
 }
@@ -51,10 +54,10 @@ func (c *controller) ServeGRPC() {
 	if err != nil {
 		log.Fatalf("failed with error %v to listen grpc port: %s", err, c.cfg.GRPCPort)
 	}
-	// создать структуру middleware, прокинуть сюда secret token из контроллера (взять из cfg.Secret main)
 	s := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
-		//middleware.WithAuth(), вызвать функцию, которая возможно даже будет работать (далеко не факт)
+			authMiddlewere.WithAuth(c.cfg.Secret, c.authCfg),
+			loggerMiddlewere.WithLogging(),
 		),
 	)
 

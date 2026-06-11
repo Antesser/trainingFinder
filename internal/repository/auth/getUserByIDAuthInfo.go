@@ -18,7 +18,8 @@ type authInfo struct {
 }
 
 func (r *repository) GetUserAuthInfoByLogin(ctx context.Context, login string) (model.UserAuthInfo, error) { // в транзакцию вставка в таблицу сессий
-	qb := sq.Select("users").
+	qb := sq.Select("id", "login", "password").
+		From("users").
 		Where(sq.Eq{"login": login}).
 		PlaceholderFormat(sq.Dollar)
 

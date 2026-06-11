@@ -31,8 +31,8 @@ func New(pool *pgxtransactor.Pool) *repository {
 
 func (r *repository) CreateTraining(ctx context.Context, training model.Training) error {
 	qb := sq.Insert("training").
-		Columns("trainer_id", "user_id", "started_at", "ended_at", "additional_info").
-		Values(training.TrainerID, training.UserID, training.StartedAt, training.EndedAt, training.AdditionalInfo).
+		Columns("id", "trainer_id", "user_id", "started_at", "ended_at", "additional_info").
+		Values(training.ID, training.TrainerID, training.UserID, training.StartedAt, training.EndedAt, training.AdditionalInfo).
 		PlaceholderFormat(sq.Dollar)
 
 	query, args, err := qb.ToSql()
@@ -46,7 +46,6 @@ func (r *repository) CreateTraining(ctx context.Context, training model.Training
 	return nil
 }
 func (r *repository) GetTraining(ctx context.Context, id string) (*model.Training, error) {
-
 	qb := sq.Select(
 		"id",
 		"trainer_id", "user_id", "started_at", "ended_at", "additional_info",
@@ -70,7 +69,7 @@ func (r *repository) GetTraining(ctx context.Context, id string) (*model.Trainin
 	return &model.Training{ID: t.ID, UserID: t.UserID, TrainerID: t.TrainerID, StartedAt: t.StartedAt, EndedAt: t.EndedAt}, nil
 }
 func (r *repository) UpdateTraining(ctx context.Context, updateTraining model.UpdateTrainingRequest) error {
-	qb := sq.Update("users").
+	qb := sq.Update("training").
 		Where(sq.Eq{"id": updateTraining.UserID})
 	if updateTraining.AdditionalInfo != nil {
 		qb = qb.Set("additional_info", updateTraining.AdditionalInfo)

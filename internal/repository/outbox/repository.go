@@ -44,9 +44,10 @@ func (r *repository) CreateOutboxItem(ctx context.Context, item outbox.OutboxIte
 	return nil
 }
 
-func (r *repository) ListOutboxItems(ctx context.Context, limit uint64) ([]outbox.OutboxItem, error) {
+func (r *repository) ListOutboxItems(ctx context.Context, topic string, limit uint64) ([]outbox.OutboxItem, error) {
 	qb := sq.Select("message_value", "channel", "key").
 		From("outbox").
+		Where(sq.Eq{"topic": topic}).
 		Limit(limit).
 		PlaceholderFormat(sq.Dollar)
 
@@ -73,8 +74,8 @@ func (r *repository) ListOutboxItems(ctx context.Context, limit uint64) ([]outbo
 	return result, nil
 }
 
-func (r *repository) DeleteOutboxItem(ctx context.Context, id []string) error {
-	qb := sq.Delete("users").
+func (r *repository) DeleteOutboxItem(ctx context.Context, id []int64) error {
+	qb := sq.Delete("outbox").
 		Where(sq.Eq{"id": id}).
 		PlaceholderFormat(sq.Dollar)
 
