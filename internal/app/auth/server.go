@@ -58,7 +58,7 @@ func (s *Server) SignIn(ctx context.Context, req *authPkg.SignInRequest) (*authP
 	cookie := &http.Cookie{
 		Name:     "refresh_token",
 		Value:    tokens.RefreshToken,
-		Path:     "/api/auth/v1/sign-in",
+		Path:     "/api/auth",
 		HttpOnly: true,
 		Secure:   true,
 		SameSite: http.SameSiteStrictMode,
