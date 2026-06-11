@@ -27,27 +27,9 @@ func New(pool *pgxtransactor.Pool) *repository {
 }
 
 func (r *repository) SignUp(ctx context.Context, hash []byte, id, login string) (string, error) {
-	checkQuery := sq.Select("1").
-		Prefix("SELECT EXISTS (").
-		From("users").
-		Where("login = ?", login).
-		Suffix(")").
-		PlaceholderFormat(sq.Dollar)
-
-	checkSQL, checkArgs, err := checkQuery.ToSql()
+	err := r.CheckUserExistence(ctx, login)
 	if err != nil {
-		log.Print("Got an error:", err)
 		return "", err
-	}
-
-	var exists bool
-	err = pgxscan.Get(ctx, r.pool.Querier(ctx), &exists, checkSQL, checkArgs...)
-	if err != nil {
-		return "", fmt.Errorf("check login existence: %w", err)
-	}
-
-	if exists {
-		return "", model.ErrLoginAlreadyExists
 	}
 	qb := sq.Insert("users").
 		Columns("id", "login", "password").
@@ -68,4 +50,29 @@ func (r *repository) SignUp(ctx context.Context, hash []byte, id, login string) 
 	}
 
 	return u.ID, nil
+}
+func (r *repository) CheckUserExistence(ctx context.Context, login string) error {
+	checkQuery := sq.Select("1").
+		Prefix("SELECT EXISTS (").
+		From("users").
+		Where("login = ?", login).
+		Suffix(")").
+		PlaceholderFormat(sq.Dollar)
+
+	checkSQL, checkArgs, err := checkQuery.ToSql()
+	if err != nil {
+		log.Print("Got an error:", err)
+		return err
+	}
+
+	var exists bool
+	err = pgxscan.Get(ctx, r.pool.Querier(ctx), &exists, checkSQL, checkArgs...)
+	if err != nil {
+		return fmt.Errorf("check login existence: %w", err)
+	}
+
+	if exists {
+		return model.ErrLoginAlreadyExists
+	}
+	return nil
 }
