@@ -32,14 +32,14 @@ type Controller interface {
 
 type controller struct {
 	cfg             config.ServerConfig
-	authCfg         *config.AuthConfig
+	authCfg         config.AuthConfig
 	implementations []ImplementationAdapter // можно запихнуть все серверы в этот интерфейс и сделать по красоте
 }
 
 func New(cfg config.ServerConfig, authCfg config.AuthConfig, implementations ...ImplementationAdapter) Controller {
 	return &controller{
 		cfg:             cfg,
-		authCfg:         &authCfg,
+		authCfg:         authCfg,
 		implementations: implementations,
 	}
 }
@@ -56,7 +56,7 @@ func (c *controller) ServeGRPC() {
 	}
 	s := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
-			authMiddlewere.WithAuth(c.cfg.Secret, *c.authCfg),
+			authMiddlewere.WithAuth(c.cfg.Secret, c.authCfg),
 			loggerMiddlewere.WithLogging(),
 		),
 	)

@@ -44,7 +44,6 @@ func (s *Server) RegisterHandlerFromEndpoint(
 }
 
 func (s *Server) CreateTraining(ctx context.Context, req *trainingPkg.CreateTrainingRequest) (*trainingPkg.CreateTrainingResponse, error) {
-
 	trainingModel := model.Training{
 		ID:             uuid.New().String(),
 		TrainerID:      req.TrainerId,

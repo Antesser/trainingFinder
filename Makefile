@@ -47,6 +47,5 @@ start-db:
 	docker compose up -d
 start:
 	go run cmd/server/main.go
-
 export:
 	export $(cat .env | xargs)

@@ -422,12 +422,7 @@
       }
     },
     "v1CreateTrainingResponse": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        }
-      }
+      "type": "object"
     },
     "v1DeleteTrainingResponse": {
       "type": "object"
@@ -531,5 +526,18 @@
     "v1UpdateUserResponse": {
       "type": "object"
     }
-  }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "description": "Authentication token, prefixed by Bearer: Bearer \u003ctoken\u003e",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
 }

@@ -21,7 +21,7 @@ type sessions struct {
 	ExpiresAt time.Time `db:"expires_at"`
 }
 
-func (r *repository) GetSessionByRefreshToken(ctx context.Context, refreshToken uuid.UUID) (*model.Sessions, error) { // в транзакцию вставка в таблицу сессий
+func (r *repository) GetSessionByRefreshToken(ctx context.Context, refreshToken uuid.UUID) (*model.Session, error) { // в транзакцию вставка в таблицу сессий
 	qb := sq.Select("refresh_token", "user_id", "is_active", "created_at", "expires_at").
 		From("session").
 		Where(sq.And{sq.Eq{"refresh_token": refreshToken}, sq.Eq{"is_active": true}}).
@@ -40,6 +40,6 @@ func (r *repository) GetSessionByRefreshToken(ctx context.Context, refreshToken 
 		return nil, fmt.Errorf("execute insert: %w", err)
 	}
 
-	return &model.Sessions{Token: i.Token, UserID: i.UserID, Active: i.Active,
+	return &model.Session{Token: i.Token, UserID: i.UserID, Active: i.Active,
 		CreatedAt: i.CreatedAt, ExpiresAt: i.ExpiresAt}, nil
 }

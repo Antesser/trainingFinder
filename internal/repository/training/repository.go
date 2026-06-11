@@ -46,7 +46,6 @@ func (r *repository) CreateTraining(ctx context.Context, training model.Training
 	return nil
 }
 func (r *repository) GetTraining(ctx context.Context, id string) (*model.Training, error) {
-
 	qb := sq.Select(
 		"id",
 		"trainer_id", "user_id", "started_at", "ended_at", "additional_info",

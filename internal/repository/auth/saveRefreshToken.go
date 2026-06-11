@@ -7,7 +7,7 @@ import (
 	sq "github.com/Masterminds/squirrel"
 )
 
-func (r *repository) SaveRefreshToken(ctx context.Context, session model.Sessions) error {
+func (r *repository) CreateSession(ctx context.Context, session model.Session) error {
 	qb := sq.Insert("session").
 		Columns("refresh_token", "user_id", "is_active", "created_at", "expires_at").
 		Values(session.Token, session.UserID, session.Active, session.CreatedAt, session.ExpiresAt).

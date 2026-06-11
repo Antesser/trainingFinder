@@ -12,7 +12,7 @@ import (
 
 func WithLogging() grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-		start := time.Now()
+		start := time.Now().UTC()
 		resp, err := handler(ctx, req)
 
 		code := codes.OK

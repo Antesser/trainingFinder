@@ -38,8 +38,9 @@ func (s *service) SignIn(ctx context.Context, login, password string) (model.Tok
 		return model.Tokens{}, err
 	}
 	refToken := uuid.New()
-	refreshTokenModel := model.Sessions{Token: refToken, UserID: authInfo.ID, Active: true, CreatedAt: time.Now(), ExpiresAt: time.Now().Add(s.accessTokenDuration)}
-	err = s.authRepo.SaveRefreshToken(ctx, refreshTokenModel)
+	createdAt := time.Now().UTC()
+	refreshTokenModel := model.Session{Token: refToken, UserID: authInfo.ID, Active: true, CreatedAt: createdAt, ExpiresAt: time.Now().Add(s.accessTokenDuration)}
+	err = s.authRepo.CreateSession(ctx, refreshTokenModel)
 	if err != nil {
 		return model.Tokens{}, err
 	}
