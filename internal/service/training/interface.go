@@ -8,6 +8,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
+//go:generate go run github.com/vektra/mockery/v2@latest --name trainingRepository --exported
 type trainingRepository interface {
 	CreateTraining(ctx context.Context, training model.Training) error
 	GetTraining(ctx context.Context, id string) (*model.Training, error)
