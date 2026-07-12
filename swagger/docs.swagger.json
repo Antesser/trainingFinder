@@ -54,6 +54,38 @@
         ]
       }
     },
+    "/api/auth/v1/roles": {
+      "post": {
+        "operationId": "AuthService_CreateRole",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateRoleResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateRoleRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AuthService"
+        ]
+      }
+    },
     "/api/auth/v1/sign-in": {
       "post": {
         "operationId": "AuthService_SignIn",
@@ -397,6 +429,17 @@
           }
         }
       }
+    },
+    "v1CreateRoleRequest": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "type": "string"
+        }
+      }
+    },
+    "v1CreateRoleResponse": {
+      "type": "object"
     },
     "v1CreateTrainingRequest": {
       "type": "object",

@@ -69,3 +69,11 @@ func (s *service) RefreshSession(ctx context.Context, refreshToken uuid.UUID) (a
 	}
 	return aToken, nil
 }
+
+func (s *service) CreateRole(ctx context.Context, role string) error {
+	err := s.authRepo.CreateRole(ctx, role)
+	if err != nil {
+		return err
+	}
+	return nil
+}

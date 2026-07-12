@@ -12,4 +12,5 @@ type authRepository interface {
 	GetUserAuthInfoByLogin(ctx context.Context, login string) (model.UserAuthInfo, error)
 	GetSessionByRefreshToken(ctx context.Context, refreshToken uuid.UUID) (*model.Session, error)
 	CreateSession(ctx context.Context, session model.Session) error
+	CreateRole(ctx context.Context, role string) error
 }

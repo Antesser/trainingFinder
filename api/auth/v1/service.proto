@@ -28,6 +28,12 @@ service AuthService {
       body: "*"
     };
   }
+  rpc CreateRole (CreateRoleRequest) returns (CreateRoleResponse) {
+    option (google.api.http) = {
+      post: "/api/auth/v1/roles"
+      body: "*"
+    };
+  }
 }
 message SignUpRequest {
   string login = 1[(buf.validate.field).required = true];
@@ -52,6 +58,12 @@ message RefreshTokenRequest {
 
 message RefreshTokenResponse {
   string access_token = 1;
+}
+message CreateRoleRequest {
+  string role = 1[(buf.validate.field).required = true];
+}
+
+message CreateRoleResponse {
 }
 //option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 //  security_definitions: {

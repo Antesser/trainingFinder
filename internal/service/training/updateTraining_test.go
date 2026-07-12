@@ -21,10 +21,6 @@ type testCase struct {
 }
 
 func TestUpdateTraining(t *testing.T) {
-	//tt := []testCase{}{userModel: model.UpdateTrainingRequest{ID: "kasdhfjkashdfj", TrainerID: "asdkjfhaisdjk"},
-	//	mock: func(m *mocks.TrainingRepository, req *UpdateTrainingRequest, userModel).Return(error) {
-	//		m.On("UpdateTraining", mock.Anything)
-	//	}}
 	tt := []testCase{
 		{userModel: model.UpdateTrainingRequest{ID: "jashdgfhj", TrainerID: new("jksadfhjk"), UserID: new("sjkdfhjk"), StartedAt: new(time.Now()), EndedAt: new(time.Now()), AdditionalInfo: new("some_info")},
 			resultUser: nil,

@@ -97,3 +97,12 @@ func (s *Server) RefreshToken(ctx context.Context, req *authPkg.RefreshTokenRequ
 		AccessToken: accessToken,
 	}, nil
 }
+func (s *Server) CreateRole(ctx context.Context, req *authPkg.CreateRoleRequest) (*authPkg.CreateRoleResponse, error) {
+
+	err := s.authService.CreateRole(ctx, req.Role)
+	if err != nil {
+		return nil, err
+	}
+
+	return &authPkg.CreateRoleResponse{}, nil
+}
