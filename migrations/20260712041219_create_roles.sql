@@ -2,8 +2,7 @@
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS roles (
                                      id BIGSERIAL PRIMARY KEY,
-                                     role text NOT NULL,
-                                     PRIMARY KEY(id)
+                                     role text NOT NULL
 );
 -- +goose StatementEnd
 
