@@ -10,4 +10,5 @@ type trainingService interface {
 	GetTraining(ctx context.Context, id string) (*model.Training, error)
 	UpdateTraining(ctx context.Context, updateTraining model.UpdateTrainingRequest) error
 	DeleteTraining(ctx context.Context, id string) error
+	ListTraining(ctx context.Context) ([]model.Training, error)
 }

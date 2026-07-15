@@ -68,13 +68,7 @@ func (s *Server) GetTraining(ctx context.Context, req *trainingPkg.GetTrainingRe
 		}
 		return nil, err
 	}
-
-	return &trainingPkg.GetTrainingResponse{Id: mod.ID,
-			TrainerId:      mod.TrainerID,
-			UserId:         mod.UserID,
-			StartedAt:      timestamppb.New(mod.StartedAt),
-			EndedAt:        timestamppb.New(mod.EndedAt),
-			AdditionalInfo: mod.AdditionalInfo},
+	return &trainingPkg.GetTrainingResponse{Training: toProtoTraining(*mod)},
 		nil
 }
 func (s *Server) UpdateTraining(ctx context.Context, req *trainingPkg.UpdateTrainingRequest) (*trainingPkg.UpdateTrainingResponse, error) {
@@ -115,4 +109,34 @@ func (s *Server) DeleteTraining(ctx context.Context, req *trainingPkg.DeleteTrai
 
 	return &trainingPkg.DeleteTrainingResponse{},
 		nil
+}
+func (s *Server) ListTrainings(ctx context.Context, _ *trainingPkg.ListTrainingsRequest) (*trainingPkg.ListTrainingsResponse, error) {
+
+	mod, err := s.trainingService.ListTraining(ctx)
+	if err != nil {
+		if errors.Is(err, model.ErrTrainingNotFound) {
+			return nil, status.Error(codes.NotFound, err.Error())
+		}
+		return nil, err
+	}
+
+	protoList := make([]*trainingPkg.Training, len(mod))
+	for i, model := range mod {
+		protoList[i] = toProtoTraining(model)
+	}
+
+	return &trainingPkg.ListTrainingsResponse{
+		Trainings: protoList,
+	}, nil
+}
+
+func toProtoTraining(m model.Training) *trainingPkg.Training {
+	return &trainingPkg.Training{
+		Id:             m.ID,
+		TrainerId:      m.TrainerID,
+		UserId:         m.UserID,
+		StartedAt:      timestamppb.New(m.StartedAt),
+		EndedAt:        timestamppb.New(m.EndedAt),
+		AdditionalInfo: m.AdditionalInfo,
+	}
 }

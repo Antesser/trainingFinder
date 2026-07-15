@@ -16,6 +16,7 @@ type trainingRepository interface {
 	DeleteTraining(ctx context.Context, id string) error
 	InTx(ctx context.Context, fn func(ctx context.Context) error) error
 	InTxWithIsoLevel(ctx context.Context, isoLevel pgx.TxIsoLevel, fn func(ctx context.Context) error) error
+	ListTrainings(ctx context.Context) ([]model.Training, error)
 }
 
 type outboxRepository interface {

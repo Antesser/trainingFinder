@@ -31,6 +31,20 @@ service TrainingService {
       get: "/api/training/v1/trainings/{id}"
     };
   }
+  rpc ListTrainings (ListTrainingsRequest) returns (ListTrainingsResponse) {
+    option (google.api.http) = {
+      get: "/api/training/v1/trainings"
+    };
+  }
+}
+
+message Training{
+  string id = 1;
+  string trainer_id = 2 ;
+  string user_id = 3 ;
+  google.protobuf.Timestamp started_at = 4;
+  google.protobuf.Timestamp ended_at = 5;
+  string additional_info = 6;
 }
 
 message CreateTrainingRequest {
@@ -52,6 +66,7 @@ message DeleteTrainingRequest {
 
 message DeleteTrainingResponse {
 }
+
 message UpdateTrainingRequest {
   string id = 1[(buf.validate.field).required = true, (buf.validate.field).string.uuid = true];
   optional string trainer_id = 2 [(buf.validate.field).string.uuid = true];
@@ -70,10 +85,12 @@ message GetTrainingRequest {
 }
 
 message GetTrainingResponse {
-  string id = 1;
-  string trainer_id = 2 ;
-  string user_id = 3 ;
-  google.protobuf.Timestamp started_at = 4;
-  google.protobuf.Timestamp ended_at = 5;
-  string additional_info = 6;
+  Training training = 1;
+}
+
+message ListTrainingsRequest {
+}
+
+message ListTrainingsResponse {
+  repeated Training trainings = 1;
 }

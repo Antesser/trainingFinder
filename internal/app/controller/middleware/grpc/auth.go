@@ -28,6 +28,7 @@ var (
 	errUnexpectedSigningMethod = status.Error(codes.Unauthenticated, "unexpected signing method")
 	// errFailedToDecodeClaims
 	errFailedToDecodeClaims = status.Error(codes.Unauthenticated, "failed to decode token claims")
+	errAccessDenied         = status.Error(codes.Unauthenticated, "failed to find a proper role")
 )
 
 type userIDKeyType struct{}
@@ -36,7 +37,8 @@ var userIDKey userIDKeyType
 
 func WithAuth(secretKey string, cfg config.AuthConfig) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-		if _, needsAuth := cfg.BearerSet[info.FullMethod]; !needsAuth {
+		allowedRoles, needsAuth := cfg.BearerSet[info.FullMethod]
+		if !needsAuth {
 			return handler(ctx, req)
 		}
 
@@ -73,10 +75,22 @@ func WithAuth(secretKey string, cfg config.AuthConfig) grpc.UnaryServerIntercept
 		if !ok {
 			return nil, errFailedToDecodeClaims
 		}
+
+		if !hasAllowedRole(claims, allowedRoles) {
+			return nil, errAccessDenied
+		}
 		id := claims["id"]
 
 		ctx = context.WithValue(ctx, userIDKey, id)
 
 		return handler(ctx, req)
 	}
+}
+
+func hasAllowedRole(claims jwt.MapClaims, allowed map[string]struct{}) bool {
+	if r, ok := claims["role"].(string); ok {
+		_, ok := allowed[r]
+		return ok
+	}
+	return false
 }

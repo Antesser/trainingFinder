@@ -151,6 +151,26 @@
       }
     },
     "/api/training/v1/trainings": {
+      "get": {
+        "operationId": "TrainingService_ListTrainings",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListTrainingsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "TrainingService"
+        ]
+      },
       "post": {
         "operationId": "TrainingService_CreateTraining",
         "responses": {
@@ -476,25 +496,8 @@
     "v1GetTrainingResponse": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string"
-        },
-        "trainer_id": {
-          "type": "string"
-        },
-        "user_id": {
-          "type": "string"
-        },
-        "started_at": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "ended_at": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "additional_info": {
-          "type": "string"
+        "training": {
+          "$ref": "#/definitions/v1Training"
         }
       }
     },
@@ -506,6 +509,18 @@
         },
         "login": {
           "type": "string"
+        }
+      }
+    },
+    "v1ListTrainingsResponse": {
+      "type": "object",
+      "properties": {
+        "trainings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Training"
+          }
         }
       }
     },
@@ -559,6 +574,31 @@
       "type": "object",
       "properties": {
         "id": {
+          "type": "string"
+        }
+      }
+    },
+    "v1Training": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "trainer_id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "started_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ended_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "additional_info": {
           "type": "string"
         }
       }

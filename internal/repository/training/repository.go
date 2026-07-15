@@ -121,3 +121,28 @@ func (r *repository) DeleteTraining(ctx context.Context, id string) error {
 	}
 	return nil
 }
+
+func (r *repository) ListTrainings(ctx context.Context) ([]model.Training, error) {
+	qb := sq.Select(
+		"id",
+		"trainer_id", "user_id", "started_at", "ended_at", "additional_info",
+	).From("training").
+		PlaceholderFormat(sq.Dollar)
+
+	query, args, err := qb.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	var rows []training
+	if err := pgxscan.Select(ctx, r.pool.Querier(ctx), &rows, query, args...); err != nil {
+		return nil, err
+	}
+
+	out := make([]model.Training, 0, len(rows))
+	for i, t := range rows {
+		out[i] = model.Training{ID: t.ID, TrainerID: t.TrainerID, UserID: t.UserID, StartedAt: t.StartedAt, EndedAt: t.EndedAt}
+	}
+
+	return out, nil
+}
