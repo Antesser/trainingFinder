@@ -70,7 +70,7 @@ func (t *trainingService) DeleteTraining(ctx context.Context, id string) error {
 	return nil
 }
 
-func (t *trainingService) ListTrainings(ctx context.Context) ([]model.Training, error) {
+func (t *trainingService) ListTraining(ctx context.Context) ([]model.Training, error) {
 	models, err := t.repo.ListTrainings(ctx)
 	if err != nil {
 		return nil, err

@@ -109,7 +109,7 @@ func (s *Server) DeleteTraining(ctx context.Context, req *trainingPkg.DeleteTrai
 	return &trainingPkg.DeleteTrainingResponse{},
 		nil
 }
-func (s *Server) ListTrainings(ctx context.Context, _ *trainingPkg.ListTrainingsRequest) (*trainingPkg.ListTrainingsResponse, error) {
+func (s *Server) ListTraining(ctx context.Context, _ *trainingPkg.ListTrainingsRequest) (*trainingPkg.ListTrainingsResponse, error) {
 
 	mod, err := s.trainingService.ListTraining(ctx)
 	if err != nil {
