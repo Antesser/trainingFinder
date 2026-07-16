@@ -36,6 +36,12 @@ service TrainingService {
       get: "/api/training/v1/trainings"
     };
   }
+  rpc BookTraining (BookTrainingRequest) returns (BookTrainingResponse) {
+    option (google.api.http) = {
+      post: "/api/training/v1/trainings/book"
+      body: "*"
+    };
+  }
 }
 
 message Training{
@@ -93,4 +99,13 @@ message ListTrainingsRequest {
 
 message ListTrainingsResponse {
   repeated Training trainings = 1;
+}
+
+message BookTrainingRequest {
+  string trainingID = 1;
+  string userID = 2;
+}
+
+message BookTrainingResponse {
+
 }

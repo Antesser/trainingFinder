@@ -72,7 +72,6 @@ func (s *Server) GetTraining(ctx context.Context, req *trainingPkg.GetTrainingRe
 		nil
 }
 func (s *Server) UpdateTraining(ctx context.Context, req *trainingPkg.UpdateTrainingRequest) (*trainingPkg.UpdateTrainingResponse, error) {
-
 	trainingModel := model.UpdateTrainingRequest{
 		ID:        req.Id,
 		TrainerID: req.TrainerId,
@@ -128,6 +127,19 @@ func (s *Server) ListTrainings(ctx context.Context, _ *trainingPkg.ListTrainings
 	return &trainingPkg.ListTrainingsResponse{
 		Trainings: protoList,
 	}, nil
+}
+
+func (s *Server) BookTraining(ctx context.Context, req *trainingPkg.BookTrainingRequest) (*trainingPkg.BookTrainingResponse, error) {
+	err := s.trainingService.BookTraining(ctx, req.TrainingID, req.UserID)
+	if err != nil {
+		if errors.Is(err, model.ErrTrainingNotFound) {
+			return nil, status.Error(codes.NotFound, err.Error())
+		}
+		return nil, err
+	}
+
+	return &trainingPkg.BookTrainingResponse{},
+		nil
 }
 
 func toProtoTraining(m model.Training) *trainingPkg.Training {

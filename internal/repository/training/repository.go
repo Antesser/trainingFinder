@@ -146,3 +146,24 @@ func (r *repository) ListTrainings(ctx context.Context) ([]model.Training, error
 
 	return out, nil
 }
+
+func (r *repository) BookTraining(ctx context.Context, trainingID, userID string) error {
+	qb := sq.Update("training").
+		Where(sq.Eq{"id": trainingID})
+
+	qb = qb.Set("booked_by", userID)
+
+	query, args, err := qb.PlaceholderFormat(sq.Dollar).ToSql()
+	if err != nil {
+		return err
+	}
+
+	tags, err := r.pool.Querier(ctx).Exec(ctx, query, args...)
+	if err != nil {
+		return err
+	}
+	if tags.RowsAffected() == 0 {
+		return model.ErrTrainingNotFound
+	}
+	return nil
+}

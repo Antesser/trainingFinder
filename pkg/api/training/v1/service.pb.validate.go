@@ -1430,3 +1430,211 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ListTrainingsResponseValidationError{}
+
+// Validate checks the field values on BookTrainingRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *BookTrainingRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on BookTrainingRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// BookTrainingRequestMultiError, or nil if none found.
+func (m *BookTrainingRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *BookTrainingRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for TrainingID
+
+	// no validation rules for UserID
+
+	if len(errors) > 0 {
+		return BookTrainingRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// BookTrainingRequestMultiError is an error wrapping multiple validation
+// errors returned by BookTrainingRequest.ValidateAll() if the designated
+// constraints aren't met.
+type BookTrainingRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m BookTrainingRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m BookTrainingRequestMultiError) AllErrors() []error { return m }
+
+// BookTrainingRequestValidationError is the validation error returned by
+// BookTrainingRequest.Validate if the designated constraints aren't met.
+type BookTrainingRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e BookTrainingRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e BookTrainingRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e BookTrainingRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e BookTrainingRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e BookTrainingRequestValidationError) ErrorName() string {
+	return "BookTrainingRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e BookTrainingRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sBookTrainingRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = BookTrainingRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = BookTrainingRequestValidationError{}
+
+// Validate checks the field values on BookTrainingResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *BookTrainingResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on BookTrainingResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// BookTrainingResponseMultiError, or nil if none found.
+func (m *BookTrainingResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *BookTrainingResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return BookTrainingResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// BookTrainingResponseMultiError is an error wrapping multiple validation
+// errors returned by BookTrainingResponse.ValidateAll() if the designated
+// constraints aren't met.
+type BookTrainingResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m BookTrainingResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m BookTrainingResponseMultiError) AllErrors() []error { return m }
+
+// BookTrainingResponseValidationError is the validation error returned by
+// BookTrainingResponse.Validate if the designated constraints aren't met.
+type BookTrainingResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e BookTrainingResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e BookTrainingResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e BookTrainingResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e BookTrainingResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e BookTrainingResponseValidationError) ErrorName() string {
+	return "BookTrainingResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e BookTrainingResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sBookTrainingResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = BookTrainingResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = BookTrainingResponseValidationError{}

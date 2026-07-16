@@ -17,6 +17,7 @@ type trainingRepository interface {
 	InTx(ctx context.Context, fn func(ctx context.Context) error) error
 	InTxWithIsoLevel(ctx context.Context, isoLevel pgx.TxIsoLevel, fn func(ctx context.Context) error) error
 	ListTrainings(ctx context.Context) ([]model.Training, error)
+	BookTraining(ctx context.Context, trainingID, userID string) error
 }
 
 type outboxRepository interface {

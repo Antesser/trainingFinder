@@ -202,6 +202,38 @@
         ]
       }
     },
+    "/api/training/v1/trainings/book": {
+      "post": {
+        "operationId": "TrainingService_BookTraining",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1BookTrainingResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1BookTrainingRequest"
+            }
+          }
+        ],
+        "tags": [
+          "TrainingService"
+        ]
+      }
+    },
     "/api/training/v1/trainings/{id}": {
       "get": {
         "operationId": "TrainingService_GetTraining",
@@ -449,6 +481,20 @@
           }
         }
       }
+    },
+    "v1BookTrainingRequest": {
+      "type": "object",
+      "properties": {
+        "trainingID": {
+          "type": "string"
+        },
+        "userID": {
+          "type": "string"
+        }
+      }
+    },
+    "v1BookTrainingResponse": {
+      "type": "object"
     },
     "v1CreateRoleRequest": {
       "type": "object",
