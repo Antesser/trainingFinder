@@ -77,11 +77,3 @@ func (t *trainingService) ListTraining(ctx context.Context, pageLimit, offset ui
 	}
 	return models, nil
 }
-
-func (t *trainingService) BookTraining(ctx context.Context, trainingID, userID string) error {
-	err := t.repo.BookTraining(ctx, trainingID, userID)
-	if err != nil {
-		return err
-	}
-	return nil
-}

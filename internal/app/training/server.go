@@ -6,7 +6,6 @@ import (
 	"log"
 	model "trainingFinder/internal/model/training"
 
-	bookingPkg "trainingFinder/pkg/api/booking/v1"
 	trainingPkg "trainingFinder/pkg/api/training/v1"
 
 	"github.com/google/uuid"
@@ -130,20 +129,6 @@ func (s *Server) ListTraining(ctx context.Context, req *trainingPkg.ListTraining
 	return &trainingPkg.ListTrainingsResponse{
 		Trainings: protoList,
 	}, nil
-}
-
-// todo вынести в отдельный модуль или сделать сабмодулем training u know?
-func (s *Server) BookTraining(ctx context.Context, req *bookingPkg.BookingTrainingRequest) (*bookingPkg.BookingTrainingResponse, error) {
-	err := s.trainingService.BookTraining(ctx, req.TrainingId, req.UserId)
-	if err != nil {
-		if errors.Is(err, model.ErrTrainingNotFound) {
-			return nil, status.Error(codes.NotFound, err.Error())
-		}
-		return nil, err
-	}
-
-	return &bookingPkg.BookingTrainingResponse{},
-		nil
 }
 
 func toProtoTraining(m *model.Training) *trainingPkg.Training {

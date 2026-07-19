@@ -13,13 +13,16 @@ import (
 	"trainingFinder/internal/process/outbox"
 
 	authGRPS "trainingFinder/internal/app/auth"
+	bookingGRPS "trainingFinder/internal/app/booking"
 	trainingGRPS "trainingFinder/internal/app/training"
 	userGRPS "trainingFinder/internal/app/users"
 	authRepository "trainingFinder/internal/repository/auth"
+	bookingRepository "trainingFinder/internal/repository/booking"
 	outboxRepository "trainingFinder/internal/repository/outbox"
 	trainingRepository "trainingFinder/internal/repository/training"
 	userRepository "trainingFinder/internal/repository/user"
 	authService "trainingFinder/internal/service/auth"
+	bookingService "trainingFinder/internal/service/booking"
 	trainingService "trainingFinder/internal/service/training"
 	userService "trainingFinder/internal/service/users"
 
@@ -44,18 +47,20 @@ func main() {
 	pool := pgxtransactor.New(oldPool)
 
 	authRepo := authRepository.New(pool)
+	bookingRepo := bookingRepository.New(pool)
 	userRepo := userRepository.New(pool)
 	trainingRepo := trainingRepository.New(pool)
 	outboxRepo := outboxRepository.New(pool)
 	authSrv := authService.New(authRepo, cfg.Server.Secret, cfg.Server.AccessTokenDuration)
 	userSrv := userService.New(userRepo)
 	trainingSrv := trainingService.New(trainingRepo, your_topic_name.MarshalCreateTrainingEvent, outboxRepo)
+	bookingSrv := bookingService.New(bookingRepo)
 	cfgAuth, err := config.NewAuthConfig(cfg.Server.AuthConfigPath)
 	if err != nil {
 		log.Fatal("failed to load auth config: %v", err)
 	}
 	//ctrl := controller.New(cfg.Server, authGRPS.NewServer(authSrv), userGRPS.NewServer(userSrv), trainingGRPS.NewServer(trainingSrv))
-	ctrl := controller.New(cfg.Server, *cfgAuth, userGRPS.NewServer(userSrv), trainingGRPS.NewServer(trainingSrv), authGRPS.NewServer(authSrv))
+	ctrl := controller.New(cfg.Server, *cfgAuth, userGRPS.NewServer(userSrv), trainingGRPS.NewServer(trainingSrv), authGRPS.NewServer(authSrv), bookingGRPS.NewServer(bookingSrv))
 	ctrl.Run(ctx)
 
 	outboxProcess := outbox.New(outboxRepo, nil)

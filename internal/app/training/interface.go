@@ -11,5 +11,4 @@ type trainingService interface {
 	UpdateTraining(ctx context.Context, updateTraining model.UpdateTrainingRequest) error
 	DeleteTraining(ctx context.Context, id string) error
 	ListTraining(ctx context.Context, pageLimit, offset uint64, userID string) ([]model.Training, error)
-	BookTraining(ctx context.Context, trainingID, userID string) error
 }
