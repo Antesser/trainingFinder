@@ -6,10 +6,12 @@ import (
 	"log"
 	model "trainingFinder/internal/model/training"
 
+	bookingPkg "trainingFinder/pkg/api/booking/v1"
 	trainingPkg "trainingFinder/pkg/api/training/v1"
 
 	"github.com/google/uuid"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/samber/lo"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -68,7 +70,7 @@ func (s *Server) GetTraining(ctx context.Context, req *trainingPkg.GetTrainingRe
 		}
 		return nil, err
 	}
-	return &trainingPkg.GetTrainingResponse{Training: toProtoTraining(*mod)},
+	return &trainingPkg.GetTrainingResponse{Training: toProtoTraining(mod)},
 		nil
 }
 func (s *Server) UpdateTraining(ctx context.Context, req *trainingPkg.UpdateTrainingRequest) (*trainingPkg.UpdateTrainingResponse, error) {
@@ -109,28 +111,30 @@ func (s *Server) DeleteTraining(ctx context.Context, req *trainingPkg.DeleteTrai
 	return &trainingPkg.DeleteTrainingResponse{},
 		nil
 }
-func (s *Server) ListTraining(ctx context.Context, _ *trainingPkg.ListTrainingsRequest) (*trainingPkg.ListTrainingsResponse, error) {
+func (s *Server) ListTraining(ctx context.Context, req *trainingPkg.ListTrainingsRequest) (*trainingPkg.ListTrainingsResponse, error) {
 
-	mod, err := s.trainingService.ListTraining(ctx)
+	mod, err := s.trainingService.ListTraining(ctx, req.PageLimit, req.Offset, req.UserId)
 	if err != nil {
 		if errors.Is(err, model.ErrTrainingNotFound) {
-			return nil, status.Error(codes.NotFound, err.Error())
+			return &trainingPkg.ListTrainingsResponse{
+				Trainings: []*trainingPkg.Training{},
+			}, nil
 		}
 		return nil, err
 	}
 
-	protoList := make([]*trainingPkg.Training, len(mod))
-	for i, model := range mod {
-		protoList[i] = toProtoTraining(model)
-	}
+	protoList := lo.Map(mod, func(m model.Training, _ int) *trainingPkg.Training {
+		return toProtoTraining(&m)
+	})
 
 	return &trainingPkg.ListTrainingsResponse{
 		Trainings: protoList,
 	}, nil
 }
 
-func (s *Server) BookTraining(ctx context.Context, req *trainingPkg.BookTrainingRequest) (*trainingPkg.BookTrainingResponse, error) {
-	err := s.trainingService.BookTraining(ctx, req.TrainingID, req.UserID)
+// todo вынести в отдельный модуль или сделать сабмодулем training u know?
+func (s *Server) BookTraining(ctx context.Context, req *bookingPkg.BookingTrainingRequest) (*bookingPkg.BookingTrainingResponse, error) {
+	err := s.trainingService.BookTraining(ctx, req.TrainingId, req.UserId)
 	if err != nil {
 		if errors.Is(err, model.ErrTrainingNotFound) {
 			return nil, status.Error(codes.NotFound, err.Error())
@@ -138,11 +142,11 @@ func (s *Server) BookTraining(ctx context.Context, req *trainingPkg.BookTraining
 		return nil, err
 	}
 
-	return &trainingPkg.BookTrainingResponse{},
+	return &bookingPkg.BookingTrainingResponse{},
 		nil
 }
 
-func toProtoTraining(m model.Training) *trainingPkg.Training {
+func toProtoTraining(m *model.Training) *trainingPkg.Training {
 	return &trainingPkg.Training{
 		Id:             m.ID,
 		TrainerId:      m.TrainerID,

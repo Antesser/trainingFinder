@@ -36,12 +36,6 @@ service TrainingService {
       get: "/api/training/v1/trainings"
     };
   }
-  rpc BookTraining (BookTrainingRequest) returns (BookTrainingResponse) {
-    option (google.api.http) = {
-      post: "/api/training/v1/trainings/book"
-      body: "*"
-    };
-  }
 }
 
 message Training{
@@ -95,17 +89,12 @@ message GetTrainingResponse {
 }
 
 message ListTrainingsRequest {
+  uint64 pageLimit = 1[(buf.validate.field).required = true, (buf.validate.field).uint64.gt=0, (buf.validate.field).uint64.lt=1000];
+  uint64 offset = 2[(buf.validate.field).required = true, (buf.validate.field).uint64.gte = 0];
+  string user_id = 3;
 }
 
 message ListTrainingsResponse {
   repeated Training trainings = 1;
 }
 
-message BookTrainingRequest {
-  string trainingID = 1;
-  string userID = 2;
-}
-
-message BookTrainingResponse {
-
-}

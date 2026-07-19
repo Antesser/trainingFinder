@@ -70,8 +70,8 @@ func (t *trainingService) DeleteTraining(ctx context.Context, id string) error {
 	return nil
 }
 
-func (t *trainingService) ListTraining(ctx context.Context) ([]model.Training, error) {
-	models, err := t.repo.ListTrainings(ctx)
+func (t *trainingService) ListTraining(ctx context.Context, pageLimit, offset uint64, userID string) ([]model.Training, error) {
+	models, err := t.repo.ListTrainings(ctx, pageLimit, offset, userID)
 	if err != nil {
 		return nil, err
 	}

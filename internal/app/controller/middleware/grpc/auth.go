@@ -75,8 +75,8 @@ func WithAuth(secretKey string, cfg config.AuthConfig) grpc.UnaryServerIntercept
 		if !ok {
 			return nil, errFailedToDecodeClaims
 		}
-
-		if !hasAllowedRole(claims, allowedRoles) {
+		userRole := claims["role"].(string)
+		if !hasAllowedRole(userRole, allowedRoles) {
 			return nil, errAccessDenied
 		}
 		id := claims["id"]
@@ -87,9 +87,8 @@ func WithAuth(secretKey string, cfg config.AuthConfig) grpc.UnaryServerIntercept
 	}
 }
 
-func hasAllowedRole(claims jwt.MapClaims, allowed map[string]struct{}) bool {
-	if r, ok := claims["role"].(string); ok {
-		_, ok := allowed[r]
+func hasAllowedRole(userRole string, allowed map[string]struct{}) bool {
+	if _, ok := allowed[userRole]; ok {
 		return ok
 	}
 	return false

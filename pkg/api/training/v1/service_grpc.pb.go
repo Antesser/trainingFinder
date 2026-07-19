@@ -24,7 +24,6 @@ const (
 	TrainingService_UpdateTraining_FullMethodName = "/training.v1.TrainingService/UpdateTraining"
 	TrainingService_GetTraining_FullMethodName    = "/training.v1.TrainingService/GetTraining"
 	TrainingService_ListTrainings_FullMethodName  = "/training.v1.TrainingService/ListTrainings"
-	TrainingService_BookTraining_FullMethodName   = "/training.v1.TrainingService/BookTraining"
 )
 
 // TrainingServiceClient is the client API for TrainingService service.
@@ -36,7 +35,6 @@ type TrainingServiceClient interface {
 	UpdateTraining(ctx context.Context, in *UpdateTrainingRequest, opts ...grpc.CallOption) (*UpdateTrainingResponse, error)
 	GetTraining(ctx context.Context, in *GetTrainingRequest, opts ...grpc.CallOption) (*GetTrainingResponse, error)
 	ListTrainings(ctx context.Context, in *ListTrainingsRequest, opts ...grpc.CallOption) (*ListTrainingsResponse, error)
-	BookTraining(ctx context.Context, in *BookTrainingRequest, opts ...grpc.CallOption) (*BookTrainingResponse, error)
 }
 
 type trainingServiceClient struct {
@@ -92,15 +90,6 @@ func (c *trainingServiceClient) ListTrainings(ctx context.Context, in *ListTrain
 	return out, nil
 }
 
-func (c *trainingServiceClient) BookTraining(ctx context.Context, in *BookTrainingRequest, opts ...grpc.CallOption) (*BookTrainingResponse, error) {
-	out := new(BookTrainingResponse)
-	err := c.cc.Invoke(ctx, TrainingService_BookTraining_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // TrainingServiceServer is the server API for TrainingService service.
 // All implementations must embed UnimplementedTrainingServiceServer
 // for forward compatibility
@@ -110,7 +99,6 @@ type TrainingServiceServer interface {
 	UpdateTraining(context.Context, *UpdateTrainingRequest) (*UpdateTrainingResponse, error)
 	GetTraining(context.Context, *GetTrainingRequest) (*GetTrainingResponse, error)
 	ListTrainings(context.Context, *ListTrainingsRequest) (*ListTrainingsResponse, error)
-	BookTraining(context.Context, *BookTrainingRequest) (*BookTrainingResponse, error)
 	mustEmbedUnimplementedTrainingServiceServer()
 }
 
@@ -132,9 +120,6 @@ func (UnimplementedTrainingServiceServer) GetTraining(context.Context, *GetTrain
 }
 func (UnimplementedTrainingServiceServer) ListTrainings(context.Context, *ListTrainingsRequest) (*ListTrainingsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListTrainings not implemented")
-}
-func (UnimplementedTrainingServiceServer) BookTraining(context.Context, *BookTrainingRequest) (*BookTrainingResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BookTraining not implemented")
 }
 func (UnimplementedTrainingServiceServer) mustEmbedUnimplementedTrainingServiceServer() {}
 
@@ -239,24 +224,6 @@ func _TrainingService_ListTrainings_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TrainingService_BookTraining_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BookTrainingRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(TrainingServiceServer).BookTraining(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: TrainingService_BookTraining_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TrainingServiceServer).BookTraining(ctx, req.(*BookTrainingRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // TrainingService_ServiceDesc is the grpc.ServiceDesc for TrainingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -283,10 +250,6 @@ var TrainingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListTrainings",
 			Handler:    _TrainingService_ListTrainings_Handler,
-		},
-		{
-			MethodName: "BookTraining",
-			Handler:    _TrainingService_BookTraining_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

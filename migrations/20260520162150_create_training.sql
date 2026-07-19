@@ -6,7 +6,6 @@ CREATE TABLE IF NOT EXISTS training (
                                         user_id TEXT NOT NULL,
                                         started_at TIMESTAMP  NOT NULL,
                                         ended_at TIMESTAMP NOT NULL,
-                                        booked_by UUID,
                                         additional_info TEXT NOT NULL,
                                         PRIMARY KEY(id)
     );

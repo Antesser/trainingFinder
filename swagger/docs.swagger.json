@@ -9,6 +9,9 @@
       "name": "AuthService"
     },
     {
+      "name": "BookingService"
+    },
+    {
       "name": "TrainingService"
     },
     {
@@ -150,6 +153,38 @@
         ]
       }
     },
+    "/api/booking/v1/book_training": {
+      "post": {
+        "operationId": "BookingService_BookTraining",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1BookingTrainingResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1BookingTrainingRequest"
+            }
+          }
+        ],
+        "tags": [
+          "BookingService"
+        ]
+      }
+    },
     "/api/training/v1/trainings": {
       "get": {
         "operationId": "TrainingService_ListTrainings",
@@ -167,6 +202,28 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "pageLimit",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
         "tags": [
           "TrainingService"
         ]
@@ -194,38 +251,6 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/v1CreateTrainingRequest"
-            }
-          }
-        ],
-        "tags": [
-          "TrainingService"
-        ]
-      }
-    },
-    "/api/training/v1/trainings/book": {
-      "post": {
-        "operationId": "TrainingService_BookTraining",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1BookTrainingResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1BookTrainingRequest"
             }
           }
         ],
@@ -482,18 +507,18 @@
         }
       }
     },
-    "v1BookTrainingRequest": {
+    "v1BookingTrainingRequest": {
       "type": "object",
       "properties": {
-        "trainingID": {
+        "training_id": {
           "type": "string"
         },
-        "userID": {
+        "user_id": {
           "type": "string"
         }
       }
     },
-    "v1BookTrainingResponse": {
+    "v1BookingTrainingResponse": {
       "type": "object"
     },
     "v1CreateRoleRequest": {

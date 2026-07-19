@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package booking.v1;
+
+option go_package = "trainingFinder/pkg/api/booking/v1";
+
+import "google/api/annotations.proto";
+
+service BookingService {
+  rpc BookTraining (BookingTrainingRequest) returns (BookingTrainingResponse) {
+    option (google.api.http) = {
+      post: "/api/booking/v1/book_training"
+      body: "*"
+    };
+  }
+}
+message BookingTrainingRequest {
+  string training_id = 1;
+  string user_id = 2;
+}
+
+message BookingTrainingResponse {
+
+}

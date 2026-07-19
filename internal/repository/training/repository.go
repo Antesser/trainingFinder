@@ -122,11 +122,14 @@ func (r *repository) DeleteTraining(ctx context.Context, id string) error {
 	return nil
 }
 
-func (r *repository) ListTrainings(ctx context.Context) ([]model.Training, error) {
+func (r *repository) ListTrainings(ctx context.Context, pageLimit, offset uint64, userID string) ([]model.Training, error) {
 	qb := sq.Select(
 		"id",
 		"trainer_id", "user_id", "started_at", "ended_at", "additional_info",
 	).From("training").
+		Where(sq.Eq{"user_id": userID}).
+		Limit(pageLimit).
+		Offset(offset).
 		PlaceholderFormat(sq.Dollar)
 
 	query, args, err := qb.ToSql()

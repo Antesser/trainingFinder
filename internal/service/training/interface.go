@@ -16,7 +16,7 @@ type trainingRepository interface {
 	DeleteTraining(ctx context.Context, id string) error
 	InTx(ctx context.Context, fn func(ctx context.Context) error) error
 	InTxWithIsoLevel(ctx context.Context, isoLevel pgx.TxIsoLevel, fn func(ctx context.Context) error) error
-	ListTrainings(ctx context.Context) ([]model.Training, error)
+	ListTrainings(ctx context.Context, pageLimit, offset uint64, userID string) ([]model.Training, error)
 	BookTraining(ctx context.Context, trainingID, userID string) error
 }
 

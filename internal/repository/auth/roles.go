@@ -9,6 +9,11 @@ import (
 	"github.com/georgysavva/scany/v2/pgxscan"
 )
 
+type roleStruct struct {
+	ID   int    `db:"id"`
+	Role string `db:"role"`
+}
+
 func (r *repository) CreateRole(ctx context.Context, role string) error {
 	qb := sq.Insert("roles").
 		Columns("role").
@@ -21,8 +26,8 @@ func (r *repository) CreateRole(ctx context.Context, role string) error {
 		return err
 	}
 
-	var u user
-	err = pgxscan.Get(ctx, r.pool.Querier(ctx), &u, query, args...)
+	var userRole roleStruct
+	err = pgxscan.Get(ctx, r.pool.Querier(ctx), &userRole, query, args...)
 	if err != nil {
 		return fmt.Errorf("execute insert: %w", err)
 	}
