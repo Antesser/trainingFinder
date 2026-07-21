@@ -1,24 +1,59 @@
 syntax = "proto3";
 
-package booking.v1;
+package training_booking.v1;
 
-option go_package = "trainingFinder/pkg/api/booking/v1";
+option go_package = "github.com/Antesser/trainingFinder/pkg/api/booking/v1";
 
 import "google/api/annotations.proto";
-
+import  "google/protobuf/timestamp.proto";
+import  "proto/protovalidate/buf/validate/validate.proto";
 service BookingService {
   rpc BookTraining (BookingTrainingRequest) returns (BookingTrainingResponse) {
     option (google.api.http) = {
-      post: "/api/booking/v1/book_training"
+      post: "/api/booking/v1/book-training"
+      body: "*"
+    };
+  }
+  rpc ListBookings (ListBookingsRequest) returns (ListBookingsResponse) {
+    option (google.api.http) = {
+      post: "/api/training/v1/list-bookings"
       body: "*"
     };
   }
 }
+
+message Page{
+  uint64 Limit = 1;
+  uint64 Offset = 2;
+}
+
+message Booking{
+  string id = 1;
+  string training_id = 2 ;
+  string booked_by = 3 ;
+  string status = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp book_from = 6;
+  google.protobuf.Timestamp book_to = 7;
+}
 message BookingTrainingRequest {
   string training_id = 1;
   string user_id = 2;
+  google.protobuf.Timestamp book_from = 3;
+  google.protobuf.Timestamp book_to = 4;
 }
 
 message BookingTrainingResponse {
 
 }
+
+message ListBookingsRequest {
+  Page page = 1;
+  string booked_by = 2[(buf.validate.field).required = true, (buf.validate.field).string.uuid = true];
+}
+
+message ListBookingsResponse {
+  repeated Booking bookings = 1;
+  bool has_next = 2;
+}
+

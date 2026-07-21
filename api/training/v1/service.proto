@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package training.v1;
 
-option go_package = "trainingFinder/pkg/api/training/v1";
+option go_package = "github.com/Antesser/trainingFinder/pkg/api/training/v1";
 
 import "google/api/annotations.proto";
 import  "google/protobuf/timestamp.proto"; // указываем структуру, как используемый тип (по сути google.protobuf)
@@ -33,7 +33,8 @@ service TrainingService {
   }
   rpc ListTrainings (ListTrainingsRequest) returns (ListTrainingsResponse) {
     option (google.api.http) = {
-      get: "/api/training/v1/trainings"
+      post: "/api/training/v1/list-trainings"
+      body: "*"
     };
   }
 }
@@ -46,7 +47,10 @@ message Training{
   google.protobuf.Timestamp ended_at = 5;
   string additional_info = 6;
 }
-
+message Page{
+  uint64 Limit = 1;
+  uint64 Offset = 2;
+}
 message CreateTrainingRequest {
   string trainer_id = 1 [(buf.validate.field).string.uuid = true];
   string user_id = 2 [(buf.validate.field).required = true];
@@ -89,12 +93,12 @@ message GetTrainingResponse {
 }
 
 message ListTrainingsRequest {
-  uint64 pageLimit = 1[(buf.validate.field).required = true, (buf.validate.field).uint64.gt=0, (buf.validate.field).uint64.lt=1000];
-  uint64 offset = 2[(buf.validate.field).required = true, (buf.validate.field).uint64.gte = 0];
-  string user_id = 3;
+  Page page = 1;
+  string user_id = 2[(buf.validate.field).required = true, (buf.validate.field).string.uuid = true];
 }
 
 message ListTrainingsResponse {
   repeated Training trainings = 1;
+  bool has_next = 2;
 }
 

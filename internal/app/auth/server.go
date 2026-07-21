@@ -6,9 +6,9 @@ import (
 	"log"
 	"net/http"
 
-	authPkg "trainingFinder/pkg/api/auth/v1"
+	authPkg "github.com/Antesser/trainingFinder/pkg/api/auth/v1"
 
-	model "trainingFinder/internal/model/training"
+	model "github.com/Antesser/trainingFinder/internal/model/training"
 
 	"github.com/google/uuid"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"

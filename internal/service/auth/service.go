@@ -3,8 +3,9 @@ package auth
 import (
 	"context"
 	"time"
-	model "trainingFinder/internal/model/auth"
-	"trainingFinder/internal/utils"
+
+	model "github.com/Antesser/trainingFinder/internal/model/auth"
+	"github.com/Antesser/trainingFinder/internal/utils"
 
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"

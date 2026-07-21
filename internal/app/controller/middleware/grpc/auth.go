@@ -4,7 +4,7 @@ import (
 	"context"
 	"strings"
 
-	"trainingFinder/internal/config"
+	"github.com/Antesser/trainingFinder/internal/config"
 
 	"github.com/golang-jwt/jwt/v5"
 	"google.golang.org/grpc"

@@ -221,18 +221,11 @@ func local_request_TrainingService_GetTraining_0(ctx context.Context, marshaler 
 
 }
 
-var (
-	filter_TrainingService_ListTrainings_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
-)
-
 func request_TrainingService_ListTrainings_0(ctx context.Context, marshaler runtime.Marshaler, client TrainingServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq ListTrainingsRequest
 	var metadata runtime.ServerMetadata
 
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_TrainingService_ListTrainings_0); err != nil {
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -245,10 +238,7 @@ func local_request_TrainingService_ListTrainings_0(ctx context.Context, marshale
 	var protoReq ListTrainingsRequest
 	var metadata runtime.ServerMetadata
 
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_TrainingService_ListTrainings_0); err != nil {
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -363,7 +353,7 @@ func RegisterTrainingServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 
 	})
 
-	mux.Handle("GET", pattern_TrainingService_ListTrainings_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_TrainingService_ListTrainings_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -371,7 +361,7 @@ func RegisterTrainingServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/training.v1.TrainingService/ListTrainings", runtime.WithHTTPPathPattern("/api/training/v1/trainings"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/training.v1.TrainingService/ListTrainings", runtime.WithHTTPPathPattern("/api/training/v1/list-trainings"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -517,13 +507,13 @@ func RegisterTrainingServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 
 	})
 
-	mux.Handle("GET", pattern_TrainingService_ListTrainings_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_TrainingService_ListTrainings_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/training.v1.TrainingService/ListTrainings", runtime.WithHTTPPathPattern("/api/training/v1/trainings"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/training.v1.TrainingService/ListTrainings", runtime.WithHTTPPathPattern("/api/training/v1/list-trainings"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -551,7 +541,7 @@ var (
 
 	pattern_TrainingService_GetTraining_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "training", "v1", "trainings", "id"}, ""))
 
-	pattern_TrainingService_ListTrainings_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"api", "training", "v1", "trainings"}, ""))
+	pattern_TrainingService_ListTrainings_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"api", "training", "v1", "list-trainings"}, ""))
 )
 
 var (

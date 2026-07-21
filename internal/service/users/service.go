@@ -3,7 +3,8 @@ package users
 import (
 	"context"
 	"fmt"
-	model "trainingFinder/internal/model/user"
+
+	model "github.com/Antesser/trainingFinder/internal/model/user"
 )
 
 type service struct {

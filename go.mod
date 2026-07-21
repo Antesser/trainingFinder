@@ -1,4 +1,4 @@
-module trainingFinder
+module github.com/Antesser/trainingFinder
 
 go 1.26.2
 

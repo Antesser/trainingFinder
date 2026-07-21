@@ -4,8 +4,12 @@ import (
 	"context"
 	"errors"
 	"log"
-	model "trainingFinder/internal/model/training"
-	bookingPkg "trainingFinder/pkg/api/booking/v1"
+
+	model "github.com/Antesser/trainingFinder/internal/model/booking"
+	modelPage "github.com/Antesser/trainingFinder/internal/model/page"
+	bookingPkg "github.com/Antesser/trainingFinder/pkg/api/booking/v1"
+	"github.com/samber/lo"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
@@ -40,11 +44,10 @@ func (s *Server) RegisterHandlerFromEndpoint(
 	return err
 }
 
-// todo вынести в отдельный модуль или сделать сабмодулем training u know?
 func (s *Server) BookTraining(ctx context.Context, req *bookingPkg.BookingTrainingRequest) (*bookingPkg.BookingTrainingResponse, error) {
-	err := s.bookingService.BookTraining(ctx, req.TrainingId, req.UserId)
+	err := s.bookingService.BookTraining(ctx, model.TrainingBooking{TrainingID: req.TrainingId, UserID: req.UserId, BookFrom: req.BookFrom.AsTime(), BookTo: req.BookTo.AsTime()})
 	if err != nil {
-		if errors.Is(err, model.ErrTrainingNotFound) {
+		if errors.Is(err, model.ErrBookingNotFound) {
 			return nil, status.Error(codes.NotFound, err.Error())
 		}
 		return nil, err
@@ -52,4 +55,34 @@ func (s *Server) BookTraining(ctx context.Context, req *bookingPkg.BookingTraini
 
 	return &bookingPkg.BookingTrainingResponse{},
 		nil
+}
+func (s *Server) ListTraining(ctx context.Context, req *bookingPkg.ListBookingsRequest) (*bookingPkg.ListBookingsResponse, error) {
+	mod, hasNext, err := s.bookingService.ListBookings(ctx, modelPage.Page{Limit: req.Page.Limit, Offset: req.Page.Offset}, req.BookedBy)
+	if err != nil {
+		if errors.Is(err, model.ErrBookingNotFound) {
+			return &bookingPkg.ListBookingsResponse{
+				Bookings: []*bookingPkg.Booking{},
+				HasNext:  hasNext,
+			}, nil
+		}
+		return nil, err
+	}
+
+	protoList := lo.Map(mod, func(m model.TrainingBooking, _ int) *bookingPkg.Booking {
+		return toProtoTraining(&m)
+	})
+
+	return &bookingPkg.ListBookingsResponse{
+		Bookings: protoList,
+		HasNext:  hasNext,
+	}, nil
+}
+
+func toProtoTraining(m *model.TrainingBooking) *bookingPkg.Booking {
+	return &bookingPkg.Booking{
+		BookedBy:   m.UserID,
+		TrainingId: m.TrainingID,
+		BookFrom:   timestamppb.New(m.BookFrom),
+		BookTo:     timestamppb.New(m.BookTo),
+	}
 }

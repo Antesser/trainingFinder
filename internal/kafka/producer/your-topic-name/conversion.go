@@ -1,8 +1,8 @@
 package your_topic_name
 
 import (
-	"trainingFinder/internal/model/training"
-	kafkapb "trainingFinder/pkg/api/kafka/v1"
+	"github.com/Antesser/trainingFinder/internal/model/training"
+	kafkapb "github.com/Antesser/trainingFinder/pkg/api/kafka/v1"
 
 	"google.golang.org/protobuf/encoding/protojson"
 )

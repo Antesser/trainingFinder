@@ -2,8 +2,10 @@ package training
 
 import (
 	"context"
-	"trainingFinder/internal/model/outbox"
-	model "trainingFinder/internal/model/training"
+
+	"github.com/Antesser/trainingFinder/internal/model/outbox"
+	"github.com/Antesser/trainingFinder/internal/model/page"
+	model "github.com/Antesser/trainingFinder/internal/model/training"
 )
 
 type trainingMarshaller func(event model.CreateTrainingEvent) ([]byte, error)
@@ -70,10 +72,10 @@ func (t *trainingService) DeleteTraining(ctx context.Context, id string) error {
 	return nil
 }
 
-func (t *trainingService) ListTraining(ctx context.Context, pageLimit, offset uint64, userID string) ([]model.Training, error) {
-	models, err := t.repo.ListTrainings(ctx, pageLimit, offset, userID)
+func (t *trainingService) ListTraining(ctx context.Context, page page.Page, userID string) ([]model.Training, bool, error) {
+	models, hasNext, err := t.repo.ListTrainings(ctx, page, userID)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
-	return models, nil
+	return models, hasNext, nil
 }

@@ -5,7 +5,9 @@ import (
 	"database/sql"
 	"errors"
 	"time"
-	model "trainingFinder/internal/model/training"
+
+	"github.com/Antesser/trainingFinder/internal/model/page"
+	model "github.com/Antesser/trainingFinder/internal/model/training"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/georgysavva/scany/v2/pgxscan"
@@ -122,30 +124,34 @@ func (r *repository) DeleteTraining(ctx context.Context, id string) error {
 	return nil
 }
 
-func (r *repository) ListTrainings(ctx context.Context, pageLimit, offset uint64, userID string) ([]model.Training, error) {
+func (r *repository) ListTrainings(ctx context.Context, page page.Page, userID string) ([]model.Training, bool, error) {
+	limit := int(page.Limit)
 	qb := sq.Select(
 		"id",
 		"trainer_id", "user_id", "started_at", "ended_at", "additional_info",
 	).From("training").
 		Where(sq.Eq{"user_id": userID}).
-		Limit(pageLimit).
-		Offset(offset).
+		Limit(page.Limit + 1).
+		Offset(page.Offset).
 		PlaceholderFormat(sq.Dollar)
 
 	query, args, err := qb.ToSql()
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 
 	var rows []training
 	if err := pgxscan.Select(ctx, r.pool.Querier(ctx), &rows, query, args...); err != nil {
-		return nil, err
+		return nil, false, err
 	}
-
+	hasNext := len(rows) > limit
+	if len(rows) > limit {
+		rows = rows[:limit]
+	}
 	out := make([]model.Training, 0, len(rows))
 	for i, t := range rows {
 		out[i] = model.Training{ID: t.ID, TrainerID: t.TrainerID, UserID: t.UserID, StartedAt: t.StartedAt, EndedAt: t.EndedAt}
 	}
 
-	return out, nil
+	return out, hasNext, nil
 }

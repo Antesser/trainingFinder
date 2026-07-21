@@ -2,7 +2,11 @@ package booking
 
 import (
 	"context"
-	model "trainingFinder/internal/model/booking"
+	"time"
+
+	model "github.com/Antesser/trainingFinder/internal/model/booking"
+	"github.com/Antesser/trainingFinder/internal/model/page"
+	"github.com/georgysavva/scany/v2/pgxscan"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/golangmonster/pgxtransactor"
@@ -16,13 +20,25 @@ type repository struct {
 func New(pool *pgxtransactor.Pool) *repository {
 	return &repository{pool: pool, Transactor: pool}
 }
-func (r *repository) BookTraining(ctx context.Context, trainingID, userID string) error {
-	qb := sq.Update("training").
-		Where(sq.Eq{"id": trainingID})
 
-	qb = qb.Set("booked_by", userID)
+type booking struct {
+	ID         string    `db:"id"`
+	TrainingID string    `db:"training_id"`
+	UserID     string    `db:"booked_by"`
+	CreatedAt  time.Time `db:"created_at"`
+	BookFrom   time.Time `db:"book_from"`
+	BookTo     time.Time `db:"book_to"`
+}
 
-	query, args, err := qb.PlaceholderFormat(sq.Dollar).ToSql()
+func (r *repository) CreateTrainingBooking(ctx context.Context, booking model.TrainingBooking) error {
+	sel := sq.Select(
+		"id",
+	).From("training_booking").
+		Where(sq.Eq{"training_id": booking.TrainingID}).
+		Where(sq.Eq{"booked_from": booking.BookFrom}).
+		PlaceholderFormat(sq.Dollar)
+
+	query, args, err := sel.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		return err
 	}
@@ -31,8 +47,58 @@ func (r *repository) BookTraining(ctx context.Context, trainingID, userID string
 	if err != nil {
 		return err
 	}
+	if tags.RowsAffected() != 0 {
+		return model.ErrBookingAlreadyExists
+	}
+
+	qb := sq.Insert("training_booking").
+		Columns("training_id", "booked_by", "book_to", "book_from").
+		Values(booking.TrainingID, booking.UserID, booking.BookTo, booking.BookFrom).
+		PlaceholderFormat(sq.Dollar)
+
+	query, args, err = qb.PlaceholderFormat(sq.Dollar).ToSql()
+	if err != nil {
+		return err
+	}
+
+	tags, err = r.pool.Querier(ctx).Exec(ctx, query, args...)
+	if err != nil {
+		return err
+	}
 	if tags.RowsAffected() == 0 {
 		return model.ErrBookingNotFound
 	}
 	return nil
+}
+
+func (r *repository) ListBookings(ctx context.Context, page page.Page, bookedBy string) ([]model.TrainingBooking, bool, error) {
+	limit := int(page.Limit)
+	qb := sq.Select(
+		"id",
+		"training_id", "booked_by", "created_at", "book_from", "book_to",
+	).From("training_booking").
+		Where(sq.Eq{"booked_by": bookedBy}).
+		Limit(page.Limit + 1).
+		Offset(page.Offset).
+		PlaceholderFormat(sq.Dollar)
+
+	query, args, err := qb.ToSql()
+	if err != nil {
+		return nil, false, err
+	}
+
+	var rows []booking
+	if err := pgxscan.Select(ctx, r.pool.Querier(ctx), &rows, query, args...); err != nil {
+		return nil, false, err
+	}
+	hasNext := len(rows) > limit
+	if len(rows) > limit {
+		rows = rows[:limit]
+	}
+	out := make([]model.TrainingBooking, 0, len(rows))
+	for i, b := range rows {
+		out[i] = model.TrainingBooking{TrainingID: b.TrainingID, BookFrom: b.BookFrom, BookTo: b.BookTo, UserID: b.UserID}
+	}
+
+	return out, hasNext, nil
 }

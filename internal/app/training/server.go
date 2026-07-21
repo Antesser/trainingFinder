@@ -4,9 +4,11 @@ import (
 	"context"
 	"errors"
 	"log"
-	model "trainingFinder/internal/model/training"
 
-	trainingPkg "trainingFinder/pkg/api/training/v1"
+	modelPage "github.com/Antesser/trainingFinder/internal/model/page"
+	model "github.com/Antesser/trainingFinder/internal/model/training"
+
+	trainingPkg "github.com/Antesser/trainingFinder/pkg/api/training/v1"
 
 	"github.com/google/uuid"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -111,12 +113,12 @@ func (s *Server) DeleteTraining(ctx context.Context, req *trainingPkg.DeleteTrai
 		nil
 }
 func (s *Server) ListTraining(ctx context.Context, req *trainingPkg.ListTrainingsRequest) (*trainingPkg.ListTrainingsResponse, error) {
-
-	mod, err := s.trainingService.ListTraining(ctx, req.PageLimit, req.Offset, req.UserId)
+	mod, hasNext, err := s.trainingService.ListTraining(ctx, modelPage.Page{Limit: req.Page.Limit, Offset: req.Page.Offset}, req.UserId)
 	if err != nil {
 		if errors.Is(err, model.ErrTrainingNotFound) {
 			return &trainingPkg.ListTrainingsResponse{
 				Trainings: []*trainingPkg.Training{},
+				HasNext:   false,
 			}, nil
 		}
 		return nil, err
@@ -128,6 +130,7 @@ func (s *Server) ListTraining(ctx context.Context, req *trainingPkg.ListTraining
 
 	return &trainingPkg.ListTrainingsResponse{
 		Trainings: protoList,
+		HasNext:   hasNext,
 	}, nil
 }
 

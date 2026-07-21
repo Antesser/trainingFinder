@@ -3,7 +3,6 @@
 CREATE TABLE IF NOT EXISTS training (
                                         id TEXT,
                                         trainer_id TEXT NOT NULL,
-                                        user_id TEXT NOT NULL,
                                         started_at TIMESTAMP  NOT NULL,
                                         ended_at TIMESTAMP NOT NULL,
                                         additional_info TEXT NOT NULL,

@@ -153,7 +153,7 @@
         ]
       }
     },
-    "/api/booking/v1/book_training": {
+    "/api/booking/v1/book-training": {
       "post": {
         "operationId": "BookingService_BookTraining",
         "responses": {
@@ -185,8 +185,40 @@
         ]
       }
     },
-    "/api/training/v1/trainings": {
-      "get": {
+    "/api/training/v1/list-bookings": {
+      "post": {
+        "operationId": "BookingService_ListBookings",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListBookingsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ListBookingsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "BookingService"
+        ]
+      }
+    },
+    "/api/training/v1/list-trainings": {
+      "post": {
         "operationId": "TrainingService_ListTrainings",
         "responses": {
           "200": {
@@ -204,30 +236,20 @@
         },
         "parameters": [
           {
-            "name": "pageLimit",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "uint64"
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "uint64"
-          },
-          {
-            "name": "user_id",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ListTrainingsRequest"
+            }
           }
         ],
         "tags": [
           "TrainingService"
         ]
-      },
+      }
+    },
+    "/api/training/v1/trainings": {
       "post": {
         "operationId": "TrainingService_CreateTraining",
         "responses": {
@@ -507,6 +529,61 @@
         }
       }
     },
+    "training_bookingv1Page": {
+      "type": "object",
+      "properties": {
+        "Limit": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "Offset": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
+    },
+    "trainingv1Page": {
+      "type": "object",
+      "properties": {
+        "Limit": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "Offset": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
+    },
+    "v1Booking": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "training_id": {
+          "type": "string"
+        },
+        "booked_by": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "book_from": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "book_to": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
     "v1BookingTrainingRequest": {
       "type": "object",
       "properties": {
@@ -515,6 +592,14 @@
         },
         "user_id": {
           "type": "string"
+        },
+        "book_from": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "book_to": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },
@@ -583,6 +668,43 @@
         }
       }
     },
+    "v1ListBookingsRequest": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "$ref": "#/definitions/training_bookingv1Page"
+        },
+        "booked_by": {
+          "type": "string"
+        }
+      }
+    },
+    "v1ListBookingsResponse": {
+      "type": "object",
+      "properties": {
+        "bookings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Booking"
+          }
+        },
+        "has_next": {
+          "type": "boolean"
+        }
+      }
+    },
+    "v1ListTrainingsRequest": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "$ref": "#/definitions/trainingv1Page"
+        },
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
     "v1ListTrainingsResponse": {
       "type": "object",
       "properties": {
@@ -592,6 +714,9 @@
             "type": "object",
             "$ref": "#/definitions/v1Training"
           }
+        },
+        "has_next": {
+          "type": "boolean"
         }
       }
     },

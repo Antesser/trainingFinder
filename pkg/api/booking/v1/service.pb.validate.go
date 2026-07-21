@@ -35,6 +35,301 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on Page with the rules defined in the proto
+// definition for this message. If any rules are violated, the first error
+// encountered is returned, or nil if there are no violations.
+func (m *Page) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Page with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in PageMultiError, or nil if none found.
+func (m *Page) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Page) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Limit
+
+	// no validation rules for Offset
+
+	if len(errors) > 0 {
+		return PageMultiError(errors)
+	}
+
+	return nil
+}
+
+// PageMultiError is an error wrapping multiple validation errors returned by
+// Page.ValidateAll() if the designated constraints aren't met.
+type PageMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PageMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PageMultiError) AllErrors() []error { return m }
+
+// PageValidationError is the validation error returned by Page.Validate if the
+// designated constraints aren't met.
+type PageValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PageValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PageValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PageValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PageValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PageValidationError) ErrorName() string { return "PageValidationError" }
+
+// Error satisfies the builtin error interface
+func (e PageValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPage.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PageValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PageValidationError{}
+
+// Validate checks the field values on Booking with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Booking) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Booking with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in BookingMultiError, or nil if none found.
+func (m *Booking) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Booking) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for TrainingId
+
+	// no validation rules for BookedBy
+
+	// no validation rules for Status
+
+	if all {
+		switch v := interface{}(m.GetCreatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, BookingValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, BookingValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return BookingValidationError{
+				field:  "CreatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetBookFrom()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, BookingValidationError{
+					field:  "BookFrom",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, BookingValidationError{
+					field:  "BookFrom",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetBookFrom()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return BookingValidationError{
+				field:  "BookFrom",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetBookTo()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, BookingValidationError{
+					field:  "BookTo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, BookingValidationError{
+					field:  "BookTo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetBookTo()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return BookingValidationError{
+				field:  "BookTo",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return BookingMultiError(errors)
+	}
+
+	return nil
+}
+
+// BookingMultiError is an error wrapping multiple validation errors returned
+// by Booking.ValidateAll() if the designated constraints aren't met.
+type BookingMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m BookingMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m BookingMultiError) AllErrors() []error { return m }
+
+// BookingValidationError is the validation error returned by Booking.Validate
+// if the designated constraints aren't met.
+type BookingValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e BookingValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e BookingValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e BookingValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e BookingValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e BookingValidationError) ErrorName() string { return "BookingValidationError" }
+
+// Error satisfies the builtin error interface
+func (e BookingValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sBooking.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = BookingValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = BookingValidationError{}
+
 // Validate checks the field values on BookingTrainingRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -60,6 +355,64 @@ func (m *BookingTrainingRequest) validate(all bool) error {
 	// no validation rules for TrainingId
 
 	// no validation rules for UserId
+
+	if all {
+		switch v := interface{}(m.GetBookFrom()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, BookingTrainingRequestValidationError{
+					field:  "BookFrom",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, BookingTrainingRequestValidationError{
+					field:  "BookFrom",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetBookFrom()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return BookingTrainingRequestValidationError{
+				field:  "BookFrom",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetBookTo()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, BookingTrainingRequestValidationError{
+					field:  "BookTo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, BookingTrainingRequestValidationError{
+					field:  "BookTo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetBookTo()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return BookingTrainingRequestValidationError{
+				field:  "BookTo",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return BookingTrainingRequestMultiError(errors)
@@ -242,3 +595,274 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = BookingTrainingResponseValidationError{}
+
+// Validate checks the field values on ListBookingsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListBookingsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListBookingsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListBookingsRequestMultiError, or nil if none found.
+func (m *ListBookingsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListBookingsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetPage()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ListBookingsRequestValidationError{
+					field:  "Page",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ListBookingsRequestValidationError{
+					field:  "Page",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListBookingsRequestValidationError{
+				field:  "Page",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for BookedBy
+
+	if len(errors) > 0 {
+		return ListBookingsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListBookingsRequestMultiError is an error wrapping multiple validation
+// errors returned by ListBookingsRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ListBookingsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListBookingsRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListBookingsRequestMultiError) AllErrors() []error { return m }
+
+// ListBookingsRequestValidationError is the validation error returned by
+// ListBookingsRequest.Validate if the designated constraints aren't met.
+type ListBookingsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListBookingsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListBookingsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListBookingsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListBookingsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListBookingsRequestValidationError) ErrorName() string {
+	return "ListBookingsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListBookingsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListBookingsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListBookingsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListBookingsRequestValidationError{}
+
+// Validate checks the field values on ListBookingsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListBookingsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListBookingsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListBookingsResponseMultiError, or nil if none found.
+func (m *ListBookingsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListBookingsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetBookings() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListBookingsResponseValidationError{
+						field:  fmt.Sprintf("Bookings[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListBookingsResponseValidationError{
+						field:  fmt.Sprintf("Bookings[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListBookingsResponseValidationError{
+					field:  fmt.Sprintf("Bookings[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for HasNext
+
+	if len(errors) > 0 {
+		return ListBookingsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListBookingsResponseMultiError is an error wrapping multiple validation
+// errors returned by ListBookingsResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ListBookingsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListBookingsResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListBookingsResponseMultiError) AllErrors() []error { return m }
+
+// ListBookingsResponseValidationError is the validation error returned by
+// ListBookingsResponse.Validate if the designated constraints aren't met.
+type ListBookingsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListBookingsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListBookingsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListBookingsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListBookingsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListBookingsResponseValidationError) ErrorName() string {
+	return "ListBookingsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListBookingsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListBookingsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListBookingsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListBookingsResponseValidationError{}
