@@ -2,7 +2,8 @@ package outbox
 
 import (
 	"context"
-	"trainingFinder/internal/model/outbox"
+
+	"github.com/Antesser/trainingFinder/internal/model/outbox"
 )
 
 type outboxRepository interface {
