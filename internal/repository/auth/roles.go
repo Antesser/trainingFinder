@@ -9,11 +9,6 @@ import (
 	"github.com/georgysavva/scany/v2/pgxscan"
 )
 
-type roleStruct struct {
-	ID   int    `db:"id"`
-	Role string `db:"role"`
-}
-
 func (r *repository) CreateRole(ctx context.Context, role string) error {
 	qb := sq.Insert("roles").
 		Columns("role").

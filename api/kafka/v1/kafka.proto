@@ -12,3 +12,10 @@ message CreateTrainingEvent {
 message DeleteTrainingEvent {
   string training_id = 1;
 }
+message CreateBookingEvent {
+  string booking_id = 1;
+}
+
+message DeleteBookingEvent {
+  string booking_id = 1;
+}

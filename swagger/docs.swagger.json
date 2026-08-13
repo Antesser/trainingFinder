@@ -529,6 +529,22 @@
         }
       }
     },
+    "training_bookingv1Filter": {
+      "type": "object",
+      "properties": {
+        "booked_by": {
+          "type": "string"
+        },
+        "booked_from": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "booked_to": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
     "training_bookingv1Page": {
       "type": "object",
       "properties": {
@@ -539,6 +555,17 @@
         "Offset": {
           "type": "string",
           "format": "uint64"
+        }
+      }
+    },
+    "trainingv1Filter": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "string"
         }
       }
     },
@@ -674,8 +701,8 @@
         "page": {
           "$ref": "#/definitions/training_bookingv1Page"
         },
-        "booked_by": {
-          "type": "string"
+        "filter": {
+          "$ref": "#/definitions/training_bookingv1Filter"
         }
       }
     },
@@ -700,8 +727,8 @@
         "page": {
           "$ref": "#/definitions/trainingv1Page"
         },
-        "user_id": {
-          "type": "string"
+        "filter": {
+          "$ref": "#/definitions/trainingv1Filter"
         }
       }
     },

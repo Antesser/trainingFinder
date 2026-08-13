@@ -57,7 +57,7 @@ func (s *Server) BookTraining(ctx context.Context, req *bookingPkg.BookingTraini
 		nil
 }
 func (s *Server) ListTraining(ctx context.Context, req *bookingPkg.ListBookingsRequest) (*bookingPkg.ListBookingsResponse, error) {
-	mod, hasNext, err := s.bookingService.ListBookings(ctx, modelPage.Page{Limit: req.Page.Limit, Offset: req.Page.Offset}, req.BookedBy)
+	mod, hasNext, err := s.bookingService.ListBookings(ctx, modelPage.Page{Limit: req.Page.Limit, Offset: req.Page.Offset}, req.Filter)
 	if err != nil {
 		if errors.Is(err, model.ErrBookingNotFound) {
 			return &bookingPkg.ListBookingsResponse{

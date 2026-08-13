@@ -6,6 +6,7 @@ import (
 
 	model "github.com/Antesser/trainingFinder/internal/model/booking"
 	"github.com/Antesser/trainingFinder/internal/model/page"
+	"github.com/Antesser/trainingFinder/internal/utils"
 	"github.com/georgysavva/scany/v2/pgxscan"
 
 	sq "github.com/Masterminds/squirrel"
@@ -91,10 +92,7 @@ func (r *repository) ListBookings(ctx context.Context, page page.Page, bookedBy 
 	if err := pgxscan.Select(ctx, r.pool.Querier(ctx), &rows, query, args...); err != nil {
 		return nil, false, err
 	}
-	hasNext := len(rows) > limit
-	if len(rows) > limit {
-		rows = rows[:limit]
-	}
+	rows, hasNext := utils.TruncateForHasNext(rows, limit)
 	out := make([]model.TrainingBooking, 0, len(rows))
 	for i, b := range rows {
 		out[i] = model.TrainingBooking{TrainingID: b.TrainingID, BookFrom: b.BookFrom, BookTo: b.BookTo, UserID: b.UserID}

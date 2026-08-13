@@ -113,7 +113,7 @@ func (s *Server) DeleteTraining(ctx context.Context, req *trainingPkg.DeleteTrai
 		nil
 }
 func (s *Server) ListTraining(ctx context.Context, req *trainingPkg.ListTrainingsRequest) (*trainingPkg.ListTrainingsResponse, error) {
-	mod, hasNext, err := s.trainingService.ListTraining(ctx, modelPage.Page{Limit: req.Page.Limit, Offset: req.Page.Offset}, req.UserId)
+	mod, hasNext, err := s.trainingService.ListTraining(ctx, modelPage.Page{Limit: req.Page.Limit, Offset: req.Page.Offset}, req.Filter)
 	if err != nil {
 		if errors.Is(err, model.ErrTrainingNotFound) {
 			return &trainingPkg.ListTrainingsResponse{

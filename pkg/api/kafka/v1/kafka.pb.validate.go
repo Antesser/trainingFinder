@@ -242,3 +242,211 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DeleteTrainingEventValidationError{}
+
+// Validate checks the field values on CreateBookingEvent with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateBookingEvent) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateBookingEvent with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateBookingEventMultiError, or nil if none found.
+func (m *CreateBookingEvent) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateBookingEvent) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for BookingId
+
+	if len(errors) > 0 {
+		return CreateBookingEventMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateBookingEventMultiError is an error wrapping multiple validation errors
+// returned by CreateBookingEvent.ValidateAll() if the designated constraints
+// aren't met.
+type CreateBookingEventMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateBookingEventMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateBookingEventMultiError) AllErrors() []error { return m }
+
+// CreateBookingEventValidationError is the validation error returned by
+// CreateBookingEvent.Validate if the designated constraints aren't met.
+type CreateBookingEventValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateBookingEventValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateBookingEventValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateBookingEventValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateBookingEventValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateBookingEventValidationError) ErrorName() string {
+	return "CreateBookingEventValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateBookingEventValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateBookingEvent.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateBookingEventValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateBookingEventValidationError{}
+
+// Validate checks the field values on DeleteBookingEvent with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteBookingEvent) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteBookingEvent with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteBookingEventMultiError, or nil if none found.
+func (m *DeleteBookingEvent) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteBookingEvent) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for BookingId
+
+	if len(errors) > 0 {
+		return DeleteBookingEventMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteBookingEventMultiError is an error wrapping multiple validation errors
+// returned by DeleteBookingEvent.ValidateAll() if the designated constraints
+// aren't met.
+type DeleteBookingEventMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteBookingEventMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteBookingEventMultiError) AllErrors() []error { return m }
+
+// DeleteBookingEventValidationError is the validation error returned by
+// DeleteBookingEvent.Validate if the designated constraints aren't met.
+type DeleteBookingEventValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteBookingEventValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteBookingEventValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteBookingEventValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteBookingEventValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteBookingEventValidationError) ErrorName() string {
+	return "DeleteBookingEventValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteBookingEventValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteBookingEvent.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteBookingEventValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteBookingEventValidationError{}

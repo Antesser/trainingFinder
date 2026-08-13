@@ -14,3 +14,6 @@ type TrainingBooking struct {
 	BookFrom   time.Time
 	BookTo     time.Time
 }
+type CreateBookingEvent struct {
+	BookingID string
+}

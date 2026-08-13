@@ -26,6 +26,11 @@ message Page{
   uint64 Limit = 1;
   uint64 Offset = 2;
 }
+message Filter{
+  string booked_by = 1[(buf.validate.field).required = true, (buf.validate.field).string.uuid = true];
+  google.protobuf.Timestamp booked_from = 2;
+  google.protobuf.Timestamp booked_to = 3;
+}
 
 message Booking{
   string id = 1;
@@ -49,7 +54,7 @@ message BookingTrainingResponse {
 
 message ListBookingsRequest {
   Page page = 1;
-  string booked_by = 2[(buf.validate.field).required = true, (buf.validate.field).string.uuid = true];
+  Filter filter = 2;
 }
 
 message ListBookingsResponse {

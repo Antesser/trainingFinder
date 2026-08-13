@@ -55,7 +55,7 @@ func main() {
 	authSrv := authService.New(authRepo, cfg.Server.Secret, cfg.Server.AccessTokenDuration)
 	userSrv := userService.New(userRepo)
 	trainingSrv := trainingService.New(trainingRepo, your_topic_name.MarshalCreateTrainingEvent, outboxRepo)
-	bookingSrv := bookingService.New(bookingRepo)
+	bookingSrv := bookingService.New(bookingRepo, your_topic_name.MarshalCreateBookingEvent, outboxRepo)
 	cfgAuth, err := config.NewAuthConfig(cfg.Server.AuthConfigPath)
 	if err != nil {
 		log.Fatal("failed to load auth config: %v", err)

@@ -8,6 +8,7 @@ import (
 
 	"github.com/Antesser/trainingFinder/internal/model/page"
 	model "github.com/Antesser/trainingFinder/internal/model/training"
+	"github.com/Antesser/trainingFinder/internal/utils"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/georgysavva/scany/v2/pgxscan"
@@ -144,10 +145,7 @@ func (r *repository) ListTrainings(ctx context.Context, page page.Page, userID s
 	if err := pgxscan.Select(ctx, r.pool.Querier(ctx), &rows, query, args...); err != nil {
 		return nil, false, err
 	}
-	hasNext := len(rows) > limit
-	if len(rows) > limit {
-		rows = rows[:limit]
-	}
+	rows, hasNext := utils.TruncateForHasNext(rows, limit)
 	out := make([]model.Training, 0, len(rows))
 	for i, t := range rows {
 		out[i] = model.Training{ID: t.ID, TrainerID: t.TrainerID, UserID: t.UserID, StartedAt: t.StartedAt, EndedAt: t.EndedAt}

@@ -4,22 +4,46 @@ import (
 	"context"
 
 	model "github.com/Antesser/trainingFinder/internal/model/booking"
+	"github.com/Antesser/trainingFinder/internal/model/outbox"
 	"github.com/Antesser/trainingFinder/internal/model/page"
 )
 
 type service struct {
-	repo bookingRepository
+	repo              bookingRepository
+	outboxRepo        outboxRepository
+	bookingMarshaller bookingMarshaller
+}
+type bookingMarshaller func(event model.CreateBookingEvent) ([]byte, error)
+
+func New(bookingRepo bookingRepository, outboxRepo outboxRepository, bookingMarshaller bookingMarshaller) *service {
+	return &service{repo: bookingRepo, outboxRepo: outboxRepo, bookingMarshaller: bookingMarshaller}
 }
 
-func New(bookingRepo bookingRepository) *service {
-	return &service{repo: bookingRepo}
-}
-func (t *service) BookTraining(ctx context.Context, booking model.TrainingBooking) error {
-	err := t.repo.CreateTrainingBooking(ctx, booking)
-	if err != nil {
-		return err
-	}
-	return nil
+func (b *service) BookTraining(ctx context.Context, booking model.TrainingBooking) error {
+	return b.repo.InTx(ctx, func(ctx context.Context) error {
+		if err := b.repo.CreateTrainingBooking(ctx, booking); err != nil {
+			return err
+		}
+		event := model.CreateBookingEvent{
+			BookingID: booking.TrainingID,
+		}
+
+		msg, err := b.bookingMarshaller(event)
+		if err != nil {
+			return err
+		}
+
+		err = b.outboxRepo.CreateOutboxItem(ctx, outbox.OutboxItem{
+			Msg:   string(msg),
+			Key:   booking.TrainingID,
+			Topic: "someTopic",
+		})
+		if err != nil {
+			return err
+		}
+		return nil
+
+	})
 }
 
 func (t *service) ListBookings(ctx context.Context, page page.Page, bookedBy string) ([]model.TrainingBooking, bool, error) {

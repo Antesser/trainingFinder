@@ -7,6 +7,7 @@ option go_package = "github.com/Antesser/trainingFinder/pkg/api/training/v1";
 import "google/api/annotations.proto";
 import  "google/protobuf/timestamp.proto"; // указываем структуру, как используемый тип (по сути google.protobuf)
 import  "proto/protovalidate/buf/validate/validate.proto";
+import "google/protobuf/duration.proto";
 
 service TrainingService {
   rpc CreateTraining (CreateTrainingRequest) returns (CreateTrainingResponse) {
@@ -51,6 +52,10 @@ message Page{
   uint64 Limit = 1;
   uint64 Offset = 2;
 }
+message Filter{
+  optional string user_id = 1[(buf.validate.field).required = true, (buf.validate.field).string.uuid = true];
+  optional google.protobuf.Duration duration = 2;
+}
 message CreateTrainingRequest {
   string trainer_id = 1 [(buf.validate.field).string.uuid = true];
   string user_id = 2 [(buf.validate.field).required = true];
@@ -94,7 +99,7 @@ message GetTrainingResponse {
 
 message ListTrainingsRequest {
   Page page = 1;
-  string user_id = 2[(buf.validate.field).required = true, (buf.validate.field).string.uuid = true];
+  Filter filter = 2;
 }
 
 message ListTrainingsResponse {
