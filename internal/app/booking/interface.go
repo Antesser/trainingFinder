@@ -10,5 +10,5 @@ import (
 
 type bookingService interface {
 	BookTraining(ctx context.Context, mod model.TrainingBooking) error
-	ListBookings(ctx context.Context, page page.Page, filter v1.Filter) ([]model.TrainingBooking, bool, error)
+	ListBookings(ctx context.Context, page page.Page, filter *v1.Filter) ([]model.TrainingBooking, bool, error)
 }

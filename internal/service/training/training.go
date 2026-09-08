@@ -6,6 +6,7 @@ import (
 	"github.com/Antesser/trainingFinder/internal/model/outbox"
 	"github.com/Antesser/trainingFinder/internal/model/page"
 	model "github.com/Antesser/trainingFinder/internal/model/training"
+	v1 "github.com/Antesser/trainingFinder/pkg/api/training/v1"
 )
 
 type trainingMarshaller func(event model.CreateTrainingEvent) ([]byte, error)
@@ -72,8 +73,8 @@ func (t *trainingService) DeleteTraining(ctx context.Context, id string) error {
 	return nil
 }
 
-func (t *trainingService) ListTraining(ctx context.Context, page page.Page, userID string) ([]model.Training, bool, error) {
-	models, hasNext, err := t.repo.ListTrainings(ctx, page, userID)
+func (t *trainingService) ListTraining(ctx context.Context, page page.Page, filter v1.Filter) ([]model.Training, bool, error) {
+	models, hasNext, err := t.repo.ListTrainings(ctx, page, filter)
 	if err != nil {
 		return nil, false, err
 	}

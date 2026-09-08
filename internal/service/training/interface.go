@@ -6,6 +6,7 @@ import (
 	"github.com/Antesser/trainingFinder/internal/model/outbox"
 	"github.com/Antesser/trainingFinder/internal/model/page"
 	model "github.com/Antesser/trainingFinder/internal/model/training"
+	v1 "github.com/Antesser/trainingFinder/pkg/api/training/v1"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -18,7 +19,7 @@ type trainingRepository interface {
 	DeleteTraining(ctx context.Context, id string) error
 	InTx(ctx context.Context, fn func(ctx context.Context) error) error
 	InTxWithIsoLevel(ctx context.Context, isoLevel pgx.TxIsoLevel, fn func(ctx context.Context) error) error
-	ListTrainings(ctx context.Context, page page.Page, userID string) ([]model.Training, bool, error)
+	ListTrainings(ctx context.Context, page page.Page, filter v1.Filter) ([]model.Training, bool, error)
 }
 
 type outboxRepository interface {
