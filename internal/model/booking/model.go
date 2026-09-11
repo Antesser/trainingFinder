@@ -13,6 +13,10 @@ type TrainingBooking struct {
 	UserID     string
 	BookFrom   time.Time
 	BookTo     time.Time
+	Status     string
+	BookedBy   string
+	CreatedAt  time.Time
+	WithLock   bool
 }
 type CreateBookingEvent struct {
 	BookingID string

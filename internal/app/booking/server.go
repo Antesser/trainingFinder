@@ -57,24 +57,24 @@ func (s *Server) BookTraining(ctx context.Context, req *bookingPkg.BookingTraini
 		nil
 }
 func (s *Server) ListTraining(ctx context.Context, req *bookingPkg.ListBookingsRequest) (*bookingPkg.ListBookingsResponse, error) {
-	mod, hasNext, err := s.bookingService.ListBookings(ctx, modelPage.Page{Limit: req.Page.Limit, Offset: req.Page.Offset}, req.Filter)
+	resp, err := s.bookingService.ListBookings(ctx, model.ListBookingsRequest{Page: modelPage.Page{Limit: req.Page.Limit, Offset: req.Page.Offset}, BookedBy: req.Filter.BookedBy})
 	if err != nil {
 		if errors.Is(err, model.ErrBookingNotFound) {
 			return &bookingPkg.ListBookingsResponse{
-				Bookings: []*bookingPkg.Booking{},
-				HasNext:  hasNext,
+				Bookings: mapTrainingBookings(resp.ModelList),
+				HasNext:  resp.HasNext,
 			}, nil
 		}
 		return nil, err
 	}
 
-	protoList := lo.Map(mod, func(m model.TrainingBooking, _ int) *bookingPkg.Booking {
+	protoList := lo.Map(resp.ModelList, func(m model.TrainingBooking, _ int) *bookingPkg.Booking {
 		return toProtoTraining(&m)
 	})
 
 	return &bookingPkg.ListBookingsResponse{
 		Bookings: protoList,
-		HasNext:  hasNext,
+		HasNext:  resp.HasNext,
 	}, nil
 }
 
@@ -85,4 +85,19 @@ func toProtoTraining(m *model.TrainingBooking) *bookingPkg.Booking {
 		BookFrom:   timestamppb.New(m.BookFrom),
 		BookTo:     timestamppb.New(m.BookTo),
 	}
+}
+
+func mapTrainingBookings(in []model.TrainingBooking) []*bookingPkg.Booking {
+	out := make([]*bookingPkg.Booking, 0, len(in))
+	for _, b := range in {
+		out = append(out, &bookingPkg.Booking{
+			TrainingId: b.TrainingID,
+			BookedBy:   b.BookedBy,
+			Status:     b.Status,
+			CreatedAt:  timestamppb.New(b.CreatedAt),
+			BookFrom:   timestamppb.New(b.BookFrom),
+			BookTo:     timestamppb.New(b.BookTo),
+		})
+	}
+	return out
 }

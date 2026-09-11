@@ -411,6 +411,8 @@ func (m *Booking) validate(all bool) error {
 		}
 	}
 
+	// no validation rules for WithLock
+
 	if len(errors) > 0 {
 		return BookingMultiError(errors)
 	}

@@ -15,13 +15,13 @@ type UpdateTrainingRequest struct {
 	AdditionalInfo *string
 }
 
-type trainingFilter struct {
+type TrainingFilter struct {
 	UserID   string
 	Duration int
 }
 type ListTrainingRequest struct {
 	Page   page.Page
-	Filter trainingFilter
+	Filter TrainingFilter
 }
 type ListTrainingResponse struct {
 	ModelList []Training

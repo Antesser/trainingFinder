@@ -565,7 +565,8 @@
           "type": "string"
         },
         "duration": {
-          "type": "string"
+          "type": "string",
+          "format": "uint64"
         }
       }
     },
@@ -608,6 +609,9 @@
         "book_to": {
           "type": "string",
           "format": "date-time"
+        },
+        "with_lock": {
+          "type": "boolean"
         }
       }
     },

@@ -7,12 +7,12 @@ import (
 	"github.com/Antesser/trainingFinder/internal/model/outbox"
 )
 
-func (b *service) BookTraining(ctx context.Context, booking model.TrainingBooking, withLock bool) error {
+func (b *service) BookTraining(ctx context.Context, booking model.TrainingBooking) error {
 	return b.repo.InTx(ctx, func(ctx context.Context) error {
 		if err := b.repo.CheckIntersections(ctx, booking); err != nil {
 			return err
 		}
-		if err := b.repo.CreateTrainingBooking(ctx, booking, withLock); err != nil {
+		if err := b.repo.CreateTrainingBooking(ctx, booking); err != nil {
 			return err
 		}
 		event := model.CreateBookingEvent{

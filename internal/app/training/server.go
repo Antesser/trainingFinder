@@ -113,18 +113,18 @@ func (s *Server) DeleteTraining(ctx context.Context, req *trainingPkg.DeleteTrai
 		nil
 }
 func (s *Server) ListTraining(ctx context.Context, req *trainingPkg.ListTrainingsRequest) (*trainingPkg.ListTrainingsResponse, error) {
-	mod, hasNext, err := s.trainingService.ListTraining(ctx, modelPage.Page{Limit: req.Page.Limit, Offset: req.Page.Offset}, req.Filter)
+	mod, err := s.trainingService.ListTraining(ctx, model.ListTrainingRequest{Page: modelPage.Page{Limit: req.Page.Limit, Offset: req.Page.Offset}, Filter: model.TrainingFilter{UserID: *req.Filter.UserId, Duration: int(*req.Filter.Duration)}})
 	if err != nil {
 		return nil, err
 	}
 
-	protoList := lo.Map(mod, func(m model.Training, _ int) *trainingPkg.Training {
+	protoList := lo.Map(mod.ModelList, func(m model.Training, _ int) *trainingPkg.Training {
 		return toProtoTraining(&m)
 	})
 
 	return &trainingPkg.ListTrainingsResponse{
 		Trainings: protoList,
-		HasNext:   hasNext,
+		HasNext:   mod.HasNext,
 	}, nil
 }
 

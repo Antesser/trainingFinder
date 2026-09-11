@@ -53,12 +53,12 @@ func (r *repository) CheckIntersections(ctx context.Context, booking model.Train
 	return nil
 }
 
-func (r *repository) CreateTrainingBooking(ctx context.Context, booking model.TrainingBooking, withLock bool) error {
+func (r *repository) CreateTrainingBooking(ctx context.Context, booking model.TrainingBooking) error {
 	qb := sq.Insert("training_booking").
 		Columns("training_id", "booked_by", "book_to", "book_from").
 		Values(booking.TrainingID, booking.UserID, booking.BookTo, booking.BookFrom).
 		PlaceholderFormat(sq.Dollar)
-	if withLock {
+	if booking.WithLock {
 		qb.Suffix("FOR UPDATE")
 	}
 	query, args, err := qb.PlaceholderFormat(sq.Dollar).ToSql()

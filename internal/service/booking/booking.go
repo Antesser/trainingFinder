@@ -11,6 +11,6 @@ type service struct {
 }
 type bookingMarshaller func(event model.CreateBookingEvent) ([]byte, error)
 
-func New(bookingRepo bookingRepository, outboxRepo outboxRepository, bookingMarshaller bookingMarshaller) *service {
+func New(bookingRepo bookingRepository, bookingMarshaller bookingMarshaller, outboxRepo outboxRepository) *service {
 	return &service{repo: bookingRepo, outboxRepo: outboxRepo, bookingMarshaller: bookingMarshaller}
 }
