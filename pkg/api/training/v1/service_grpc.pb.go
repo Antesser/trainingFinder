@@ -23,6 +23,7 @@ const (
 	TrainingService_DeleteTraining_FullMethodName = "/training.v1.TrainingService/DeleteTraining"
 	TrainingService_UpdateTraining_FullMethodName = "/training.v1.TrainingService/UpdateTraining"
 	TrainingService_GetTraining_FullMethodName    = "/training.v1.TrainingService/GetTraining"
+	TrainingService_ListTrainings_FullMethodName  = "/training.v1.TrainingService/ListTrainings"
 )
 
 // TrainingServiceClient is the client API for TrainingService service.
@@ -33,6 +34,7 @@ type TrainingServiceClient interface {
 	DeleteTraining(ctx context.Context, in *DeleteTrainingRequest, opts ...grpc.CallOption) (*DeleteTrainingResponse, error)
 	UpdateTraining(ctx context.Context, in *UpdateTrainingRequest, opts ...grpc.CallOption) (*UpdateTrainingResponse, error)
 	GetTraining(ctx context.Context, in *GetTrainingRequest, opts ...grpc.CallOption) (*GetTrainingResponse, error)
+	ListTrainings(ctx context.Context, in *ListTrainingsRequest, opts ...grpc.CallOption) (*ListTrainingsResponse, error)
 }
 
 type trainingServiceClient struct {
@@ -79,6 +81,15 @@ func (c *trainingServiceClient) GetTraining(ctx context.Context, in *GetTraining
 	return out, nil
 }
 
+func (c *trainingServiceClient) ListTrainings(ctx context.Context, in *ListTrainingsRequest, opts ...grpc.CallOption) (*ListTrainingsResponse, error) {
+	out := new(ListTrainingsResponse)
+	err := c.cc.Invoke(ctx, TrainingService_ListTrainings_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TrainingServiceServer is the server API for TrainingService service.
 // All implementations must embed UnimplementedTrainingServiceServer
 // for forward compatibility
@@ -87,6 +98,7 @@ type TrainingServiceServer interface {
 	DeleteTraining(context.Context, *DeleteTrainingRequest) (*DeleteTrainingResponse, error)
 	UpdateTraining(context.Context, *UpdateTrainingRequest) (*UpdateTrainingResponse, error)
 	GetTraining(context.Context, *GetTrainingRequest) (*GetTrainingResponse, error)
+	ListTrainings(context.Context, *ListTrainingsRequest) (*ListTrainingsResponse, error)
 	mustEmbedUnimplementedTrainingServiceServer()
 }
 
@@ -105,6 +117,9 @@ func (UnimplementedTrainingServiceServer) UpdateTraining(context.Context, *Updat
 }
 func (UnimplementedTrainingServiceServer) GetTraining(context.Context, *GetTrainingRequest) (*GetTrainingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTraining not implemented")
+}
+func (UnimplementedTrainingServiceServer) ListTrainings(context.Context, *ListTrainingsRequest) (*ListTrainingsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListTrainings not implemented")
 }
 func (UnimplementedTrainingServiceServer) mustEmbedUnimplementedTrainingServiceServer() {}
 
@@ -191,6 +206,24 @@ func _TrainingService_GetTraining_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TrainingService_ListTrainings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTrainingsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TrainingServiceServer).ListTrainings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TrainingService_ListTrainings_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TrainingServiceServer).ListTrainings(ctx, req.(*ListTrainingsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TrainingService_ServiceDesc is the grpc.ServiceDesc for TrainingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -213,6 +246,10 @@ var TrainingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTraining",
 			Handler:    _TrainingService_GetTraining_Handler,
+		},
+		{
+			MethodName: "ListTrainings",
+			Handler:    _TrainingService_ListTrainings_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

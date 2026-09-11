@@ -114,6 +114,100 @@ func (x *DeleteTrainingEvent) GetTrainingId() string {
 	return ""
 }
 
+type CreateBookingEvent struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	BookingId string `protobuf:"bytes,1,opt,name=booking_id,json=bookingId,proto3" json:"booking_id,omitempty"`
+}
+
+func (x *CreateBookingEvent) Reset() {
+	*x = CreateBookingEvent{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_kafka_v1_kafka_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CreateBookingEvent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateBookingEvent) ProtoMessage() {}
+
+func (x *CreateBookingEvent) ProtoReflect() protoreflect.Message {
+	mi := &file_api_kafka_v1_kafka_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateBookingEvent.ProtoReflect.Descriptor instead.
+func (*CreateBookingEvent) Descriptor() ([]byte, []int) {
+	return file_api_kafka_v1_kafka_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *CreateBookingEvent) GetBookingId() string {
+	if x != nil {
+		return x.BookingId
+	}
+	return ""
+}
+
+type DeleteBookingEvent struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	BookingId string `protobuf:"bytes,1,opt,name=booking_id,json=bookingId,proto3" json:"booking_id,omitempty"`
+}
+
+func (x *DeleteBookingEvent) Reset() {
+	*x = DeleteBookingEvent{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_kafka_v1_kafka_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteBookingEvent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteBookingEvent) ProtoMessage() {}
+
+func (x *DeleteBookingEvent) ProtoReflect() protoreflect.Message {
+	mi := &file_api_kafka_v1_kafka_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteBookingEvent.ProtoReflect.Descriptor instead.
+func (*DeleteBookingEvent) Descriptor() ([]byte, []int) {
+	return file_api_kafka_v1_kafka_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *DeleteBookingEvent) GetBookingId() string {
+	if x != nil {
+		return x.BookingId
+	}
+	return ""
+}
+
 var File_api_kafka_v1_kafka_proto protoreflect.FileDescriptor
 
 var file_api_kafka_v1_kafka_proto_rawDesc = []byte{
@@ -126,9 +220,17 @@ var file_api_kafka_v1_kafka_proto_rawDesc = []byte{
 	0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x54, 0x72, 0x61, 0x69, 0x6e, 0x69, 0x6e, 0x67, 0x45, 0x76,
 	0x65, 0x6e, 0x74, 0x12, 0x1f, 0x0a, 0x0b, 0x74, 0x72, 0x61, 0x69, 0x6e, 0x69, 0x6e, 0x67, 0x5f,
 	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x74, 0x72, 0x61, 0x69, 0x6e, 0x69,
-	0x6e, 0x67, 0x49, 0x64, 0x42, 0x21, 0x5a, 0x1f, 0x74, 0x72, 0x61, 0x69, 0x6e, 0x69, 0x6e, 0x67,
-	0x46, 0x69, 0x6e, 0x64, 0x65, 0x72, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x6b,
-	0x61, 0x66, 0x6b, 0x61, 0x2f, 0x76, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6e, 0x67, 0x49, 0x64, 0x22, 0x33, 0x0a, 0x12, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x42, 0x6f,
+	0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x12, 0x1d, 0x0a, 0x0a, 0x62, 0x6f,
+	0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09,
+	0x62, 0x6f, 0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x49, 0x64, 0x22, 0x33, 0x0a, 0x12, 0x44, 0x65, 0x6c,
+	0x65, 0x74, 0x65, 0x42, 0x6f, 0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x12,
+	0x1d, 0x0a, 0x0a, 0x62, 0x6f, 0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x09, 0x62, 0x6f, 0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x49, 0x64, 0x42, 0x35,
+	0x5a, 0x33, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x41, 0x6e, 0x74,
+	0x65, 0x73, 0x73, 0x65, 0x72, 0x2f, 0x74, 0x72, 0x61, 0x69, 0x6e, 0x69, 0x6e, 0x67, 0x46, 0x69,
+	0x6e, 0x64, 0x65, 0x72, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x6b, 0x61, 0x66,
+	0x6b, 0x61, 0x2f, 0x76, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -143,10 +245,12 @@ func file_api_kafka_v1_kafka_proto_rawDescGZIP() []byte {
 	return file_api_kafka_v1_kafka_proto_rawDescData
 }
 
-var file_api_kafka_v1_kafka_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_api_kafka_v1_kafka_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_api_kafka_v1_kafka_proto_goTypes = []interface{}{
 	(*CreateTrainingEvent)(nil), // 0: kafka.v1.CreateTrainingEvent
 	(*DeleteTrainingEvent)(nil), // 1: kafka.v1.DeleteTrainingEvent
+	(*CreateBookingEvent)(nil),  // 2: kafka.v1.CreateBookingEvent
+	(*DeleteBookingEvent)(nil),  // 3: kafka.v1.DeleteBookingEvent
 }
 var file_api_kafka_v1_kafka_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -186,6 +290,30 @@ func file_api_kafka_v1_kafka_proto_init() {
 				return nil
 			}
 		}
+		file_api_kafka_v1_kafka_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CreateBookingEvent); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_kafka_v1_kafka_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteBookingEvent); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -193,7 +321,7 @@ func file_api_kafka_v1_kafka_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_api_kafka_v1_kafka_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

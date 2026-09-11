@@ -4,12 +4,15 @@ import (
 	"context"
 	"errors"
 	"log"
-	model "trainingFinder/internal/model/training"
 
-	trainingPkg "trainingFinder/pkg/api/training/v1"
+	modelPage "github.com/Antesser/trainingFinder/internal/model/page"
+	model "github.com/Antesser/trainingFinder/internal/model/training"
+
+	trainingPkg "github.com/Antesser/trainingFinder/pkg/api/training/v1"
 
 	"github.com/google/uuid"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/samber/lo"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -68,17 +71,10 @@ func (s *Server) GetTraining(ctx context.Context, req *trainingPkg.GetTrainingRe
 		}
 		return nil, err
 	}
-
-	return &trainingPkg.GetTrainingResponse{Id: mod.ID,
-			TrainerId:      mod.TrainerID,
-			UserId:         mod.UserID,
-			StartedAt:      timestamppb.New(mod.StartedAt),
-			EndedAt:        timestamppb.New(mod.EndedAt),
-			AdditionalInfo: mod.AdditionalInfo},
+	return &trainingPkg.GetTrainingResponse{Training: toProtoTraining(mod)},
 		nil
 }
 func (s *Server) UpdateTraining(ctx context.Context, req *trainingPkg.UpdateTrainingRequest) (*trainingPkg.UpdateTrainingResponse, error) {
-
 	trainingModel := model.UpdateTrainingRequest{
 		ID:        req.Id,
 		TrainerID: req.TrainerId,
@@ -115,4 +111,30 @@ func (s *Server) DeleteTraining(ctx context.Context, req *trainingPkg.DeleteTrai
 
 	return &trainingPkg.DeleteTrainingResponse{},
 		nil
+}
+func (s *Server) ListTraining(ctx context.Context, req *trainingPkg.ListTrainingsRequest) (*trainingPkg.ListTrainingsResponse, error) {
+	mod, hasNext, err := s.trainingService.ListTraining(ctx, modelPage.Page{Limit: req.Page.Limit, Offset: req.Page.Offset}, req.Filter)
+	if err != nil {
+		return nil, err
+	}
+
+	protoList := lo.Map(mod, func(m model.Training, _ int) *trainingPkg.Training {
+		return toProtoTraining(&m)
+	})
+
+	return &trainingPkg.ListTrainingsResponse{
+		Trainings: protoList,
+		HasNext:   hasNext,
+	}, nil
+}
+
+func toProtoTraining(m *model.Training) *trainingPkg.Training {
+	return &trainingPkg.Training{
+		Id:             m.ID,
+		TrainerId:      m.TrainerID,
+		UserId:         m.UserID,
+		StartedAt:      timestamppb.New(m.StartedAt),
+		EndedAt:        timestamppb.New(m.EndedAt),
+		AdditionalInfo: m.AdditionalInfo,
+	}
 }

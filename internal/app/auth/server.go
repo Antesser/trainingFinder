@@ -6,9 +6,9 @@ import (
 	"log"
 	"net/http"
 
-	authPkg "trainingFinder/pkg/api/auth/v1"
+	authPkg "github.com/Antesser/trainingFinder/pkg/api/auth/v1"
 
-	model "trainingFinder/internal/model/training"
+	model "github.com/Antesser/trainingFinder/internal/model/training"
 
 	"github.com/google/uuid"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -96,4 +96,13 @@ func (s *Server) RefreshToken(ctx context.Context, req *authPkg.RefreshTokenRequ
 	return &authPkg.RefreshTokenResponse{
 		AccessToken: accessToken,
 	}, nil
+}
+func (s *Server) CreateRole(ctx context.Context, req *authPkg.CreateRoleRequest) (*authPkg.CreateRoleResponse, error) {
+
+	err := s.authService.CreateRole(ctx, req.Role)
+	if err != nil {
+		return nil, err
+	}
+
+	return &authPkg.CreateRoleResponse{}, nil
 }

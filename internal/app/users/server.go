@@ -3,7 +3,8 @@ package users
 import (
 	"context"
 	"log"
-	userPkg "trainingFinder/pkg/api/users/v1"
+
+	userPkg "github.com/Antesser/trainingFinder/pkg/api/users/v1"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"

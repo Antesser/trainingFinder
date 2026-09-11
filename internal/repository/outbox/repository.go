@@ -3,8 +3,9 @@ package outbox
 import (
 	"context"
 	"fmt"
-	"trainingFinder/internal/model/outbox"
-	model "trainingFinder/internal/model/training"
+
+	"github.com/Antesser/trainingFinder/internal/model/outbox"
+	model "github.com/Antesser/trainingFinder/internal/model/training"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/georgysavva/scany/v2/pgxscan"
