@@ -3,14 +3,15 @@ package booking
 import (
 	"context"
 
+	"github.com/Antesser/trainingFinder/internal/model/booking"
 	model "github.com/Antesser/trainingFinder/internal/model/booking"
 	"github.com/Antesser/trainingFinder/internal/model/outbox"
-	"github.com/Antesser/trainingFinder/internal/model/page"
 )
 
 type bookingRepository interface {
-	CreateTrainingBooking(ctx context.Context, mod model.TrainingBooking) error
-	ListBookings(ctx context.Context, page page.Page, bookedBy string) ([]model.TrainingBooking, bool, error)
+	CreateTrainingBooking(ctx context.Context, mod model.TrainingBooking, withLock bool) error
+	CheckIntersections(ctx context.Context, booking model.TrainingBooking) error
+	ListBookings(ctx context.Context, data booking.ListBookingsRequest) (model.ListBookingsResponse, error)
 	InTx(ctx context.Context, fn func(ctx context.Context) error) error
 }
 

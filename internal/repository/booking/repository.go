@@ -5,7 +5,6 @@ import (
 	"time"
 
 	model "github.com/Antesser/trainingFinder/internal/model/booking"
-	"github.com/Antesser/trainingFinder/internal/model/page"
 	"github.com/Antesser/trainingFinder/internal/utils"
 	"github.com/georgysavva/scany/v2/pgxscan"
 
@@ -31,7 +30,7 @@ type booking struct {
 	BookTo     time.Time `db:"book_to"`
 }
 
-func (r *repository) CreateTrainingBooking(ctx context.Context, booking model.TrainingBooking) error {
+func (r *repository) CheckIntersections(ctx context.Context, booking model.TrainingBooking) error {
 	sel := sq.Select(
 		"id",
 	).From("training_booking").
@@ -51,18 +50,23 @@ func (r *repository) CreateTrainingBooking(ctx context.Context, booking model.Tr
 	if tags.RowsAffected() != 0 {
 		return model.ErrBookingAlreadyExists
 	}
+	return nil
+}
 
+func (r *repository) CreateTrainingBooking(ctx context.Context, booking model.TrainingBooking, withLock bool) error {
 	qb := sq.Insert("training_booking").
 		Columns("training_id", "booked_by", "book_to", "book_from").
 		Values(booking.TrainingID, booking.UserID, booking.BookTo, booking.BookFrom).
 		PlaceholderFormat(sq.Dollar)
-
-	query, args, err = qb.PlaceholderFormat(sq.Dollar).ToSql()
+	if withLock {
+		qb.Suffix("FOR UPDATE")
+	}
+	query, args, err := qb.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		return err
 	}
 
-	tags, err = r.pool.Querier(ctx).Exec(ctx, query, args...)
+	tags, err := r.pool.Querier(ctx).Exec(ctx, query, args...)
 	if err != nil {
 		return err
 	}
@@ -72,25 +76,25 @@ func (r *repository) CreateTrainingBooking(ctx context.Context, booking model.Tr
 	return nil
 }
 
-func (r *repository) ListBookings(ctx context.Context, page page.Page, bookedBy string) ([]model.TrainingBooking, bool, error) {
-	limit := int(page.Limit)
+func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRequest) (model.ListBookingsResponse, error) {
+	limit := int(data.Page.Limit)
 	qb := sq.Select(
 		"id",
 		"training_id", "booked_by", "created_at", "book_from", "book_to",
 	).From("training_booking").
-		Where(sq.Eq{"booked_by": bookedBy}).
-		Limit(page.Limit + 1).
-		Offset(page.Offset).
+		Where(sq.Eq{"booked_by": data.BookedBy}).
+		Limit(data.Page.Limit + 1).
+		Offset(data.Page.Offset).
 		PlaceholderFormat(sq.Dollar)
 
 	query, args, err := qb.ToSql()
 	if err != nil {
-		return nil, false, err
+		return model.ListBookingsResponse{}, err
 	}
 
 	var rows []booking
 	if err := pgxscan.Select(ctx, r.pool.Querier(ctx), &rows, query, args...); err != nil {
-		return nil, false, err
+		return model.ListBookingsResponse{}, err
 	}
 	rows, hasNext := utils.TruncateForHasNext(rows, limit)
 	out := make([]model.TrainingBooking, 0, len(rows))
@@ -98,5 +102,5 @@ func (r *repository) ListBookings(ctx context.Context, page page.Page, bookedBy 
 		out[i] = model.TrainingBooking{TrainingID: b.TrainingID, BookFrom: b.BookFrom, BookTo: b.BookTo, UserID: b.UserID}
 	}
 
-	return out, hasNext, nil
+	return model.ListBookingsResponse{ModelList: out, HasNext: hasNext}, nil
 }

@@ -6,7 +6,6 @@ import (
 	"errors"
 	"time"
 
-	"github.com/Antesser/trainingFinder/internal/model/page"
 	model "github.com/Antesser/trainingFinder/internal/model/training"
 	"github.com/Antesser/trainingFinder/internal/utils"
 
@@ -125,25 +124,25 @@ func (r *repository) DeleteTraining(ctx context.Context, id string) error {
 	return nil
 }
 
-func (r *repository) ListTrainings(ctx context.Context, page page.Page, userID string) ([]model.Training, bool, error) {
-	limit := int(page.Limit)
+func (r *repository) ListTrainings(ctx context.Context, data model.ListTrainingRequest) (model.ListTrainingResponse, error) {
+	limit := int(data.Page.Limit)
 	qb := sq.Select(
 		"id",
 		"trainer_id", "user_id", "started_at", "ended_at", "additional_info",
 	).From("training").
-		Where(sq.Eq{"user_id": userID}).
-		Limit(page.Limit + 1).
-		Offset(page.Offset).
+		Where(sq.Eq{"user_id": data.Filter.UserID}).
+		Limit(data.Page.Limit + 1).
+		Offset(data.Page.Offset).
 		PlaceholderFormat(sq.Dollar)
 
 	query, args, err := qb.ToSql()
 	if err != nil {
-		return nil, false, err
+		return model.ListTrainingResponse{}, err
 	}
 
 	var rows []training
 	if err := pgxscan.Select(ctx, r.pool.Querier(ctx), &rows, query, args...); err != nil {
-		return nil, false, err
+		return model.ListTrainingResponse{}, err
 	}
 	rows, hasNext := utils.TruncateForHasNext(rows, limit)
 	out := make([]model.Training, 0, len(rows))
@@ -151,5 +150,5 @@ func (r *repository) ListTrainings(ctx context.Context, page page.Page, userID s
 		out[i] = model.Training{ID: t.ID, TrainerID: t.TrainerID, UserID: t.UserID, StartedAt: t.StartedAt, EndedAt: t.EndedAt}
 	}
 
-	return out, hasNext, nil
+	return model.ListTrainingResponse{ModelList: out, HasNext: hasNext}, nil
 }
