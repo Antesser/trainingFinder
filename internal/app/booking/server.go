@@ -60,6 +60,9 @@ func (s *Server) BookTraining(ctx context.Context, req *bookingPkg.BookTrainingR
 		if errors.Is(err, model.ErrBookingNotFound) {
 			return nil, status.Error(codes.NotFound, err.Error())
 		}
+		if errors.Is(err, model.ErrBookingAlreadyExists) {
+			return nil, status.Error(codes.AlreadyExists, err.Error())
+		}
 		return nil, err
 	}
 
