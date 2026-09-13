@@ -2,7 +2,6 @@ package booking
 
 import (
 	"context"
-	"time"
 
 	model "github.com/Antesser/trainingFinder/internal/model/booking"
 	"github.com/Antesser/trainingFinder/internal/utils"
@@ -20,15 +19,6 @@ type repository struct {
 
 func New(pool *pgxtransactor.Pool) *repository {
 	return &repository{pool: pool, Transactor: pool}
-}
-
-type booking struct {
-	ID         string    `db:"id"`
-	TrainingID string    `db:"training_id"`
-	UserID     string    `db:"booked_by"`
-	CreatedAt  time.Time `db:"created_at"`
-	BookFrom   time.Time `db:"book_from"`
-	BookTo     time.Time `db:"book_to"`
 }
 
 func (r *repository) CreateTrainingBooking(ctx context.Context, booking model.TrainingBooking) error {
@@ -94,6 +84,9 @@ func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRe
 			BookFrom:   b.BookFrom,
 			BookTo:     b.BookTo,
 			UserID:     b.UserID,
+			Status:     b.Status,
+			CreatedAt:  b.CreatedAt,
+			BookedBy:   b.BookBy,
 		}
 	})
 	return model.ListBookingsResponse{ModelList: out, HasNext: hasNext}, nil

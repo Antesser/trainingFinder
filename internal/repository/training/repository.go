@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"time"
 
 	model "github.com/Antesser/trainingFinder/internal/model/training"
 	"github.com/Antesser/trainingFinder/internal/utils"
@@ -14,15 +13,6 @@ import (
 	"github.com/samber/lo"
 )
 
-type training struct {
-	ID             string    `db:"id"`
-	TrainerID      string    `db:"trainer_id"`
-	UserID         string    `db:"user_id"`
-	StartedAt      time.Time `db:"started_at"`
-	EndedAt        time.Time `db:"ended_at"`
-	AdditionalInfo string    `db:"additional_info"`
-	Duration       int64     `db:"duration"`
-}
 type repository struct {
 	pool *pgxtransactor.Pool
 	pgxtransactor.Transactor
