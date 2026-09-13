@@ -65,7 +65,7 @@ func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRe
 		PlaceholderFormat(sq.Dollar)
 
 	if data.Filter.WithLock {
-		qb.Suffix("FOR UPDATE")
+		qb = qb.Suffix("FOR UPDATE")
 	}
 	if data.Filter.BookedFrom != nil {
 		qb = qb.Where("book_from = ?", data.Filter.BookedFrom)
