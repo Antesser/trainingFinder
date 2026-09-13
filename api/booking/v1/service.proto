@@ -36,7 +36,6 @@ message Booking{
   google.protobuf.Timestamp created_at = 5;
   google.protobuf.Timestamp book_from = 6;
   google.protobuf.Timestamp book_to = 7;
-  bool with_lock = 8;
 }
 message BookTrainingRequest {
   string training_id = 1[(buf.validate.field).required = true];

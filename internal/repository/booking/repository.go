@@ -30,38 +30,6 @@ type booking struct {
 	BookTo     time.Time `db:"book_to"`
 }
 
-func (r *repository) CheckIntersections(ctx context.Context, booking model.TrainingBooking) error {
-	sel := sq.Select(
-		"id",
-	).From("training_booking").
-		Where(sq.Eq{"training_id": booking.TrainingID}).
-		Where(sq.Eq{"booked_from": booking.BookFrom}).
-		PlaceholderFormat(sq.Dollar)
-	if booking.WithLock {
-		sel.Suffix("FOR UPDATE")
-	}
-	if booking.BookFrom != nil {
-		sel = sel.Where("booked_by = ?", booking.BookFrom)
-	}
-	if booking.BookTo != nil {
-		sel = sel.Where("booked_by = ?", booking.BookTo)
-	}
-
-	query, args, err := sel.PlaceholderFormat(sq.Dollar).ToSql()
-	if err != nil {
-		return err
-	}
-
-	tags, err := r.pool.Querier(ctx).Exec(ctx, query, args...)
-	if err != nil {
-		return err
-	}
-	if tags.RowsAffected() != 0 {
-		return model.ErrBookingAlreadyExists
-	}
-	return nil
-}
-
 func (r *repository) CreateTrainingBooking(ctx context.Context, booking model.TrainingBooking) error {
 	qb := sq.Insert("training_booking").
 		Columns("training_id", "booked_by", "book_to", "book_from").

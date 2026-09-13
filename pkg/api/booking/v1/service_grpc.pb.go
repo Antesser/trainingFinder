@@ -27,7 +27,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BookingServiceClient interface {
-	BookTraining(ctx context.Context, in *BookingTrainingRequest, opts ...grpc.CallOption) (*BookingTrainingResponse, error)
+	BookTraining(ctx context.Context, in *BookTrainingRequest, opts ...grpc.CallOption) (*BookTrainingResponse, error)
 	ListBookings(ctx context.Context, in *ListBookingsRequest, opts ...grpc.CallOption) (*ListBookingsResponse, error)
 }
 
@@ -39,8 +39,8 @@ func NewBookingServiceClient(cc grpc.ClientConnInterface) BookingServiceClient {
 	return &bookingServiceClient{cc}
 }
 
-func (c *bookingServiceClient) BookTraining(ctx context.Context, in *BookingTrainingRequest, opts ...grpc.CallOption) (*BookingTrainingResponse, error) {
-	out := new(BookingTrainingResponse)
+func (c *bookingServiceClient) BookTraining(ctx context.Context, in *BookTrainingRequest, opts ...grpc.CallOption) (*BookTrainingResponse, error) {
+	out := new(BookTrainingResponse)
 	err := c.cc.Invoke(ctx, BookingService_BookTraining_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -61,7 +61,7 @@ func (c *bookingServiceClient) ListBookings(ctx context.Context, in *ListBooking
 // All implementations must embed UnimplementedBookingServiceServer
 // for forward compatibility
 type BookingServiceServer interface {
-	BookTraining(context.Context, *BookingTrainingRequest) (*BookingTrainingResponse, error)
+	BookTraining(context.Context, *BookTrainingRequest) (*BookTrainingResponse, error)
 	ListBookings(context.Context, *ListBookingsRequest) (*ListBookingsResponse, error)
 	mustEmbedUnimplementedBookingServiceServer()
 }
@@ -70,7 +70,7 @@ type BookingServiceServer interface {
 type UnimplementedBookingServiceServer struct {
 }
 
-func (UnimplementedBookingServiceServer) BookTraining(context.Context, *BookingTrainingRequest) (*BookingTrainingResponse, error) {
+func (UnimplementedBookingServiceServer) BookTraining(context.Context, *BookTrainingRequest) (*BookTrainingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BookTraining not implemented")
 }
 func (UnimplementedBookingServiceServer) ListBookings(context.Context, *ListBookingsRequest) (*ListBookingsResponse, error) {
@@ -90,7 +90,7 @@ func RegisterBookingServiceServer(s grpc.ServiceRegistrar, srv BookingServiceSer
 }
 
 func _BookingService_BookTraining_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BookingTrainingRequest)
+	in := new(BookTrainingRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -102,7 +102,7 @@ func _BookingService_BookTraining_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: BookingService_BookTraining_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BookingServiceServer).BookTraining(ctx, req.(*BookingTrainingRequest))
+		return srv.(BookingServiceServer).BookTraining(ctx, req.(*BookTrainingRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

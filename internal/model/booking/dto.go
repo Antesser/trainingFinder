@@ -19,4 +19,5 @@ type Filter struct {
 	BookedBy   string
 	BookedFrom *time.Time
 	BookedTo   *time.Time
+	WithLock   bool
 }

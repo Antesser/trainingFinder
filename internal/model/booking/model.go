@@ -16,7 +16,6 @@ type TrainingBooking struct {
 	Status     string
 	BookedBy   string
 	CreatedAt  time.Time
-	WithLock   bool
 }
 type CreateBookingEvent struct {
 	BookingID string

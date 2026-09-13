@@ -5,11 +5,17 @@ import (
 
 	model "github.com/Antesser/trainingFinder/internal/model/booking"
 	"github.com/Antesser/trainingFinder/internal/model/outbox"
+	"github.com/Antesser/trainingFinder/internal/model/page"
 )
 
 func (b *service) BookTraining(ctx context.Context, booking model.TrainingBooking) error {
+	book := model.ListBookingsRequest{
+		Page:   page.Page{},
+		Filter: model.Filter{BookedFrom: booking.BookFrom, BookedBy: booking.BookedBy, BookedTo: booking.BookTo, WithLock: true},
+	}
+
 	return b.repo.InTx(ctx, func(ctx context.Context) error {
-		if err := b.repo.CheckIntersections(ctx, booking); err != nil {
+		if _, err := b.repo.ListBookings(ctx, book); err != nil {
 			return err
 		}
 		if err := b.repo.CreateTrainingBooking(ctx, booking); err != nil {

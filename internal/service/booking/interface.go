@@ -10,7 +10,6 @@ import (
 
 type bookingRepository interface {
 	CreateTrainingBooking(ctx context.Context, mod model.TrainingBooking) error
-	CheckIntersections(ctx context.Context, booking model.TrainingBooking) error
 	ListBookings(ctx context.Context, data booking.ListBookingsRequest) (model.ListBookingsResponse, error)
 	InTx(ctx context.Context, fn func(ctx context.Context) error) error
 }

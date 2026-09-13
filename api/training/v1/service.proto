@@ -47,6 +47,7 @@ message Training{
   google.protobuf.Timestamp started_at = 4;
   google.protobuf.Timestamp ended_at = 5;
   string additional_info = 6;
+  uint64 duration = 7;
 }
 message Page{
   uint64 Limit = 1;
@@ -61,6 +62,7 @@ message CreateTrainingRequest {
   string additional_info = 5 [
     (buf.validate.field).string = {min_len: 1, max_len: 1000}
   ];
+  uint64 duration = 6;
 }
 
 message CreateTrainingResponse {

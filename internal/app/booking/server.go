@@ -45,7 +45,7 @@ func (s *Server) RegisterHandlerFromEndpoint(
 	return err
 }
 
-func (s *Server) BookTraining(ctx context.Context, req *bookingPkg.BookingTrainingRequest) (*bookingPkg.BookingTrainingResponse, error) {
+func (s *Server) BookTraining(ctx context.Context, req *bookingPkg.BookTrainingRequest) (*bookingPkg.BookTrainingResponse, error) {
 	var bookFrom, bookTo *time.Time
 	if ts := req.GetBookFrom(); ts != nil {
 		t := ts.AsTime()
@@ -63,7 +63,7 @@ func (s *Server) BookTraining(ctx context.Context, req *bookingPkg.BookingTraini
 		return nil, err
 	}
 
-	return &bookingPkg.BookingTrainingResponse{},
+	return &bookingPkg.BookTrainingResponse{},
 		nil
 }
 

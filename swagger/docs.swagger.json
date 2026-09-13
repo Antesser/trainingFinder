@@ -160,7 +160,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1BookingTrainingResponse"
+              "$ref": "#/definitions/v1BookTrainingResponse"
             }
           },
           "default": {
@@ -176,7 +176,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1BookingTrainingRequest"
+              "$ref": "#/definitions/v1BookTrainingRequest"
             }
           }
         ],
@@ -555,6 +555,28 @@
         }
       }
     },
+    "v1BookTrainingRequest": {
+      "type": "object",
+      "properties": {
+        "training_id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "book_from": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "book_to": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "v1BookTrainingResponse": {
+      "type": "object"
+    },
     "v1Booking": {
       "type": "object",
       "properties": {
@@ -581,33 +603,8 @@
         "book_to": {
           "type": "string",
           "format": "date-time"
-        },
-        "with_lock": {
-          "type": "boolean"
         }
       }
-    },
-    "v1BookingTrainingRequest": {
-      "type": "object",
-      "properties": {
-        "training_id": {
-          "type": "string"
-        },
-        "user_id": {
-          "type": "string"
-        },
-        "book_from": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "book_to": {
-          "type": "string",
-          "format": "date-time"
-        }
-      }
-    },
-    "v1BookingTrainingResponse": {
-      "type": "object"
     },
     "v1CreateRoleRequest": {
       "type": "object",
@@ -640,6 +637,10 @@
         },
         "additional_info": {
           "type": "string"
+        },
+        "duration": {
+          "type": "string",
+          "format": "uint64"
         }
       }
     },
@@ -827,6 +828,10 @@
         },
         "additional_info": {
           "type": "string"
+        },
+        "duration": {
+          "type": "string",
+          "format": "uint64"
         }
       }
     },
