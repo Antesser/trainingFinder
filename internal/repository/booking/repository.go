@@ -7,6 +7,7 @@ import (
 	model "github.com/Antesser/trainingFinder/internal/model/booking"
 	"github.com/Antesser/trainingFinder/internal/utils"
 	"github.com/georgysavva/scany/v2/pgxscan"
+	"github.com/samber/lo"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/golangmonster/pgxtransactor"
@@ -87,10 +88,15 @@ func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRe
 		return model.ListBookingsResponse{}, err
 	}
 	rows, hasNext := utils.TruncateForHasNext(rows, limit)
-	out := make([]model.TrainingBooking, 0, len(rows))
-	for i, b := range rows {
-		out[i] = model.TrainingBooking{TrainingID: b.TrainingID, BookFrom: &b.BookFrom, BookTo: &b.BookTo, UserID: b.UserID}
-	}
-
+	out := lo.Map(rows, func(b booking, _ int) model.TrainingBooking {
+		bookFrom := b.BookFrom
+		bookTo := b.BookTo
+		return model.TrainingBooking{
+			TrainingID: b.TrainingID,
+			BookFrom:   &bookFrom,
+			BookTo:     &bookTo,
+			UserID:     b.UserID,
+		}
+	})
 	return model.ListBookingsResponse{ModelList: out, HasNext: hasNext}, nil
 }

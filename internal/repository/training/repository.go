@@ -8,10 +8,10 @@ import (
 
 	model "github.com/Antesser/trainingFinder/internal/model/training"
 	"github.com/Antesser/trainingFinder/internal/utils"
-
 	sq "github.com/Masterminds/squirrel"
 	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/golangmonster/pgxtransactor"
+	"github.com/samber/lo"
 )
 
 type training struct {
@@ -152,10 +152,14 @@ func (r *repository) ListTrainings(ctx context.Context, data model.ListTrainingR
 		return model.ListTrainingResponse{}, err
 	}
 	rows, hasNext := utils.TruncateForHasNext(rows, limit)
-	out := make([]model.Training, 0, len(rows))
-	for i, t := range rows {
-		out[i] = model.Training{ID: t.ID, TrainerID: t.TrainerID, UserID: t.UserID, StartedAt: t.StartedAt, EndedAt: t.EndedAt}
-	}
-
+	out := lo.Map(rows, func(t training, _ int) model.Training {
+		return model.Training{
+			ID:        t.ID,
+			TrainerID: t.TrainerID,
+			UserID:    t.UserID,
+			StartedAt: t.StartedAt,
+			EndedAt:   t.EndedAt,
+		}
+	})
 	return model.ListTrainingResponse{ModelList: out, HasNext: hasNext}, nil
 }
