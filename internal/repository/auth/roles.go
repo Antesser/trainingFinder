@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 	"fmt"
-	"log"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/georgysavva/scany/v2/pgxscan"
@@ -17,7 +16,6 @@ func (r *repository) CreateRole(ctx context.Context, role string) error {
 
 	query, args, err := qb.ToSql()
 	if err != nil {
-		log.Print("Got an error:", err)
 		return err
 	}
 

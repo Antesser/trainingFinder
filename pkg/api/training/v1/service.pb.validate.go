@@ -302,112 +302,6 @@ var _ interface {
 	ErrorName() string
 } = PageValidationError{}
 
-// Validate checks the field values on Filter with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *Filter) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on Filter with the rules defined in the
-// proto definition for this message. If any rules are violated, the result is
-// a list of violation errors wrapped in FilterMultiError, or nil if none found.
-func (m *Filter) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *Filter) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if m.UserId != nil {
-		// no validation rules for UserId
-	}
-
-	if m.Duration != nil {
-		// no validation rules for Duration
-	}
-
-	if len(errors) > 0 {
-		return FilterMultiError(errors)
-	}
-
-	return nil
-}
-
-// FilterMultiError is an error wrapping multiple validation errors returned by
-// Filter.ValidateAll() if the designated constraints aren't met.
-type FilterMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m FilterMultiError) Error() string {
-	msgs := make([]string, 0, len(m))
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m FilterMultiError) AllErrors() []error { return m }
-
-// FilterValidationError is the validation error returned by Filter.Validate if
-// the designated constraints aren't met.
-type FilterValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e FilterValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e FilterValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e FilterValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e FilterValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e FilterValidationError) ErrorName() string { return "FilterValidationError" }
-
-// Error satisfies the builtin error interface
-func (e FilterValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sFilter.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = FilterValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = FilterValidationError{}
-
 // Validate checks the field values on CreateTrainingRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -1698,3 +1592,114 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ListTrainingsResponseValidationError{}
+
+// Validate checks the field values on ListTrainingsRequest_Filter with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListTrainingsRequest_Filter) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListTrainingsRequest_Filter with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListTrainingsRequest_FilterMultiError, or nil if none found.
+func (m *ListTrainingsRequest_Filter) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListTrainingsRequest_Filter) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.UserId != nil {
+		// no validation rules for UserId
+	}
+
+	if m.Duration != nil {
+		// no validation rules for Duration
+	}
+
+	if len(errors) > 0 {
+		return ListTrainingsRequest_FilterMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListTrainingsRequest_FilterMultiError is an error wrapping multiple
+// validation errors returned by ListTrainingsRequest_Filter.ValidateAll() if
+// the designated constraints aren't met.
+type ListTrainingsRequest_FilterMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListTrainingsRequest_FilterMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListTrainingsRequest_FilterMultiError) AllErrors() []error { return m }
+
+// ListTrainingsRequest_FilterValidationError is the validation error returned
+// by ListTrainingsRequest_Filter.Validate if the designated constraints
+// aren't met.
+type ListTrainingsRequest_FilterValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListTrainingsRequest_FilterValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListTrainingsRequest_FilterValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListTrainingsRequest_FilterValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListTrainingsRequest_FilterValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListTrainingsRequest_FilterValidationError) ErrorName() string {
+	return "ListTrainingsRequest_FilterValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListTrainingsRequest_FilterValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListTrainingsRequest_Filter.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListTrainingsRequest_FilterValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListTrainingsRequest_FilterValidationError{}

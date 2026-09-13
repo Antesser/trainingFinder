@@ -542,18 +542,6 @@
         }
       }
     },
-    "trainingv1Filter": {
-      "type": "object",
-      "properties": {
-        "user_id": {
-          "type": "string"
-        },
-        "duration": {
-          "type": "string",
-          "format": "uint64"
-        }
-      }
-    },
     "trainingv1Page": {
       "type": "object",
       "properties": {
@@ -732,7 +720,19 @@
           "$ref": "#/definitions/trainingv1Page"
         },
         "filter": {
-          "$ref": "#/definitions/trainingv1Filter"
+          "$ref": "#/definitions/v1ListTrainingsRequestFilter"
+        }
+      }
+    },
+    "v1ListTrainingsRequestFilter": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "string",
+          "format": "uint64"
         }
       }
     },

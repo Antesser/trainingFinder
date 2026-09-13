@@ -52,10 +52,7 @@ message Page{
   uint64 Limit = 1;
   uint64 Offset = 2;
 }
-message Filter{
-  optional string user_id = 1[(buf.validate.field).required = true, (buf.validate.field).string.uuid = true];
-  optional uint64 duration = 2;
-}
+
 message CreateTrainingRequest {
   string trainer_id = 1 [(buf.validate.field).string.uuid = true];
   string user_id = 2 [(buf.validate.field).required = true];
@@ -98,8 +95,12 @@ message GetTrainingResponse {
 }
 
 message ListTrainingsRequest {
-  Page page = 1;
+  Page page = 1[(buf.validate.field).required = true];
   Filter filter = 2;
+  message Filter{
+    optional string user_id = 1[(buf.validate.field).required = true, (buf.validate.field).string.uuid = true];
+    optional uint64 duration = 2;
+  }
 }
 
 message ListTrainingsResponse {
