@@ -56,16 +56,15 @@ func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRe
 		"id",
 		"training_id", "booked_by", "created_at", "book_from", "book_to",
 	).From("training_booking").
-		Where(sq.Eq{"booked_by": data.Filter.BookedBy}).
 		Limit(data.Page.Limit + 1).
 		Offset(data.Page.Offset).
 		PlaceholderFormat(sq.Dollar)
 
 	if data.Filter.BookedFrom != nil {
-		qb = qb.Where("booked_by = ?", data.Filter.BookedFrom)
+		qb = qb.Where("book_from = ?", data.Filter.BookedFrom)
 	}
 	if data.Filter.BookedTo != nil {
-		qb = qb.Where("booked_by = ?", data.Filter.BookedTo)
+		qb = qb.Where("book_to = ?", data.Filter.BookedTo)
 	}
 
 	query, args, err := qb.ToSql()

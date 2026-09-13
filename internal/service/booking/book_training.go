@@ -12,9 +12,10 @@ func (b *service) BookTraining(ctx context.Context, booking model.TrainingBookin
 	return b.repo.InTx(ctx, func(ctx context.Context) error {
 		res, err := b.repo.ListBookings(ctx, model.ListBookingsRequest{
 			Page: page.Page{},
-			Filter: model.Filter{BookedFrom: booking.BookFrom,
-				BookedTo: booking.BookTo,
-				WithLock: true,
+			Filter: model.Filter{
+				BookedFrom: booking.BookFrom,
+				BookedTo:   booking.BookTo,
+				WithLock:   true,
 			},
 		})
 		if err != nil {
