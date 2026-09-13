@@ -113,9 +113,9 @@ func (s *Server) DeleteTraining(ctx context.Context, req *trainingPkg.DeleteTrai
 		nil
 }
 func (s *Server) ListTraining(ctx context.Context, req *trainingPkg.ListTrainingsRequest) (*trainingPkg.ListTrainingsResponse, error) {
-	var duration int
+	var duration int64
 	if req.GetFilter().Duration != nil {
-		duration = int(*req.GetFilter().Duration)
+		duration = int64(*req.GetFilter().Duration)
 	}
 	mod, err := s.trainingService.ListTraining(ctx, model.ListTrainingRequest{Page: modelPage.Page{Limit: req.Page.Limit, Offset: req.Page.Offset},
 		Filter: model.TrainingFilter{UserID: req.Filter.UserId, Duration: &duration}})

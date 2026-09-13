@@ -126,7 +126,7 @@ func (r *repository) ListTrainings(ctx context.Context, data model.ListTrainingR
 		PlaceholderFormat(sq.Dollar)
 
 	if data.Filter.Duration != nil {
-		qb = qb.Where("duration = ?", data.Filter.Duration)
+		qb = qb.Where(sq.Eq{"duration": data.Filter.Duration})
 	}
 	if data.Filter.UserID != nil {
 		qb = qb.Where(sq.Eq{"user_id": data.Filter.UserID})

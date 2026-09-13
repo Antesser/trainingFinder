@@ -59,13 +59,13 @@ func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRe
 		qb = qb.Suffix("FOR UPDATE")
 	}
 	if data.Filter.BookedFrom != nil {
-		qb = qb.Where("book_from = ?", data.Filter.BookedFrom)
+		qb = qb.Where(sq.Eq{"book_from": data.Filter.BookedFrom})
 	}
 	if data.Filter.BookedBy != nil {
-		qb = qb.Where("booked_by = ?", data.Filter.BookedBy)
+		qb = qb.Where(sq.Eq{"booked_by": data.Filter.BookedBy})
 	}
 	if data.Filter.BookedTo != nil {
-		qb = qb.Where("book_to = ?", data.Filter.BookedTo)
+		qb = qb.Where(sq.Eq{"book_to": data.Filter.BookedTo})
 	}
 
 	query, args, err := qb.ToSql()

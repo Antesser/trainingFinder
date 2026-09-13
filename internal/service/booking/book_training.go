@@ -27,17 +27,18 @@ func (b *service) BookTraining(ctx context.Context, booking model.TrainingBookin
 		if err := b.repo.CreateTrainingBooking(ctx, booking); err != nil {
 			return err
 		}
-		event := model.CreateBookingEvent{
-			BookingID: booking.TrainingID,
-		}
+		//event := model.CreateBookingEvent{
+		//	BookingID: booking.TrainingID,
+		//}
 
-		msg, err := b.bookingMarshaller(event)
-		if err != nil {
-			return err
-		}
+		//msg, err := b.bookingMarshaller(event)
+		//if err != nil {
+		//	return err
+		//}
 
 		err = b.outboxRepo.CreateOutboxItem(ctx, outbox.OutboxItem{
-			Msg:   string(msg),
+			//Msg:   string(msg),
+			Msg:   "Later",
 			Key:   booking.TrainingID,
 			Topic: "someTopic",
 		})

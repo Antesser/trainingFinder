@@ -17,7 +17,7 @@ type UpdateTrainingRequest struct {
 
 type TrainingFilter struct {
 	UserID   *string
-	Duration *int
+	Duration *int64
 }
 type ListTrainingRequest struct {
 	Page   page.Page

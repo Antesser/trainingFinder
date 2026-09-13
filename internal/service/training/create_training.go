@@ -13,17 +13,18 @@ func (t *trainingService) CreateTraining(ctx context.Context, trainingModel *mod
 			return err
 		}
 
-		event := model.CreateTrainingEvent{
-			TrainingID: trainingModel.ID,
-		}
+		//event := model.CreateTrainingEvent{
+		//	TrainingID: trainingModel.ID,
+		//}
+		//
+		//msg, err := t.trainingMarshaller(event)
+		//if err != nil {
+		//	return err
+		//}
 
-		msg, err := t.trainingMarshaller(event)
-		if err != nil {
-			return err
-		}
-
-		err = t.outboxRepo.CreateOutboxItem(ctx, outbox.OutboxItem{
-			Msg:   string(msg),
+		err := t.outboxRepo.CreateOutboxItem(ctx, outbox.OutboxItem{
+			//Msg:   string(msg),
+			Msg:   "Later",
 			Key:   trainingModel.ID,
 			Topic: "someTopic",
 		})
