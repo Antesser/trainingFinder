@@ -21,6 +21,7 @@ type training struct {
 	StartedAt      time.Time `db:"started_at"`
 	EndedAt        time.Time `db:"ended_at"`
 	AdditionalInfo string    `db:"additional_info"`
+	Duration       int       `db:"duration"`
 }
 type repository struct {
 	pool *pgxtransactor.Pool
@@ -128,12 +129,18 @@ func (r *repository) ListTrainings(ctx context.Context, data model.ListTrainingR
 	limit := int(data.Page.Limit)
 	qb := sq.Select(
 		"id",
-		"trainer_id", "user_id", "started_at", "ended_at", "additional_info",
+		"trainer_id", "user_id", "started_at", "ended_at", "additional_info", "duration",
 	).From("training").
-		Where(sq.Eq{"user_id": data.Filter.UserID}).
 		Limit(data.Page.Limit + 1).
 		Offset(data.Page.Offset).
 		PlaceholderFormat(sq.Dollar)
+
+	if data.Filter.Duration != nil {
+		qb = qb.Where("duration = ?", data.Filter.Duration)
+	}
+	if data.Filter.UserID != nil {
+		qb = qb.Where(sq.Eq{"user_id": data.Filter.UserID})
+	}
 
 	query, args, err := qb.ToSql()
 	if err != nil {

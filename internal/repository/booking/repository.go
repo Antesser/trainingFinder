@@ -37,6 +37,15 @@ func (r *repository) CheckIntersections(ctx context.Context, booking model.Train
 		Where(sq.Eq{"training_id": booking.TrainingID}).
 		Where(sq.Eq{"booked_from": booking.BookFrom}).
 		PlaceholderFormat(sq.Dollar)
+	if booking.WithLock {
+		sel.Suffix("FOR UPDATE")
+	}
+	if booking.BookFrom != nil {
+		sel = sel.Where("booked_by = ?", booking.BookFrom)
+	}
+	if booking.BookTo != nil {
+		sel = sel.Where("booked_by = ?", booking.BookTo)
+	}
 
 	query, args, err := sel.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
@@ -58,9 +67,6 @@ func (r *repository) CreateTrainingBooking(ctx context.Context, booking model.Tr
 		Columns("training_id", "booked_by", "book_to", "book_from").
 		Values(booking.TrainingID, booking.UserID, booking.BookTo, booking.BookFrom).
 		PlaceholderFormat(sq.Dollar)
-	if booking.WithLock {
-		qb.Suffix("FOR UPDATE")
-	}
 	query, args, err := qb.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		return err
@@ -82,10 +88,17 @@ func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRe
 		"id",
 		"training_id", "booked_by", "created_at", "book_from", "book_to",
 	).From("training_booking").
-		Where(sq.Eq{"booked_by": data.BookedBy}).
+		Where(sq.Eq{"booked_by": data.Filter.BookedBy}).
 		Limit(data.Page.Limit + 1).
 		Offset(data.Page.Offset).
 		PlaceholderFormat(sq.Dollar)
+
+	if data.Filter.BookedFrom != nil {
+		qb = qb.Where("booked_by = ?", data.Filter.BookedFrom)
+	}
+	if data.Filter.BookedTo != nil {
+		qb = qb.Where("booked_by = ?", data.Filter.BookedTo)
+	}
 
 	query, args, err := qb.ToSql()
 	if err != nil {
@@ -99,7 +112,7 @@ func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRe
 	rows, hasNext := utils.TruncateForHasNext(rows, limit)
 	out := make([]model.TrainingBooking, 0, len(rows))
 	for i, b := range rows {
-		out[i] = model.TrainingBooking{TrainingID: b.TrainingID, BookFrom: b.BookFrom, BookTo: b.BookTo, UserID: b.UserID}
+		out[i] = model.TrainingBooking{TrainingID: b.TrainingID, BookFrom: &b.BookFrom, BookTo: &b.BookTo, UserID: b.UserID}
 	}
 
 	return model.ListBookingsResponse{ModelList: out, HasNext: hasNext}, nil

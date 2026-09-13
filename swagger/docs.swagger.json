@@ -529,22 +529,6 @@
         }
       }
     },
-    "training_bookingv1Filter": {
-      "type": "object",
-      "properties": {
-        "booked_by": {
-          "type": "string"
-        },
-        "booked_from": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "booked_to": {
-          "type": "string",
-          "format": "date-time"
-        }
-      }
-    },
     "training_bookingv1Page": {
       "type": "object",
       "properties": {
@@ -706,7 +690,23 @@
           "$ref": "#/definitions/training_bookingv1Page"
         },
         "filter": {
-          "$ref": "#/definitions/training_bookingv1Filter"
+          "$ref": "#/definitions/v1ListBookingsRequestFilter"
+        }
+      }
+    },
+    "v1ListBookingsRequestFilter": {
+      "type": "object",
+      "properties": {
+        "booked_by": {
+          "type": "string"
+        },
+        "booked_from": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "booked_to": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },

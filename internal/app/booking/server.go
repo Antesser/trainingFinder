@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"time"
 
 	model "github.com/Antesser/trainingFinder/internal/model/booking"
 	modelPage "github.com/Antesser/trainingFinder/internal/model/page"
@@ -45,7 +46,16 @@ func (s *Server) RegisterHandlerFromEndpoint(
 }
 
 func (s *Server) BookTraining(ctx context.Context, req *bookingPkg.BookingTrainingRequest) (*bookingPkg.BookingTrainingResponse, error) {
-	err := s.bookingService.BookTraining(ctx, model.TrainingBooking{TrainingID: req.TrainingId, UserID: req.UserId, BookFrom: req.BookFrom.AsTime(), BookTo: req.BookTo.AsTime()})
+	var bookFrom, bookTo *time.Time
+	if ts := req.GetBookFrom(); ts != nil {
+		t := ts.AsTime()
+		bookFrom = &t
+	}
+	if ts := req.GetBookTo(); ts != nil {
+		t := ts.AsTime()
+		bookTo = &t
+	}
+	err := s.bookingService.BookTraining(ctx, model.TrainingBooking{TrainingID: req.TrainingId, UserID: req.UserId, BookFrom: bookFrom, BookTo: bookTo})
 	if err != nil {
 		if errors.Is(err, model.ErrBookingNotFound) {
 			return nil, status.Error(codes.NotFound, err.Error())
@@ -56,16 +66,20 @@ func (s *Server) BookTraining(ctx context.Context, req *bookingPkg.BookingTraini
 	return &bookingPkg.BookingTrainingResponse{},
 		nil
 }
+
 func (s *Server) ListTraining(ctx context.Context, req *bookingPkg.ListBookingsRequest) (*bookingPkg.ListBookingsResponse, error) {
-	resp, err := s.bookingService.ListBookings(ctx, model.ListBookingsRequest{Page: modelPage.Page{Limit: req.Page.Limit, Offset: req.Page.Offset}, BookedBy: req.Filter.BookedBy})
+	var bookedFrom, bookedTo time.Time
+	if ts := req.GetFilter().GetBookedFrom(); ts != nil {
+		bookedFrom = ts.AsTime()
+	}
+	if ts := req.GetFilter().GetBookedTo(); ts != nil {
+		bookedTo = ts.AsTime()
+	}
+	resp, err := s.bookingService.ListBookings(ctx, model.ListBookingsRequest{Page: modelPage.Page{Limit: req.Page.Limit, Offset: req.Page.Offset},
+		Filter: model.Filter{BookedBy: req.Filter.BookedBy, BookedFrom: &bookedFrom, BookedTo: &bookedTo}})
 	if err != nil {
-		if errors.Is(err, model.ErrBookingNotFound) {
-			return &bookingPkg.ListBookingsResponse{
-				Bookings: mapTrainingBookings(resp.ModelList),
-				HasNext:  resp.HasNext,
-			}, nil
-		}
 		return nil, err
+
 	}
 
 	protoList := lo.Map(resp.ModelList, func(m model.TrainingBooking, _ int) *bookingPkg.Booking {
@@ -82,22 +96,14 @@ func toProtoTraining(m *model.TrainingBooking) *bookingPkg.Booking {
 	return &bookingPkg.Booking{
 		BookedBy:   m.UserID,
 		TrainingId: m.TrainingID,
-		BookFrom:   timestamppb.New(m.BookFrom),
-		BookTo:     timestamppb.New(m.BookTo),
+		BookFrom:   timeToProto(m.BookFrom),
+		BookTo:     timeToProto(m.BookTo),
 	}
 }
 
-func mapTrainingBookings(in []model.TrainingBooking) []*bookingPkg.Booking {
-	out := make([]*bookingPkg.Booking, 0, len(in))
-	for _, b := range in {
-		out = append(out, &bookingPkg.Booking{
-			TrainingId: b.TrainingID,
-			BookedBy:   b.BookedBy,
-			Status:     b.Status,
-			CreatedAt:  timestamppb.New(b.CreatedAt),
-			BookFrom:   timestamppb.New(b.BookFrom),
-			BookTo:     timestamppb.New(b.BookTo),
-		})
+func timeToProto(t *time.Time) *timestamppb.Timestamp {
+	if t == nil {
+		return nil
 	}
-	return out
+	return timestamppb.New(*t)
 }
