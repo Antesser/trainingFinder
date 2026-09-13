@@ -89,12 +89,10 @@ func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRe
 	}
 	rows, hasNext := utils.TruncateForHasNext(rows, limit)
 	out := lo.Map(rows, func(b booking, _ int) model.TrainingBooking {
-		bookFrom := b.BookFrom
-		bookTo := b.BookTo
 		return model.TrainingBooking{
 			TrainingID: b.TrainingID,
-			BookFrom:   &bookFrom,
-			BookTo:     &bookTo,
+			BookFrom:   b.BookFrom,
+			BookTo:     b.BookTo,
 			UserID:     b.UserID,
 		}
 	})

@@ -21,7 +21,7 @@ type training struct {
 	StartedAt      time.Time `db:"started_at"`
 	EndedAt        time.Time `db:"ended_at"`
 	AdditionalInfo string    `db:"additional_info"`
-	Duration       int       `db:"duration"`
+	Duration       int64     `db:"duration"`
 }
 type repository struct {
 	pool *pgxtransactor.Pool
@@ -154,11 +154,13 @@ func (r *repository) ListTrainings(ctx context.Context, data model.ListTrainingR
 	rows, hasNext := utils.TruncateForHasNext(rows, limit)
 	out := lo.Map(rows, func(t training, _ int) model.Training {
 		return model.Training{
-			ID:        t.ID,
-			TrainerID: t.TrainerID,
-			UserID:    t.UserID,
-			StartedAt: t.StartedAt,
-			EndedAt:   t.EndedAt,
+			ID:             t.ID,
+			TrainerID:      t.TrainerID,
+			UserID:         t.UserID,
+			StartedAt:      t.StartedAt,
+			EndedAt:        t.EndedAt,
+			AdditionalInfo: t.AdditionalInfo,
+			Duration:       t.Duration,
 		}
 	})
 	return model.ListTrainingResponse{ModelList: out, HasNext: hasNext}, nil

@@ -55,7 +55,7 @@ func (s *Server) BookTraining(ctx context.Context, req *bookingPkg.BookTrainingR
 		t := ts.AsTime()
 		bookTo = &t
 	}
-	err := s.bookingService.BookTraining(ctx, model.TrainingBooking{TrainingID: req.TrainingId, UserID: req.UserId, BookFrom: bookFrom, BookTo: bookTo})
+	err := s.bookingService.BookTraining(ctx, model.TrainingBooking{TrainingID: req.TrainingId, UserID: req.UserId, BookFrom: *bookFrom, BookTo: *bookTo})
 	if err != nil {
 		if errors.Is(err, model.ErrBookingNotFound) {
 			return nil, status.Error(codes.NotFound, err.Error())
@@ -99,8 +99,8 @@ func toProtoTraining(m *model.TrainingBooking) *bookingPkg.Booking {
 	return &bookingPkg.Booking{
 		BookedBy:   m.UserID,
 		TrainingId: m.TrainingID,
-		BookFrom:   timeToProto(m.BookFrom),
-		BookTo:     timeToProto(m.BookTo),
+		BookFrom:   timeToProto(&m.BookFrom),
+		BookTo:     timeToProto(&m.BookTo),
 	}
 }
 

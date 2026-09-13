@@ -13,8 +13,8 @@ func (b *service) BookTraining(ctx context.Context, booking model.TrainingBookin
 		res, err := b.repo.ListBookings(ctx, model.ListBookingsRequest{
 			Page: page.Page{},
 			Filter: model.Filter{
-				BookedFrom: booking.BookFrom,
-				BookedTo:   booking.BookTo,
+				BookedFrom: &booking.BookFrom,
+				BookedTo:   &booking.BookTo,
 				WithLock:   true,
 			},
 		})

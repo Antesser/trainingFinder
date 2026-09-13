@@ -11,8 +11,8 @@ var ErrBookingAlreadyExists = errors.New("booking already exists")
 type TrainingBooking struct {
 	TrainingID string
 	UserID     string
-	BookFrom   *time.Time
-	BookTo     *time.Time
+	BookFrom   time.Time
+	BookTo     time.Time
 	Status     string
 	BookedBy   string
 	CreatedAt  time.Time
