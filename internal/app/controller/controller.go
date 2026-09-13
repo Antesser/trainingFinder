@@ -5,10 +5,11 @@ import (
 	"log"
 	"net"
 	"net/http"
-	authMiddlewere "trainingFinder/internal/app/controller/middleware/grpc"
 
-	loggerMiddlewere "trainingFinder/internal/app/controller/middleware/logger"
-	"trainingFinder/internal/config"
+	authMiddlewere "github.com/Antesser/trainingFinder/internal/app/controller/middleware/grpc"
+
+	loggerMiddlewere "github.com/Antesser/trainingFinder/internal/app/controller/middleware/logger"
+	"github.com/Antesser/trainingFinder/internal/config"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/rs/cors"

@@ -5,7 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"time"
-	model "trainingFinder/internal/model/auth"
+
+	model "github.com/Antesser/trainingFinder/internal/model/auth"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/georgysavva/scany/v2/pgxscan"

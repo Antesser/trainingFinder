@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package auth.v1;
 
-option go_package = "trainingFinder/pkg/api/auth/v1";
+option go_package = "github.com/Antesser/trainingFinder/pkg/api/auth/v1";
 
 import "google/api/annotations.proto";
 import  "proto/protovalidate/buf/validate/validate.proto";
@@ -25,6 +25,12 @@ service AuthService {
   rpc RefreshToken (RefreshTokenRequest) returns (RefreshTokenResponse) {
     option (google.api.http) = {
       post: "/api/auth/v1/refresh-token"
+      body: "*"
+    };
+  }
+  rpc CreateRole (CreateRoleRequest) returns (CreateRoleResponse) {
+    option (google.api.http) = {
+      post: "/api/auth/v1/roles"
       body: "*"
     };
   }
@@ -52,6 +58,12 @@ message RefreshTokenRequest {
 
 message RefreshTokenResponse {
   string access_token = 1;
+}
+message CreateRoleRequest {
+  string role = 1[(buf.validate.field).required = true];
+}
+
+message CreateRoleResponse {
 }
 //option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 //  security_definitions: {

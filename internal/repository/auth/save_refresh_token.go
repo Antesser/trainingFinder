@@ -2,7 +2,8 @@ package auth
 
 import (
 	"context"
-	model "trainingFinder/internal/model/auth"
+
+	model "github.com/Antesser/trainingFinder/internal/model/auth"
 
 	sq "github.com/Masterminds/squirrel"
 )

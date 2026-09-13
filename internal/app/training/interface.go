@@ -2,7 +2,8 @@ package training
 
 import (
 	"context"
-	model "trainingFinder/internal/model/training"
+
+	model "github.com/Antesser/trainingFinder/internal/model/training"
 )
 
 type trainingService interface {
@@ -10,4 +11,5 @@ type trainingService interface {
 	GetTraining(ctx context.Context, id string) (*model.Training, error)
 	UpdateTraining(ctx context.Context, updateTraining model.UpdateTrainingRequest) error
 	DeleteTraining(ctx context.Context, id string) error
+	ListTraining(ctx context.Context, request model.ListTrainingRequest) (model.ListTrainingResponse, error)
 }
