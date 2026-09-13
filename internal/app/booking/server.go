@@ -76,7 +76,7 @@ func (s *Server) ListTraining(ctx context.Context, req *bookingPkg.ListBookingsR
 		bookedTo = ts.AsTime()
 	}
 	resp, err := s.bookingService.ListBookings(ctx, model.ListBookingsRequest{Page: modelPage.Page{Limit: req.Page.Limit, Offset: req.Page.Offset},
-		Filter: model.Filter{BookedBy: req.Filter.BookedBy, BookedFrom: &bookedFrom, BookedTo: &bookedTo}})
+		Filter: model.Filter{BookedBy: &req.Filter.BookedBy, BookedFrom: &bookedFrom, BookedTo: &bookedTo}})
 	if err != nil {
 		return nil, err
 

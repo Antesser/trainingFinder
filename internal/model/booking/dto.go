@@ -16,7 +16,7 @@ type ListBookingsResponse struct {
 }
 
 type Filter struct {
-	BookedBy   string
+	BookedBy   *string
 	BookedFrom *time.Time
 	BookedTo   *time.Time
 	WithLock   bool
