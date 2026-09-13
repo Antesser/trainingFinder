@@ -31,13 +31,13 @@ func (r *repository) CreateTrainingBooking(ctx context.Context, booking model.Tr
 		return err
 	}
 
-	tags, err := r.pool.Querier(ctx).Exec(ctx, query, args...)
+	_, err = r.pool.Querier(ctx).Exec(ctx, query, args...)
 	if err != nil {
 		return err
 	}
-	if tags.RowsAffected() == 0 {
-		return model.ErrBookingNotFound
-	}
+	//if tags.RowsAffected() == 0 {
+	//	return model.ErrBookingNotFound
+	//}
 	return nil
 }
 
