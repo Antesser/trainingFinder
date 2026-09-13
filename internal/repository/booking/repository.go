@@ -54,7 +54,11 @@ func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRe
 	limit := int(data.Page.Limit)
 	qb := sq.Select(
 		"id",
-		"training_id", "booked_by", "created_at", "book_from", "book_to",
+		"training_id",
+		"booked_by",
+		"created_at",
+		"book_from",
+		"book_to",
 	).From("training_booking").
 		Limit(data.Page.Limit + 1).
 		Offset(data.Page.Offset).
