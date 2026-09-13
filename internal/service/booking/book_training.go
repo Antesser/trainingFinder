@@ -15,8 +15,12 @@ func (b *service) BookTraining(ctx context.Context, booking model.TrainingBookin
 	}
 
 	return b.repo.InTx(ctx, func(ctx context.Context) error {
-		if _, err := b.repo.ListBookings(ctx, book); err != nil {
+		res, err := b.repo.ListBookings(ctx, book)
+		if err != nil {
 			return err
+		}
+		if len(res.ModelList) != 0 {
+			return model.ErrBookingAlreadyExists
 		}
 		if err := b.repo.CreateTrainingBooking(ctx, booking); err != nil {
 			return err
