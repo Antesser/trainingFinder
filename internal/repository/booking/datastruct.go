@@ -10,5 +10,4 @@ type booking struct {
 	BookFrom   time.Time `db:"book_from"`
 	BookTo     time.Time `db:"book_to"`
 	Status     string    `db:"status"`
-	BookBy     string    `db:"book_by"`
 }

@@ -86,7 +86,6 @@ func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRe
 			UserID:     b.UserID,
 			Status:     b.Status,
 			CreatedAt:  b.CreatedAt,
-			BookedBy:   b.BookBy,
 		}
 	})
 	return model.ListBookingsResponse{ModelList: out, HasNext: hasNext}, nil
