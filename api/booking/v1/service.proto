@@ -8,7 +8,7 @@ import "google/api/annotations.proto";
 import  "google/protobuf/timestamp.proto";
 import  "proto/protovalidate/buf/validate/validate.proto";
 service BookingService {
-  rpc BookTraining (BookingTrainingRequest) returns (BookingTrainingResponse) {
+  rpc BookTraining (BookTrainingRequest) returns (BookTrainingResponse) {
     option (google.api.http) = {
       post: "/api/booking/v1/book-training"
       body: "*"
@@ -38,14 +38,14 @@ message Booking{
   google.protobuf.Timestamp book_to = 7;
   bool with_lock = 8;
 }
-message BookingTrainingRequest {
+message BookTrainingRequest {
   string training_id = 1[(buf.validate.field).required = true];
   string user_id = 2[(buf.validate.field).required = true];
   google.protobuf.Timestamp book_from = 3;
   google.protobuf.Timestamp book_to = 4;
 }
 
-message BookingTrainingResponse {
+message BookTrainingResponse {
 
 }
 
