@@ -9,13 +9,15 @@ import (
 )
 
 func (b *service) BookTraining(ctx context.Context, booking model.TrainingBooking) error {
-	book := model.ListBookingsRequest{
-		Page:   page.Page{},
-		Filter: model.Filter{BookedFrom: booking.BookFrom, BookedBy: booking.BookedBy, BookedTo: booking.BookTo, WithLock: true},
-	}
-
 	return b.repo.InTx(ctx, func(ctx context.Context) error {
-		res, err := b.repo.ListBookings(ctx, book)
+		res, err := b.repo.ListBookings(ctx, model.ListBookingsRequest{
+			Page: page.Page{},
+			Filter: model.Filter{BookedFrom: booking.BookFrom,
+				BookedBy: booking.BookedBy,
+				BookedTo: booking.BookTo,
+				WithLock: true,
+			},
+		})
 		if err != nil {
 			return err
 		}
