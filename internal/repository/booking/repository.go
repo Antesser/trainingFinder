@@ -2,6 +2,8 @@ package booking
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	model "github.com/Antesser/trainingFinder/internal/model/booking"
 	"github.com/Antesser/trainingFinder/internal/utils"
@@ -23,8 +25,8 @@ func New(pool *pgxtransactor.Pool) *repository {
 
 func (r *repository) CreateTrainingBooking(ctx context.Context, booking model.TrainingBooking) error {
 	qb := sq.Insert("training_booking").
-		Columns("training_id", "booked_by", "book_to", "book_from").
-		Values(booking.TrainingID, booking.UserID, booking.BookTo, booking.BookFrom).
+		Columns("training_id", "booked_by", "book_to", "book_from", "created_at").
+		Values(booking.TrainingID, booking.UserID, booking.BookTo, booking.BookFrom, time.Now()).
 		PlaceholderFormat(sq.Dollar)
 	query, args, err := qb.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
@@ -35,9 +37,7 @@ func (r *repository) CreateTrainingBooking(ctx context.Context, booking model.Tr
 	if err != nil {
 		return err
 	}
-	//if tags.RowsAffected() == 0 {
-	//	return model.ErrBookingNotFound
-	//}
+
 	return nil
 }
 
@@ -48,6 +48,7 @@ func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRe
 		"training_id",
 		"booked_by",
 		"created_at",
+		"status",
 		"book_from",
 		"book_to",
 	).From("training_booking").
@@ -59,13 +60,13 @@ func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRe
 		qb = qb.Suffix("FOR UPDATE")
 	}
 	if data.Filter.BookedFrom != nil {
-		qb = qb.Where(sq.Eq{"book_from": data.Filter.BookedFrom})
+		qb = qb.Where(sq.Eq{"book_from": *data.Filter.BookedFrom})
 	}
 	if data.Filter.BookedBy != nil {
-		qb = qb.Where(sq.Eq{"booked_by": data.Filter.BookedBy})
+		qb = qb.Where(sq.Eq{"booked_by": *data.Filter.BookedBy})
 	}
 	if data.Filter.BookedTo != nil {
-		qb = qb.Where(sq.Eq{"book_to": data.Filter.BookedTo})
+		qb = qb.Where(sq.Eq{"book_to": *data.Filter.BookedTo})
 	}
 
 	query, args, err := qb.ToSql()
@@ -78,8 +79,10 @@ func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRe
 		return model.ListBookingsResponse{}, err
 	}
 	rows, hasNext := utils.TruncateForHasNext(rows, limit)
+
 	out := lo.Map(rows, func(b booking, _ int) model.TrainingBooking {
 		return model.TrainingBooking{
+			ID:         b.ID,
 			TrainingID: b.TrainingID,
 			BookFrom:   b.BookFrom,
 			BookTo:     b.BookTo,
@@ -88,5 +91,8 @@ func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRe
 			CreatedAt:  b.CreatedAt,
 		}
 	})
+	fmt.Println("SQL:", query)
+	fmt.Println("ARGS:", args)
+	fmt.Println("rows:", len(rows))
 	return model.ListBookingsResponse{ModelList: out, HasNext: hasNext}, nil
 }

@@ -50,8 +50,8 @@ message Training{
   int64 duration = 7;
 }
 message Page{
-  uint64 Limit = 1;
-  uint64 Offset = 2;
+  uint64 limit = 1;
+  uint64 offset = 2;
 }
 
 message CreateTrainingRequest {
@@ -100,7 +100,7 @@ message ListTrainingsRequest {
   Page page = 1[(buf.validate.field).required = true];
   Filter filter = 2;
   message Filter{
-    optional string user_id = 1[(buf.validate.field).required = true, (buf.validate.field).string.uuid = true];
+    optional string user_id = 1[(buf.validate.field).string.uuid = true];
     optional int64 duration = 2;
   }
 }

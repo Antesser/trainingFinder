@@ -70,19 +70,41 @@ func (s *Server) BookTraining(ctx context.Context, req *bookingPkg.BookTrainingR
 		nil
 }
 
-func (s *Server) ListTraining(ctx context.Context, req *bookingPkg.ListBookingsRequest) (*bookingPkg.ListBookingsResponse, error) {
-	var bookedFrom, bookedTo time.Time
-	if ts := req.GetFilter().GetBookedFrom(); ts != nil {
-		bookedFrom = ts.AsTime()
+func (s *Server) ListBookings(ctx context.Context, req *bookingPkg.ListBookingsRequest) (*bookingPkg.ListBookingsResponse, error) {
+	page := req.GetPage()
+	filter := req.GetFilter()
+
+	var bookedFrom *time.Time
+	if ts := filter.GetBookedFrom(); ts != nil {
+		t := ts.AsTime()
+		bookedFrom = &t
 	}
-	if ts := req.GetFilter().GetBookedTo(); ts != nil {
-		bookedTo = ts.AsTime()
+
+	var bookedTo *time.Time
+	if ts := filter.GetBookedTo(); ts != nil {
+		t := ts.AsTime()
+		bookedTo = &t
 	}
-	resp, err := s.bookingService.ListBookings(ctx, model.ListBookingsRequest{Page: modelPage.Page{Limit: req.Page.Limit, Offset: req.Page.Offset},
-		Filter: model.Filter{BookedBy: &req.Filter.BookedBy, BookedFrom: &bookedFrom, BookedTo: &bookedTo}})
+
+	var bookedBy *string
+	if v := filter.GetBookedBy(); v != "" {
+		bookedBy = &v
+	}
+
+	resp, err := s.bookingService.ListBookings(ctx, model.ListBookingsRequest{
+		Page: modelPage.Page{
+			Limit:  page.GetLimit(),
+			Offset: page.GetOffset(),
+		},
+		Filter: model.Filter{
+			BookedBy:   bookedBy,
+			BookedFrom: bookedFrom,
+			BookedTo:   bookedTo,
+			WithLock:   filter.GetWithLock(),
+		},
+	})
 	if err != nil {
 		return nil, err
-
 	}
 
 	protoList := lo.Map(resp.ModelList, func(m model.TrainingBooking, _ int) *bookingPkg.Booking {

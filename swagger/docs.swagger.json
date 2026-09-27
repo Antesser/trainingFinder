@@ -532,11 +532,11 @@
     "training_bookingv1Page": {
       "type": "object",
       "properties": {
-        "Limit": {
+        "limit": {
           "type": "string",
           "format": "uint64"
         },
-        "Offset": {
+        "offset": {
           "type": "string",
           "format": "uint64"
         }
@@ -545,11 +545,11 @@
     "trainingv1Page": {
       "type": "object",
       "properties": {
-        "Limit": {
+        "limit": {
           "type": "string",
           "format": "uint64"
         },
-        "Offset": {
+        "offset": {
           "type": "string",
           "format": "uint64"
         }
@@ -640,7 +640,7 @@
         },
         "duration": {
           "type": "string",
-          "format": "uint64"
+          "format": "int64"
         }
       }
     },
@@ -696,6 +696,12 @@
         "booked_to": {
           "type": "string",
           "format": "date-time"
+        },
+        "trainer_id": {
+          "type": "string"
+        },
+        "with_lock": {
+          "type": "boolean"
         }
       }
     },
@@ -733,7 +739,7 @@
         },
         "duration": {
           "type": "string",
-          "format": "uint64"
+          "format": "int64"
         }
       }
     },
@@ -831,7 +837,7 @@
         },
         "duration": {
           "type": "string",
-          "format": "uint64"
+          "format": "int64"
         }
       }
     },

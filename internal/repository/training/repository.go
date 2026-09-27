@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	model "github.com/Antesser/trainingFinder/internal/model/training"
 	"github.com/Antesser/trainingFinder/internal/utils"
@@ -63,7 +64,7 @@ func (r *repository) GetTraining(ctx context.Context, id string) (*model.Trainin
 }
 func (r *repository) UpdateTraining(ctx context.Context, updateTraining model.UpdateTrainingRequest) error {
 	qb := sq.Update("training").
-		Where(sq.Eq{"id": updateTraining.UserID})
+		Where(sq.Eq{"id": updateTraining.ID})
 	if updateTraining.AdditionalInfo != nil {
 		qb = qb.Set("additional_info", updateTraining.AdditionalInfo)
 	}
@@ -126,10 +127,10 @@ func (r *repository) ListTrainings(ctx context.Context, data model.ListTrainingR
 		PlaceholderFormat(sq.Dollar)
 
 	if data.Filter.Duration != nil {
-		qb = qb.Where(sq.Eq{"duration": data.Filter.Duration})
+		qb = qb.Where(sq.Eq{"duration": *data.Filter.Duration})
 	}
 	if data.Filter.UserID != nil {
-		qb = qb.Where(sq.Eq{"user_id": data.Filter.UserID})
+		qb = qb.Where(sq.Eq{"user_id": *data.Filter.UserID})
 	}
 
 	query, args, err := qb.ToSql()
@@ -142,6 +143,7 @@ func (r *repository) ListTrainings(ctx context.Context, data model.ListTrainingR
 		return model.ListTrainingResponse{}, err
 	}
 	rows, hasNext := utils.TruncateForHasNext(rows, limit)
+	fmt.Println("roror", rows)
 	out := lo.Map(rows, func(t training, _ int) model.Training {
 		return model.Training{
 			ID:             t.ID,

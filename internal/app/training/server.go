@@ -112,13 +112,28 @@ func (s *Server) DeleteTraining(ctx context.Context, req *trainingPkg.DeleteTrai
 	return &trainingPkg.DeleteTrainingResponse{},
 		nil
 }
-func (s *Server) ListTraining(ctx context.Context, req *trainingPkg.ListTrainingsRequest) (*trainingPkg.ListTrainingsResponse, error) {
-	var duration int64
-	if req.GetFilter().Duration != nil {
-		duration = int64(*req.GetFilter().Duration)
+func (s *Server) ListTrainings(ctx context.Context, req *trainingPkg.ListTrainingsRequest) (*trainingPkg.ListTrainingsResponse, error) {
+	var duration *int64
+	if f := req.GetFilter(); f != nil && f.Duration != nil {
+		d := f.GetDuration()
+		duration = &d
 	}
-	mod, err := s.trainingService.ListTraining(ctx, model.ListTrainingRequest{Page: modelPage.Page{Limit: req.Page.Limit, Offset: req.Page.Offset},
-		Filter: model.TrainingFilter{UserID: req.Filter.UserId, Duration: &duration}})
+
+	var userID *string
+	if f := req.GetFilter(); f != nil && f.GetUserId() != "" {
+		u := f.GetUserId()
+		userID = &u
+	}
+	mod, err := s.trainingService.ListTrainings(ctx, model.ListTrainingRequest{
+		Page: modelPage.Page{
+			Limit:  req.GetPage().GetLimit(),
+			Offset: req.GetPage().GetOffset(),
+		},
+		Filter: model.TrainingFilter{
+			UserID:   userID,
+			Duration: duration,
+		},
+	})
 	if err != nil {
 		return nil, err
 	}

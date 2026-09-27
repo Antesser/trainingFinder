@@ -23,8 +23,8 @@ service BookingService {
 }
 
 message Page{
-  uint64 Limit = 1;
-  uint64 Offset = 2;
+  uint64 limit = 1;
+  uint64 offset = 2;
 }
 
 
@@ -52,9 +52,11 @@ message ListBookingsRequest {
   Page page = 1 [(buf.validate.field).required = true];
   optional Filter filter = 2;
   message Filter{
-    string booked_by = 1[(buf.validate.field).required = true, (buf.validate.field).string.uuid = true];
+    optional string booked_by = 1[(buf.validate.field).string.uuid = true];
     optional google.protobuf.Timestamp booked_from = 2;
     optional google.protobuf.Timestamp booked_to = 3;
+    optional string trainer_id = 4[(buf.validate.field).string.uuid = true];
+    bool with_lock = 5;
   }
 }
 

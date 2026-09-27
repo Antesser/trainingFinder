@@ -920,7 +920,11 @@ func (m *ListBookingsRequest_Filter) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for BookedBy
+	// no validation rules for WithLock
+
+	if m.BookedBy != nil {
+		// no validation rules for BookedBy
+	}
 
 	if m.BookedFrom != nil {
 
@@ -986,6 +990,10 @@ func (m *ListBookingsRequest_Filter) validate(all bool) error {
 			}
 		}
 
+	}
+
+	if m.TrainerId != nil {
+		// no validation rules for TrainerId
 	}
 
 	if len(errors) > 0 {
