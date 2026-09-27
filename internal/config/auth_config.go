@@ -9,11 +9,13 @@ import (
 
 type authYamlConfig struct {
 	Endpoints struct {
-		Bearer []string `yaml:"bearer"`
+		Bearer map[string]struct {
+			Roles []string `yaml:"roles"`
+		} `yaml:"bearer"`
 	} `yaml:"auth-endpoints"`
 }
 type AuthConfig struct {
-	BearerSet map[string]struct{}
+	BearerSet map[string]map[string]struct{}
 }
 
 // NewAuthConfig loads and parses the auth configuration from file
@@ -26,10 +28,16 @@ func NewAuthConfig(path string) (*AuthConfig, error) {
 	if err := yaml.Unmarshal(data, &fileCfg); err != nil {
 		return nil, err
 	}
-	var cfg AuthConfig
-	cfg.BearerSet = make(map[string]struct{}, len(fileCfg.Endpoints.Bearer))
-	for _, m := range fileCfg.Endpoints.Bearer {
-		cfg.BearerSet[m] = struct{}{}
+	cfg := &AuthConfig{
+		BearerSet: make(map[string]map[string]struct{}, len(fileCfg.Endpoints.Bearer)),
 	}
-	return &cfg, nil
+	for method, endpoint := range fileCfg.Endpoints.Bearer {
+		roles := make(map[string]struct{}, len(endpoint.Roles))
+		for _, r := range endpoint.Roles {
+			roles[r] = struct{}{}
+		}
+		cfg.BearerSet[method] = roles
+	}
+
+	return cfg, nil
 }

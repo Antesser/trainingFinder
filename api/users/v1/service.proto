@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package users.v1;
 
-option go_package = "trainingFinder/pkg/api/users/v1";
+option go_package = "github.com/Antesser/trainingFinder/pkg/api/users/v1";
 
 import "google/api/annotations.proto";
 import  "proto/protovalidate/buf/validate/validate.proto";

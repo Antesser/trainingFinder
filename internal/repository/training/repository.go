@@ -4,22 +4,16 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"time"
-	model "trainingFinder/internal/model/training"
+	"fmt"
 
+	model "github.com/Antesser/trainingFinder/internal/model/training"
+	"github.com/Antesser/trainingFinder/internal/utils"
 	sq "github.com/Masterminds/squirrel"
 	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/golangmonster/pgxtransactor"
+	"github.com/samber/lo"
 )
 
-type training struct {
-	ID             string    `db:"id"`
-	TrainerID      string    `db:"trainer_id"`
-	UserID         string    `db:"user_id"`
-	StartedAt      time.Time `db:"started_at"`
-	EndedAt        time.Time `db:"ended_at"`
-	AdditionalInfo string    `db:"additional_info"`
-}
 type repository struct {
 	pool *pgxtransactor.Pool
 	pgxtransactor.Transactor
@@ -70,7 +64,7 @@ func (r *repository) GetTraining(ctx context.Context, id string) (*model.Trainin
 }
 func (r *repository) UpdateTraining(ctx context.Context, updateTraining model.UpdateTrainingRequest) error {
 	qb := sq.Update("training").
-		Where(sq.Eq{"id": updateTraining.UserID})
+		Where(sq.Eq{"id": updateTraining.ID})
 	if updateTraining.AdditionalInfo != nil {
 		qb = qb.Set("additional_info", updateTraining.AdditionalInfo)
 	}
@@ -120,4 +114,46 @@ func (r *repository) DeleteTraining(ctx context.Context, id string) error {
 		return model.ErrTrainingNotFound
 	}
 	return nil
+}
+
+func (r *repository) ListTrainings(ctx context.Context, data model.ListTrainingRequest) (model.ListTrainingResponse, error) {
+	limit := int(data.Page.Limit)
+	qb := sq.Select(
+		"id",
+		"trainer_id", "user_id", "started_at", "ended_at", "additional_info", "duration",
+	).From("training").
+		Limit(data.Page.Limit + 1).
+		Offset(data.Page.Offset).
+		PlaceholderFormat(sq.Dollar)
+
+	if data.Filter.Duration != nil {
+		qb = qb.Where(sq.Eq{"duration": *data.Filter.Duration})
+	}
+	if data.Filter.UserID != nil {
+		qb = qb.Where(sq.Eq{"user_id": *data.Filter.UserID})
+	}
+
+	query, args, err := qb.ToSql()
+	if err != nil {
+		return model.ListTrainingResponse{}, err
+	}
+
+	var rows []training
+	if err := pgxscan.Select(ctx, r.pool.Querier(ctx), &rows, query, args...); err != nil {
+		return model.ListTrainingResponse{}, err
+	}
+	rows, hasNext := utils.TruncateForHasNext(rows, limit)
+	fmt.Println("roror", rows)
+	out := lo.Map(rows, func(t training, _ int) model.Training {
+		return model.Training{
+			ID:             t.ID,
+			TrainerID:      t.TrainerID,
+			UserID:         t.UserID,
+			StartedAt:      t.StartedAt,
+			EndedAt:        t.EndedAt,
+			AdditionalInfo: t.AdditionalInfo,
+			Duration:       t.Duration,
+		}
+	})
+	return model.ListTrainingResponse{ModelList: out, HasNext: hasNext}, nil
 }

@@ -1,6 +1,10 @@
 package training
 
-import "time"
+import (
+	"time"
+
+	"github.com/Antesser/trainingFinder/internal/model/page"
+)
 
 type UpdateTrainingRequest struct {
 	ID             string
@@ -9,4 +13,17 @@ type UpdateTrainingRequest struct {
 	StartedAt      *time.Time
 	EndedAt        *time.Time
 	AdditionalInfo *string
+}
+
+type TrainingFilter struct {
+	UserID   *string
+	Duration *int64
+}
+type ListTrainingRequest struct {
+	Page   page.Page
+	Filter TrainingFilter
+}
+type ListTrainingResponse struct {
+	ModelList []Training
+	HasNext   bool
 }
