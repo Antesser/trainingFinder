@@ -61,6 +61,8 @@ func (m *SignUpRequest) validate(all bool) error {
 
 	// no validation rules for Password
 
+	// no validation rules for RoleID
+
 	if len(errors) > 0 {
 		return SignUpRequestMultiError(errors)
 	}

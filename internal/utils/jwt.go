@@ -7,12 +7,12 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func GenerateToken(id string, secretKey []byte, duration time.Duration) (string, error) {
+func GenerateToken(id string, roleID int64, secretKey []byte, duration time.Duration) (string, error) {
 	iat := time.Now().UTC()
 
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id": id,
-		//"role": role,                     // Service role
+		"id":   id,
+		"role": roleID, // Service role
 		//"iat":  iat.Unix(),               // Issued at
 		"exp": iat.Add(duration).Unix(), // Expiration time
 	}).SignedString(secretKey)

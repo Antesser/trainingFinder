@@ -16,7 +16,7 @@ func (s *service) RefreshSession(ctx context.Context, refreshToken uuid.UUID) (a
 	if !session.IsActive() {
 		return "", model.ErrSessionExpired
 	}
-	aToken, err := utils.GenerateToken(session.UserID, []byte(s.secretKey), s.accessTokenDuration)
+	aToken, err := utils.GenerateToken(session.UserID, session.RoleID, []byte(s.secretKey), s.accessTokenDuration)
 	if err != nil {
 		return "", err
 	}

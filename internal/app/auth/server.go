@@ -73,7 +73,7 @@ func (s *Server) SignIn(ctx context.Context, req *authPkg.SignInRequest) (*authP
 func (s *Server) SignUp(ctx context.Context, req *authPkg.SignUpRequest) (*authPkg.SignUpResponse, error) { // вынести в отдельный файл, Виталий негодует
 	log.Printf("SignUp request: login=%s", req.Login)
 
-	id, err := s.authService.SignUp(ctx, req.Login, req.Password)
+	id, err := s.authService.SignUp(ctx, req.Login, req.Password, req.RoleID)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +98,6 @@ func (s *Server) RefreshToken(ctx context.Context, req *authPkg.RefreshTokenRequ
 	}, nil
 }
 func (s *Server) CreateRole(ctx context.Context, req *authPkg.CreateRoleRequest) (*authPkg.CreateRoleResponse, error) {
-
 	err := s.authService.CreateRole(ctx, req.Role)
 	if err != nil {
 		return nil, err

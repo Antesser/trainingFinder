@@ -19,7 +19,7 @@ func (s *service) SignIn(ctx context.Context, login, password string) (model.Tok
 	if err != nil {
 		return model.Tokens{}, model.ErrInvalidPass
 	}
-	aToken, err := utils.GenerateToken(authInfo.ID, []byte(s.secretKey), s.accessTokenDuration)
+	aToken, err := utils.GenerateToken(authInfo.ID, authInfo.RoleID, []byte(s.secretKey), s.accessTokenDuration)
 	if err != nil {
 		return model.Tokens{}, err
 	}

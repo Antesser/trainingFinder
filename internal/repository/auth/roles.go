@@ -4,8 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	model "github.com/Antesser/trainingFinder/internal/model/training"
+	"github.com/Antesser/trainingFinder/internal/utils"
 	sq "github.com/Masterminds/squirrel"
-	"github.com/georgysavva/scany/v2/pgxscan"
 )
 
 func (r *repository) CreateRole(ctx context.Context, role string) error {
@@ -19,11 +20,12 @@ func (r *repository) CreateRole(ctx context.Context, role string) error {
 		return err
 	}
 
-	var userRole roleStruct
-	err = pgxscan.Get(ctx, r.pool.Querier(ctx), &userRole, query, args...)
+	_, err = r.pool.Querier(ctx).Exec(ctx, query, args...)
 	if err != nil {
+		if utils.IsUniqueViolation(err) {
+			return model.ErrAlreadyExists
+		}
 		return fmt.Errorf("execute insert: %w", err)
 	}
-
 	return nil
 }

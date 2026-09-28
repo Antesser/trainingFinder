@@ -801,6 +801,10 @@
         },
         "password": {
           "type": "string"
+        },
+        "roleID": {
+          "type": "string",
+          "format": "int64"
         }
       }
     },

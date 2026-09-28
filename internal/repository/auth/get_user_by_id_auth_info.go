@@ -16,10 +16,11 @@ type authInfo struct {
 	ID       string `db:"id"`
 	Login    string `db:"login"`
 	Password string `db:"password"`
+	RoleID   int64  `db:"role_id"`
 }
 
 func (r *repository) GetUserAuthInfoByLogin(ctx context.Context, login string) (model.UserAuthInfo, error) { // в транзакцию вставка в таблицу сессий
-	qb := sq.Select("id", "login", "password").
+	qb := sq.Select("id", "login", "password", "role_id").
 		From("users").
 		Where(sq.Eq{"login": login}).
 		PlaceholderFormat(sq.Dollar)
@@ -38,5 +39,5 @@ func (r *repository) GetUserAuthInfoByLogin(ctx context.Context, login string) (
 		return model.UserAuthInfo{}, fmt.Errorf("execute insert: %w", err)
 	}
 
-	return model.UserAuthInfo{ID: i.ID, Login: i.Login, Password: i.Password}, nil
+	return model.UserAuthInfo{ID: i.ID, Login: i.Login, Password: i.Password, RoleID: i.RoleID}, nil
 }

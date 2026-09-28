@@ -52,11 +52,10 @@ message ListBookingsRequest {
   Page page = 1 [(buf.validate.field).required = true];
   optional Filter filter = 2;
   message Filter{
-    optional string booked_by = 1[(buf.validate.field).string.uuid = true];
-    optional google.protobuf.Timestamp booked_from = 2;
-    optional google.protobuf.Timestamp booked_to = 3;
-    optional string trainer_id = 4[(buf.validate.field).string.uuid = true];
-    bool with_lock = 5;
+    optional google.protobuf.Timestamp booked_from = 1;
+    optional google.protobuf.Timestamp booked_to = 2;
+    optional string trainer_id = 3[(buf.validate.field).string.uuid = true];
+    bool with_lock = 4;
   }
 }
 

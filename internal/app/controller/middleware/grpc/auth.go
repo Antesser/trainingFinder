@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/Antesser/trainingFinder/internal/config"
@@ -22,8 +23,8 @@ var (
 	errInvalidAuthHeader = status.Error(codes.Unauthenticated, "invalid authorization header format")
 	// errInvalidToken returned when auth token not match.
 	errInvalidToken = status.Error(codes.Unauthenticated, "invalid token")
-	// errClientUnathenticated
-	errClientUnathenticated = status.Error(codes.Unauthenticated, "client is not authenticated to use handler")
+	// errClientUnauthenticated
+	errClientUnauthenticated = status.Error(codes.Unauthenticated, "client is not authenticated to use handler")
 	// errUnexpectedSigningMethod
 	errUnexpectedSigningMethod = status.Error(codes.Unauthenticated, "unexpected signing method")
 	// errFailedToDecodeClaims
@@ -36,7 +37,7 @@ type userIDKeyType struct{}
 var userIDKey userIDKeyType
 
 func WithAuth(secretKey string, cfg config.AuthConfig) grpc.UnaryServerInterceptor {
-	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 		allowedRoles, needsAuth := cfg.BearerSet[info.FullMethod]
 		if !needsAuth {
 			return handler(ctx, req)
@@ -59,23 +60,25 @@ func WithAuth(secretKey string, cfg config.AuthConfig) grpc.UnaryServerIntercept
 			return nil, errInvalidAuthHeader
 		}
 
-		jwToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+		jwToken, err := jwt.Parse(token, func(token *jwt.Token) (any, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, errUnexpectedSigningMethod
 			}
 			return []byte(secretKey), nil
 		})
 		if err != nil {
-			return nil, errClientUnathenticated
+			return nil, errClientUnauthenticated
 		}
 		if !jwToken.Valid {
 			return nil, errInvalidToken
 		}
 		claims, ok := jwToken.Claims.(jwt.MapClaims)
+		fmt.Println("claims", claims)
 		if !ok {
 			return nil, errFailedToDecodeClaims
 		}
-		userRole := claims["role"].(string)
+		userRole := claims["role"].(int64)
+		fmt.Println("userRole", userRole)
 		if !hasAllowedRole(userRole, allowedRoles) {
 			return nil, errAccessDenied
 		}
@@ -87,7 +90,12 @@ func WithAuth(secretKey string, cfg config.AuthConfig) grpc.UnaryServerIntercept
 	}
 }
 
-func hasAllowedRole(userRole string, allowed map[string]struct{}) bool {
+// todo wtf???
+func GetUserID(ctx context.Context) int64 {
+	ctx = context.WithValue(ctx, userIDKey, "")
+}
+
+func hasAllowedRole(userRole int64, allowed map[int64]struct{}) bool {
 	if _, ok := allowed[userRole]; ok {
 		return ok
 	}

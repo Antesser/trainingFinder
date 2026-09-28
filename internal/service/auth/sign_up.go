@@ -7,10 +7,10 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (s *service) SignUp(ctx context.Context, login, password string) (string, error) {
+func (s *service) SignUp(ctx context.Context, login, password string, roleID int64) (string, error) {
 	hash, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	userId := uuid.New().String()
-	id, err := s.authRepo.SignUp(ctx, hash, userId, login)
+	id, err := s.authRepo.SignUp(ctx, hash, userId, login, roleID)
 	if err != nil {
 		return "", err
 	}

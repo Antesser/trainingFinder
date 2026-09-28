@@ -16,6 +16,7 @@ type Session struct {
 	Active    bool
 	CreatedAt time.Time
 	ExpiresAt time.Time
+	RoleID    int64
 }
 
 func (s *Session) IsActive() bool {

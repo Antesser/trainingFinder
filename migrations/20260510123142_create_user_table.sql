@@ -1,10 +1,10 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS users (
-    id TEXT,
+                                     id      TEXT PRIMARY KEY,
     login VARCHAR(20) NOT NULL,
     password VARCHAR(50) NOT NULL,
-    PRIMARY KEY(id)
+                                     role_id BIGINT NOT NULL REFERENCES roles (id)
 );
 -- +goose StatementEnd
 

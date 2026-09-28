@@ -100,8 +100,7 @@ message ListTrainingsRequest {
   Page page = 1[(buf.validate.field).required = true];
   Filter filter = 2;
   message Filter{
-    optional string user_id = 1[(buf.validate.field).string.uuid = true];
-    optional int64 duration = 2;
+    optional int64 duration = 1;
   }
 }
 
