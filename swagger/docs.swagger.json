@@ -686,9 +686,6 @@
     "v1ListBookingsRequestFilter": {
       "type": "object",
       "properties": {
-        "booked_by": {
-          "type": "string"
-        },
         "booked_from": {
           "type": "string",
           "format": "date-time"
@@ -734,9 +731,6 @@
     "v1ListTrainingsRequestFilter": {
       "type": "object",
       "properties": {
-        "user_id": {
-          "type": "string"
-        },
         "duration": {
           "type": "string",
           "format": "int64"
@@ -803,8 +797,7 @@
           "type": "string"
         },
         "roleID": {
-          "type": "string",
-          "format": "int64"
+          "type": "string"
         }
       }
     },

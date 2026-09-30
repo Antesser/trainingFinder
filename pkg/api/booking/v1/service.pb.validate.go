@@ -922,10 +922,6 @@ func (m *ListBookingsRequest_Filter) validate(all bool) error {
 
 	// no validation rules for WithLock
 
-	if m.BookedBy != nil {
-		// no validation rules for BookedBy
-	}
-
 	if m.BookedFrom != nil {
 
 		if all {

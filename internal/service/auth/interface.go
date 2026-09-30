@@ -9,7 +9,7 @@ import (
 )
 
 type authRepository interface {
-	SignUp(ctx context.Context, hash []byte, id, login string, roleID int64) (string, error)
+	SignUp(ctx context.Context, hash []byte, id, login, roleID string) (string, error)
 	GetUserAuthInfoByLogin(ctx context.Context, login string) (model.UserAuthInfo, error)
 	GetSessionByRefreshToken(ctx context.Context, refreshToken uuid.UUID) (*model.Session, error)
 	CreateSession(ctx context.Context, session model.Session) error

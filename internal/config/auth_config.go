@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -10,17 +11,18 @@ import (
 type authYamlConfig struct {
 	Endpoints struct {
 		Bearer map[string]struct {
-			Roles []int64 `yaml:"roles"`
+			Roles []string `yaml:"roles"`
 		} `yaml:"bearer"`
 	} `yaml:"auth-endpoints"`
 }
 type AuthConfig struct {
-	BearerSet map[string]map[int64]struct{}
+	BearerSet map[string]map[string]struct{}
 }
 
 // NewAuthConfig loads and parses the auth configuration from file
 func NewAuthConfig(path string) (*AuthConfig, error) {
 	data, err := os.ReadFile(filepath.Clean(path))
+
 	if err != nil {
 		return nil, err
 	}
@@ -30,10 +32,11 @@ func NewAuthConfig(path string) (*AuthConfig, error) {
 	}
 
 	cfg := &AuthConfig{
-		BearerSet: make(map[string]map[int64]struct{}, len(fileCfg.Endpoints.Bearer)),
+		BearerSet: make(map[string]map[string]struct{}, len(fileCfg.Endpoints.Bearer)),
 	}
+	fmt.Println("fileCfg", fileCfg)
 	for method, endpoint := range fileCfg.Endpoints.Bearer {
-		roles := make(map[int64]struct{}, len(endpoint.Roles))
+		roles := make(map[string]struct{}, len(endpoint.Roles))
 		for _, id := range endpoint.Roles {
 			roles[id] = struct{}{}
 		}

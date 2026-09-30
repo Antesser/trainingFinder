@@ -38,7 +38,7 @@ service AuthService {
 message SignUpRequest {
   string login = 1[(buf.validate.field).required = true];
   string password = 2[(buf.validate.field).required = true];
-  int64 roleID = 3[(buf.validate.field).required = true];
+  string roleID = 3[(buf.validate.field).required = true];
 }
 
 message SignUpResponse {

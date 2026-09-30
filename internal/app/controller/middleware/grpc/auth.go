@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -77,26 +78,37 @@ func WithAuth(secretKey string, cfg config.AuthConfig) grpc.UnaryServerIntercept
 		if !ok {
 			return nil, errFailedToDecodeClaims
 		}
-		userRole := claims["role"].(int64)
+		userRole, ok := claims["role"]
+		if !ok {
+			fmt.Println("userRole", claims["role"])
+		}
 		fmt.Println("userRole", userRole)
-		if !hasAllowedRole(userRole, allowedRoles) {
+		userRoleID, ok := userRole.(string)
+		if !ok {
+			fmt.Println("userRoleID", userRoleID)
+		}
+		if !hasAllowedRole(userRoleID, allowedRoles) {
 			return nil, errAccessDenied
 		}
 		id := claims["id"]
-
-		ctx = context.WithValue(ctx, userIDKey, id)
+		fmt.Printf("id type: %T, value: %#v\n", id, id)
+		ctx = context.WithValue(ctx, "userIDKey", id)
 
 		return handler(ctx, req)
 	}
 }
 
-// todo wtf???
-func GetUserID(ctx context.Context) int64 {
-	ctx = context.WithValue(ctx, userIDKey, "")
+func GetUserID(ctx context.Context) (string, error) {
+	res, ok := ctx.Value("userIDKey").(string)
+	if !ok {
+		return "", errors.New("failed to get user ID")
+	}
+	return res, nil
 }
 
-func hasAllowedRole(userRole int64, allowed map[int64]struct{}) bool {
-	if _, ok := allowed[userRole]; ok {
+func hasAllowedRole(userRole string, allowed map[string]struct{}) bool {
+	role := roles[userRole]
+	if _, ok := allowed[role]; ok {
 		return ok
 	}
 	return false

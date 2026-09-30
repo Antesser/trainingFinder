@@ -9,7 +9,7 @@ import (
 )
 
 type authService interface {
-	SignUp(ctx context.Context, login, password string, roleID int64) (string, error)
+	SignUp(ctx context.Context, login, password, roleID string) (string, error)
 	SignIn(ctx context.Context, login, password string) (model.Tokens, error)
 	RefreshSession(ctx context.Context, refreshToken uuid.UUID) (accessToken string, err error)
 	CreateRole(ctx context.Context, role string) error

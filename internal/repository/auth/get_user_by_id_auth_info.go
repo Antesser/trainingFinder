@@ -16,7 +16,7 @@ type authInfo struct {
 	ID       string `db:"id"`
 	Login    string `db:"login"`
 	Password string `db:"password"`
-	RoleID   int64  `db:"role_id"`
+	RoleID   string `db:"role_id"`
 }
 
 func (r *repository) GetUserAuthInfoByLogin(ctx context.Context, login string) (model.UserAuthInfo, error) { // в транзакцию вставка в таблицу сессий

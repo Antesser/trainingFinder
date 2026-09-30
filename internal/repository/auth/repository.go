@@ -21,14 +21,14 @@ type user struct {
 	ID       string `db:"id"`
 	Login    string `db:"login"`
 	Password string `db:"password"`
-	RoleID   int64  `db:"role_id"`
+	RoleID   string `db:"role_id"`
 }
 
 func New(pool *pgxtransactor.Pool) *repository {
 	return &repository{pool: pool}
 }
 
-func (r *repository) SignUp(ctx context.Context, hash []byte, id, login string, roleID int64) (string, error) {
+func (r *repository) SignUp(ctx context.Context, hash []byte, id, login, roleID string) (string, error) {
 	err := r.CheckUserExistence(ctx, login)
 	if err != nil {
 		return "", err

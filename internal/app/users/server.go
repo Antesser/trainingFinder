@@ -2,9 +2,13 @@ package users
 
 import (
 	"context"
+	"errors"
 	"log"
 
+	model "github.com/Antesser/trainingFinder/internal/model/user"
 	userPkg "github.com/Antesser/trainingFinder/pkg/api/users/v1"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
@@ -37,15 +41,6 @@ func (s *Server) RegisterHandlerFromEndpoint(
 	return err
 }
 
-func (s *Server) DeleteUser(ctx context.Context, req *userPkg.DeleteUserRequest) (*userPkg.DeleteUserResponse, error) {
-
-	err := s.userService.DeleteUser(ctx, req.GetId())
-	if err != nil {
-		return nil, err
-	}
-
-	return &userPkg.DeleteUserResponse{}, nil
-}
 func (s *Server) UpdateUser(ctx context.Context, req *userPkg.UpdateUserRequest) (*userPkg.UpdateUserResponse, error) { //вынести в отдельные файлы, ибо надо
 
 	err := s.userService.UpdateUser(ctx, req.GetId(), req.GetLogin())
@@ -56,9 +51,11 @@ func (s *Server) UpdateUser(ctx context.Context, req *userPkg.UpdateUserRequest)
 	return &userPkg.UpdateUserResponse{}, nil
 }
 func (s *Server) GetUserByID(ctx context.Context, req *userPkg.GetUserByIDRequest) (*userPkg.GetUserByIDResponse, error) {
-
 	user, err := s.userService.GetUserByID(ctx, req.GetId())
 	if err != nil {
+		if errors.Is(err, model.ErrUserNotFound) {
+			return nil, status.Errorf(codes.NotFound, "user %q not found", req.GetId())
+		}
 		return nil, err
 	}
 

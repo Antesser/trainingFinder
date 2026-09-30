@@ -43,6 +43,7 @@ func (r *repository) CreateTrainingBooking(ctx context.Context, booking model.Tr
 
 func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRequest) (model.ListBookingsResponse, error) {
 	limit := int(data.Page.Limit)
+	fmt.Println("data", data.Filter.BookedBy)
 	qb := sq.Select(
 		"id",
 		"training_id",

@@ -16,6 +16,7 @@ type ListBookingsResponse struct {
 }
 
 type Filter struct {
+	//TrainerID  string // чтобы тренер видел свои тренировки
 	BookedBy   *string
 	BookedFrom *time.Time
 	BookedTo   *time.Time

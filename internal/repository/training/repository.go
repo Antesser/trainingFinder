@@ -129,9 +129,9 @@ func (r *repository) ListTrainings(ctx context.Context, data model.ListTrainingR
 	if data.Filter.Duration != nil {
 		qb = qb.Where(sq.Eq{"duration": *data.Filter.Duration})
 	}
-	if data.Filter.UserID != nil {
-		qb = qb.Where(sq.Eq{"user_id": *data.Filter.UserID})
-	}
+	//if data.Filter.UserID != nil {
+	//	qb = qb.Where(sq.Eq{"user_id": *data.Filter.UserID})
+	//}
 
 	query, args, err := qb.ToSql()
 	if err != nil {

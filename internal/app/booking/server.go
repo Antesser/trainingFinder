@@ -3,9 +3,11 @@ package booking
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"time"
 
+	authMiddlewere "github.com/Antesser/trainingFinder/internal/app/controller/middleware/grpc"
 	model "github.com/Antesser/trainingFinder/internal/model/booking"
 	modelPage "github.com/Antesser/trainingFinder/internal/model/page"
 	bookingPkg "github.com/Antesser/trainingFinder/pkg/api/booking/v1"
@@ -85,11 +87,15 @@ func (s *Server) ListBookings(ctx context.Context, req *bookingPkg.ListBookingsR
 		t := ts.AsTime()
 		bookedTo = &t
 	}
-
-	var bookedBy *string
-	if v := filter.GetBookedBy(); v != "" {
-		bookedBy = &v
+	userID, err := authMiddlewere.GetUserID(ctx)
+	fmt.Println("userID", userID)
+	if err != nil {
+		return nil, err
 	}
+
+	//if v := filter.GetBookedBy(); v != "" {
+	//	bookedBy = &v
+	//}
 
 	resp, err := s.bookingService.ListBookings(ctx, model.ListBookingsRequest{
 		Page: modelPage.Page{
@@ -97,7 +103,7 @@ func (s *Server) ListBookings(ctx context.Context, req *bookingPkg.ListBookingsR
 			Offset: page.GetOffset(),
 		},
 		Filter: model.Filter{
-			BookedBy:   bookedBy,
+			BookedBy:   &userID,
 			BookedFrom: bookedFrom,
 			BookedTo:   bookedTo,
 			WithLock:   filter.GetWithLock(),

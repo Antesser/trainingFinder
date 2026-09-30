@@ -1619,10 +1619,6 @@ func (m *ListTrainingsRequest_Filter) validate(all bool) error {
 
 	var errors []error
 
-	if m.UserId != nil {
-		// no validation rules for UserId
-	}
-
 	if m.Duration != nil {
 		// no validation rules for Duration
 	}

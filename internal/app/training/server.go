@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log"
 
+	authMiddlewere "github.com/Antesser/trainingFinder/internal/app/controller/middleware/grpc"
 	modelPage "github.com/Antesser/trainingFinder/internal/model/page"
 	model "github.com/Antesser/trainingFinder/internal/model/training"
 
@@ -118,12 +119,13 @@ func (s *Server) ListTrainings(ctx context.Context, req *trainingPkg.ListTrainin
 		d := f.GetDuration()
 		duration = &d
 	}
-
-	var userID *string
-	if f := req.GetFilter(); f != nil && f.GetUserId() != "" {
-		u := f.GetUserId()
-		userID = &u
+	userID, err := authMiddlewere.GetUserID(ctx)
+	if err != nil {
+		return nil, err
 	}
+	//if f := req.GetFilter(); f != nil && userID != "" {
+	//	userID = &u
+	//}
 	mod, err := s.trainingService.ListTrainings(ctx, model.ListTrainingRequest{
 		Page: modelPage.Page{
 			Limit:  req.GetPage().GetLimit(),

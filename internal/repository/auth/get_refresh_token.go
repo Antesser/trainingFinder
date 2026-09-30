@@ -20,7 +20,7 @@ type sessions struct {
 	Active    bool      `db:"is_active"`
 	CreatedAt time.Time `db:"created_at"`
 	ExpiresAt time.Time `db:"expires_at"`
-	RoleID    int64     `db:"role_id"`
+	RoleID    string    `db:"role_id"`
 }
 
 func (r *repository) GetSessionByRefreshToken(ctx context.Context, refreshToken uuid.UUID) (*model.Session, error) { // в транзакцию вставка в таблицу сессий
