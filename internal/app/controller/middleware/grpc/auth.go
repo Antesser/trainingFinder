@@ -2,7 +2,6 @@ package grpc
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 
@@ -36,6 +35,7 @@ var (
 type userIDKeyType struct{}
 
 var userIDKey userIDKeyType
+var coachIDKey userIDKeyType
 
 func WithAuth(secretKey string, cfg config.AuthConfig) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
@@ -91,19 +91,33 @@ func WithAuth(secretKey string, cfg config.AuthConfig) grpc.UnaryServerIntercept
 			return nil, errAccessDenied
 		}
 		id := claims["id"]
-		fmt.Printf("id type: %T, value: %#v\n", id, id)
-		ctx = context.WithValue(ctx, "userIDKey", id)
+
+		switch {
+		case IsCoach(userRoleID):
+			ctx = context.WithValue(ctx, coachIDKey, id)
+		case IsUser(userRoleID):
+			ctx = context.WithValue(ctx, userIDKey, id)
+		}
 
 		return handler(ctx, req)
 	}
 }
 
-func GetUserID(ctx context.Context) (string, error) {
-	res, ok := ctx.Value("userIDKey").(string)
-	if !ok {
-		return "", errors.New("failed to get user ID")
+func GetUserID(ctx context.Context) *string {
+	res, ok := ctx.Value(userIDKey).(string)
+	if ok {
+		return &res
 	}
-	return res, nil
+
+	return nil
+}
+func GetCoachID(ctx context.Context) *string {
+	res, ok := ctx.Value(coachIDKey).(string)
+	if ok {
+		return &res
+	}
+
+	return nil
 }
 
 func hasAllowedRole(userRole string, allowed map[string]struct{}) bool {
@@ -111,5 +125,6 @@ func hasAllowedRole(userRole string, allowed map[string]struct{}) bool {
 	if _, ok := allowed[role]; ok {
 		return ok
 	}
+
 	return false
 }

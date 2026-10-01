@@ -66,6 +66,9 @@ func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRe
 	if data.Filter.BookedBy != nil {
 		qb = qb.Where(sq.Eq{"booked_by": *data.Filter.BookedBy})
 	}
+	if data.Filter.TrainerID != nil {
+		qb = qb.Where(sq.Eq{"training_id": *data.Filter.TrainerID})
+	}
 	if data.Filter.BookedTo != nil {
 		qb = qb.Where(sq.Eq{"book_to": *data.Filter.BookedTo})
 	}

@@ -3,7 +3,6 @@ package booking
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log"
 	"time"
 
@@ -87,15 +86,12 @@ func (s *Server) ListBookings(ctx context.Context, req *bookingPkg.ListBookingsR
 		t := ts.AsTime()
 		bookedTo = &t
 	}
-	userID, err := authMiddlewere.GetUserID(ctx)
-	fmt.Println("userID", userID)
-	if err != nil {
-		return nil, err
-	}
+	userID := authMiddlewere.GetUserID(ctx)
+	coachID := authMiddlewere.GetCoachID(ctx)
 
-	//if v := filter.GetBookedBy(); v != "" {
-	//	bookedBy = &v
-	//}
+	if coachID == nil && userID == nil {
+		return nil, status.Error(codes.Unauthenticated, "No IDs provided")
+	}
 
 	resp, err := s.bookingService.ListBookings(ctx, model.ListBookingsRequest{
 		Page: modelPage.Page{
@@ -103,10 +99,10 @@ func (s *Server) ListBookings(ctx context.Context, req *bookingPkg.ListBookingsR
 			Offset: page.GetOffset(),
 		},
 		Filter: model.Filter{
-			BookedBy:   &userID,
+			BookedBy:   userID,
 			BookedFrom: bookedFrom,
 			BookedTo:   bookedTo,
-			//WithLock:   filter.GetWithLock(),
+			TrainerID:  coachID,
 		},
 	})
 	if err != nil {
