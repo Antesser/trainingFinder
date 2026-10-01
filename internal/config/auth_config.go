@@ -22,7 +22,6 @@ type AuthConfig struct {
 // NewAuthConfig loads and parses the auth configuration from file
 func NewAuthConfig(path string) (*AuthConfig, error) {
 	data, err := os.ReadFile(filepath.Clean(path))
-
 	if err != nil {
 		return nil, err
 	}
