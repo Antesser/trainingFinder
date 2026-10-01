@@ -9,7 +9,7 @@ import (
 func (t *trainingService) GetTraining(ctx context.Context, id string) (*model.Training, error) {
 	model, err := t.repo.GetTraining(ctx, id)
 	if err != nil {
-		return model, err
+		return nil, err
 	}
 	return model, nil
 }
