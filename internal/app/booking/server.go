@@ -106,7 +106,7 @@ func (s *Server) ListBookings(ctx context.Context, req *bookingPkg.ListBookingsR
 			BookedBy:   &userID,
 			BookedFrom: bookedFrom,
 			BookedTo:   bookedTo,
-			WithLock:   filter.GetWithLock(),
+			//WithLock:   filter.GetWithLock(),
 		},
 	})
 	if err != nil {
