@@ -73,7 +73,7 @@ func (s *Server) SignIn(ctx context.Context, req *authPkg.SignInRequest) (*authP
 func (s *Server) SignUp(ctx context.Context, req *authPkg.SignUpRequest) (*authPkg.SignUpResponse, error) { // вынести в отдельный файл, Виталий негодует
 	log.Printf("SignUp request: login=%s", req.Login)
 
-	id, err := s.authService.SignUp(ctx, req.Login, req.Password, req.RoleID)
+	id, err := s.authService.SignUp(ctx, req.Login, req.Password, req.RoleId)
 	if err != nil {
 		return nil, err
 	}

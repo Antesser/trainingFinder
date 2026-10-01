@@ -43,7 +43,6 @@ auth-endpoints:
     /training_booking.v1.BookingService/BookTraining:
       roles:
         - admin
-        - coach
         - user
     /training_booking.v1.BookingService/ListBookings:
       roles:

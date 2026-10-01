@@ -27,7 +27,7 @@ func (r *repository) GetSessionByRefreshToken(ctx context.Context, refreshToken 
 	qb := sq.Select("s.refresh_token", "s.user_id", "s.is_active", "s.created_at", "s.expires_at", "u.role_id").
 		From("session s").
 		Join("users u ON u.id = s.user_id").
-		Where(sq.And{sq.Eq{"s.refresh_token": refreshToken}, sq.Eq{"s.is_active": true}}).
+		Where(sq.And{sq.Eq{"s.refresh_token": refreshToken, "s.is_active": true}}).
 		PlaceholderFormat(sq.Dollar)
 
 	query, args, err := qb.ToSql()

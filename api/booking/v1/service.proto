@@ -55,7 +55,6 @@ message ListBookingsRequest {
     optional google.protobuf.Timestamp booked_from = 1;
     optional google.protobuf.Timestamp booked_to = 2;
     optional string trainer_id = 3[(buf.validate.field).string.uuid = true];
-    bool with_lock = 4;
   }
 }
 
