@@ -119,10 +119,8 @@ func (s *Server) ListTrainings(ctx context.Context, req *trainingPkg.ListTrainin
 		d := f.GetDuration()
 		duration = &d
 	}
-	userID, err := authMiddlewere.GetUserID(ctx)
-	if err != nil {
-		return nil, err
-	}
+	userID := authMiddlewere.GetUserID(ctx)
+
 	//if f := req.GetFilter(); f != nil && userID != "" {
 	//	userID = &u
 	//}
@@ -132,7 +130,7 @@ func (s *Server) ListTrainings(ctx context.Context, req *trainingPkg.ListTrainin
 			Offset: req.GetPage().GetOffset(),
 		},
 		Filter: model.TrainingFilter{
-			UserID:   userID,
+			UserID:   *userID,
 			Duration: duration,
 		},
 	})

@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 
@@ -33,7 +32,6 @@ func NewAuthConfig(path string) (*AuthConfig, error) {
 	cfg := &AuthConfig{
 		BearerSet: make(map[string]map[string]struct{}, len(fileCfg.Endpoints.Bearer)),
 	}
-	fmt.Println("fileCfg", fileCfg)
 	for method, endpoint := range fileCfg.Endpoints.Bearer {
 		roles := make(map[string]struct{}, len(endpoint.Roles))
 		for _, id := range endpoint.Roles {

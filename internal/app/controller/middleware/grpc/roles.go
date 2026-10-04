@@ -17,6 +17,7 @@ var (
 func IsCoach(input string) bool {
 	return roles[input] == Coach
 }
+
 func IsUser(input string) bool {
 	return roles[input] == User
 }
