@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	model "trainingFinder/internal/model/user"
 
+	model "github.com/Antesser/trainingFinder/internal/model/user"
 	sq "github.com/Masterminds/squirrel"
 	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/golangmonster/pgxtransactor"

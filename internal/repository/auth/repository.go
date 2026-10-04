@@ -4,7 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log"
-	model "trainingFinder/internal/model/user"
+
+	model "github.com/Antesser/trainingFinder/internal/model/user"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/georgysavva/scany/v2/pgxscan"
@@ -20,20 +21,21 @@ type user struct {
 	ID       string `db:"id"`
 	Login    string `db:"login"`
 	Password string `db:"password"`
+	RoleID   string `db:"role_id"`
 }
 
 func New(pool *pgxtransactor.Pool) *repository {
 	return &repository{pool: pool}
 }
 
-func (r *repository) SignUp(ctx context.Context, hash []byte, id, login string) (string, error) {
+func (r *repository) SignUp(ctx context.Context, hash []byte, id, login, roleID string) (string, error) {
 	err := r.CheckUserExistence(ctx, login)
 	if err != nil {
 		return "", err
 	}
 	qb := sq.Insert("users").
-		Columns("id", "login", "password").
-		Values(id, login, hash).
+		Columns("id", "login", "password", "role_id").
+		Values(id, login, hash, roleID).
 		Suffix("RETURNING id").
 		PlaceholderFormat(sq.Dollar)
 

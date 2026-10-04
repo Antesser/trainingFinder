@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package kafka.v1;
 
-option go_package = "trainingFinder/pkg/api/kafka/v1";
+option go_package = "github.com/Antesser/trainingFinder/pkg/api/kafka/v1";
 
 
 message CreateTrainingEvent {
@@ -11,4 +11,11 @@ message CreateTrainingEvent {
 
 message DeleteTrainingEvent {
   string training_id = 1;
+}
+message CreateBookingEvent {
+  string booking_id = 1;
+}
+
+message DeleteBookingEvent {
+  string booking_id = 1;
 }

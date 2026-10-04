@@ -2,9 +2,10 @@ package grpc
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
-	"trainingFinder/internal/config"
+	"github.com/Antesser/trainingFinder/internal/config"
 
 	"github.com/golang-jwt/jwt/v5"
 	"google.golang.org/grpc"
@@ -22,21 +23,24 @@ var (
 	errInvalidAuthHeader = status.Error(codes.Unauthenticated, "invalid authorization header format")
 	// errInvalidToken returned when auth token not match.
 	errInvalidToken = status.Error(codes.Unauthenticated, "invalid token")
-	// errClientUnathenticated
-	errClientUnathenticated = status.Error(codes.Unauthenticated, "client is not authenticated to use handler")
+	// errClientUnauthenticated
+	errClientUnauthenticated = status.Error(codes.Unauthenticated, "client is not authenticated to use handler")
 	// errUnexpectedSigningMethod
 	errUnexpectedSigningMethod = status.Error(codes.Unauthenticated, "unexpected signing method")
 	// errFailedToDecodeClaims
 	errFailedToDecodeClaims = status.Error(codes.Unauthenticated, "failed to decode token claims")
+	errAccessDenied         = status.Error(codes.Unauthenticated, "failed to find a proper role")
 )
 
 type userIDKeyType struct{}
 
 var userIDKey userIDKeyType
+var coachIDKey userIDKeyType
 
 func WithAuth(secretKey string, cfg config.AuthConfig) grpc.UnaryServerInterceptor {
-	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-		if _, needsAuth := cfg.BearerSet[info.FullMethod]; !needsAuth {
+	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+		allowedRoles, needsAuth := cfg.BearerSet[info.FullMethod]
+		if !needsAuth {
 			return handler(ctx, req)
 		}
 
@@ -57,26 +61,70 @@ func WithAuth(secretKey string, cfg config.AuthConfig) grpc.UnaryServerIntercept
 			return nil, errInvalidAuthHeader
 		}
 
-		jwToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+		jwToken, err := jwt.Parse(token, func(token *jwt.Token) (any, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, errUnexpectedSigningMethod
 			}
 			return []byte(secretKey), nil
 		})
 		if err != nil {
-			return nil, errClientUnathenticated
+			return nil, errClientUnauthenticated
 		}
 		if !jwToken.Valid {
 			return nil, errInvalidToken
 		}
 		claims, ok := jwToken.Claims.(jwt.MapClaims)
+		fmt.Println("claims", claims)
 		if !ok {
 			return nil, errFailedToDecodeClaims
 		}
+		userRole, ok := claims["role"]
+		if !ok {
+			fmt.Println("userRole", claims["role"])
+		}
+		fmt.Println("userRole", userRole)
+		userRoleID, ok := userRole.(string)
+		if !ok {
+			fmt.Println("userRoleID", userRoleID)
+		}
+		if !hasAllowedRole(userRoleID, allowedRoles) {
+			return nil, errAccessDenied
+		}
 		id := claims["id"]
 
-		ctx = context.WithValue(ctx, userIDKey, id)
+		switch {
+		case IsCoach(userRoleID):
+			ctx = context.WithValue(ctx, coachIDKey, id)
+		case IsUser(userRoleID):
+			ctx = context.WithValue(ctx, userIDKey, id)
+		}
 
 		return handler(ctx, req)
 	}
+}
+
+func GetUserID(ctx context.Context) *string {
+	res, ok := ctx.Value(userIDKey).(string)
+	if ok {
+		return &res
+	}
+
+	return nil
+}
+func GetCoachID(ctx context.Context) *string {
+	res, ok := ctx.Value(coachIDKey).(string)
+	if ok {
+		return &res
+	}
+
+	return nil
+}
+
+func hasAllowedRole(userRole string, allowed map[string]struct{}) bool {
+	role := roles[userRole]
+	if _, ok := allowed[role]; ok {
+		return ok
+	}
+
+	return false
 }

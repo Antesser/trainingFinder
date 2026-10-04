@@ -2,7 +2,8 @@ package users
 
 import (
 	"context"
-	model "trainingFinder/internal/model/user"
+
+	model "github.com/Antesser/trainingFinder/internal/model/user"
 )
 
 type userRepository interface {

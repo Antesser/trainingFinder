@@ -5,7 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"time"
-	model "trainingFinder/internal/model/auth"
+
+	model "github.com/Antesser/trainingFinder/internal/model/auth"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/georgysavva/scany/v2/pgxscan"
@@ -19,27 +20,29 @@ type sessions struct {
 	Active    bool      `db:"is_active"`
 	CreatedAt time.Time `db:"created_at"`
 	ExpiresAt time.Time `db:"expires_at"`
+	RoleID    string    `db:"role_id"`
 }
 
 func (r *repository) GetSessionByRefreshToken(ctx context.Context, refreshToken uuid.UUID) (*model.Session, error) { // в транзакцию вставка в таблицу сессий
-	qb := sq.Select("refresh_token", "user_id", "is_active", "created_at", "expires_at").
-		From("session").
-		Where(sq.And{sq.Eq{"refresh_token": refreshToken}, sq.Eq{"is_active": true}}).
+	qb := sq.Select("s.refresh_token", "s.user_id", "s.is_active", "s.created_at", "s.expires_at", "u.role_id").
+		From("session s").
+		Join("users u ON u.id = s.user_id").
+		Where(sq.And{sq.Eq{"s.refresh_token": refreshToken, "s.is_active": true}}).
 		PlaceholderFormat(sq.Dollar)
 
 	query, args, err := qb.ToSql()
 	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, model.ErrNotFound
-		}
 		return nil, err
 	}
 	var i sessions
 	err = pgxscan.Get(ctx, r.pool.Querier(ctx), &i, query, args...)
 	if err != nil {
-		return nil, fmt.Errorf("execute insert: %w", err)
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, model.ErrSessionNotFound
+		}
+		return nil, fmt.Errorf("execute query: %w", err)
 	}
 
 	return &model.Session{Token: i.Token, UserID: i.UserID, Active: i.Active,
-		CreatedAt: i.CreatedAt, ExpiresAt: i.ExpiresAt}, nil
+		CreatedAt: i.CreatedAt, ExpiresAt: i.ExpiresAt, RoleID: i.RoleID}, nil
 }

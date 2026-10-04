@@ -8,6 +8,7 @@ type UserAuthInfo struct {
 	ID       string
 	Login    string
 	Password string
+	RoleID   string
 }
 
 var (

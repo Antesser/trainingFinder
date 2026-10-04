@@ -1,10 +1,51 @@
 auth-endpoints:
   bearer:
-    - /training.v1.TrainingService/CreateTraining
-    - /training.v1.TrainingService/GetTraining
-    - /training.v1.TrainingService/UpdateTraining
-    - /training.v1.TrainingService/DeleteTraining
-    - /users.v1.UserService/GetUserByID
-    - /users.v1.UserService/DeleteUser
-    - /users.v1.UserService/UpdateUser
-
+    /training.v1.TrainingService/CreateTraining:
+      roles:
+        - admin
+        - coach
+        - user
+    /training.v1.TrainingService/GetTraining:
+      roles:
+        - admin
+        - coach
+        - user
+    /training.v1.TrainingService/UpdateTraining:
+      roles:
+        - admin
+        - coach
+        - user
+    /training.v1.TrainingService/DeleteTraining:
+      roles:
+        - admin
+        - coach
+        - user
+    /training.v1.TrainingService/ListTrainings:
+      roles:
+        - admin
+        - coach
+        - user
+    /users.v1.UserService/GetUserByID:
+      roles:
+        - admin
+        - coach
+        - user
+    /users.v1.UserService/DeleteUser:
+      roles:
+        - admin
+        - coach
+        - user
+    /users.v1.UserService/UpdateUser:
+      roles:
+        - admin
+        - coach
+        - user
+    /training_booking.v1.BookingService/BookTraining:
+      roles:
+        - admin
+        - user
+    /training_booking.v1.BookingService/ListBookings:
+      roles:
+        - admin
+        - coach
+        - user

@@ -6,9 +6,9 @@ import (
 	"log"
 	"net/http"
 
-	authPkg "trainingFinder/pkg/api/auth/v1"
+	authPkg "github.com/Antesser/trainingFinder/pkg/api/auth/v1"
 
-	model "trainingFinder/internal/model/training"
+	model "github.com/Antesser/trainingFinder/internal/model/training"
 
 	"github.com/google/uuid"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -54,7 +54,6 @@ func (s *Server) SignIn(ctx context.Context, req *authPkg.SignInRequest) (*authP
 		}
 		return nil, err
 	}
-	// добавить печеньки, в которые я положу refreshToken, проблема в том, что всё может пойти по ...
 	cookie := &http.Cookie{
 		Name:     "refresh_token",
 		Value:    tokens.RefreshToken,
@@ -73,7 +72,7 @@ func (s *Server) SignIn(ctx context.Context, req *authPkg.SignInRequest) (*authP
 func (s *Server) SignUp(ctx context.Context, req *authPkg.SignUpRequest) (*authPkg.SignUpResponse, error) { // вынести в отдельный файл, Виталий негодует
 	log.Printf("SignUp request: login=%s", req.Login)
 
-	id, err := s.authService.SignUp(ctx, req.Login, req.Password)
+	id, err := s.authService.SignUp(ctx, req.Login, req.Password, req.RoleId)
 	if err != nil {
 		return nil, err
 	}
@@ -96,4 +95,12 @@ func (s *Server) RefreshToken(ctx context.Context, req *authPkg.RefreshTokenRequ
 	return &authPkg.RefreshTokenResponse{
 		AccessToken: accessToken,
 	}, nil
+}
+func (s *Server) CreateRole(ctx context.Context, req *authPkg.CreateRoleRequest) (*authPkg.CreateRoleResponse, error) {
+	err := s.authService.CreateRole(ctx, req.Role)
+	if err != nil {
+		return nil, err
+	}
+
+	return &authPkg.CreateRoleResponse{}, nil
 }
