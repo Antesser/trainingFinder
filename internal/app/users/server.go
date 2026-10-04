@@ -42,7 +42,6 @@ func (s *Server) RegisterHandlerFromEndpoint(
 }
 
 func (s *Server) UpdateUser(ctx context.Context, req *userPkg.UpdateUserRequest) (*userPkg.UpdateUserResponse, error) { //вынести в отдельные файлы, ибо надо
-
 	err := s.userService.UpdateUser(ctx, req.GetId(), req.GetLogin())
 	if err != nil {
 		return nil, err

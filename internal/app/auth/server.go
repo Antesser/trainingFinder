@@ -54,7 +54,6 @@ func (s *Server) SignIn(ctx context.Context, req *authPkg.SignInRequest) (*authP
 		}
 		return nil, err
 	}
-	// добавить печеньки, в которые я положу refreshToken, проблема в том, что всё может пойти по ...
 	cookie := &http.Cookie{
 		Name:     "refresh_token",
 		Value:    tokens.RefreshToken,

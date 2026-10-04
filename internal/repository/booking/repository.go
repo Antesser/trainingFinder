@@ -41,7 +41,7 @@ func (r *repository) CreateTrainingBooking(ctx context.Context, booking model.Tr
 	return nil
 }
 
-func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRequest) (model.ListBookingsResponse, error) {
+func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRequest) (*model.ListBookingsResponse, error) {
 	limit := int(data.Page.Limit)
 	fmt.Println("data", data.Filter.BookedBy)
 	qb := sq.Select(
@@ -75,12 +75,12 @@ func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRe
 
 	query, args, err := qb.ToSql()
 	if err != nil {
-		return model.ListBookingsResponse{}, err
+		return nil, err
 	}
 
 	var rows []booking
 	if err := pgxscan.Select(ctx, r.pool.Querier(ctx), &rows, query, args...); err != nil {
-		return model.ListBookingsResponse{}, err
+		return nil, err
 	}
 	rows, hasNext := utils.TruncateForHasNext(rows, limit)
 
@@ -98,5 +98,5 @@ func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRe
 	fmt.Println("SQL:", query)
 	fmt.Println("ARGS:", args)
 	fmt.Println("rows:", len(rows))
-	return model.ListBookingsResponse{ModelList: out, HasNext: hasNext}, nil
+	return &model.ListBookingsResponse{ModelList: out, HasNext: hasNext}, nil
 }
