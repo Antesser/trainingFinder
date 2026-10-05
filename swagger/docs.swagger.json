@@ -153,6 +153,38 @@
         ]
       }
     },
+    "/api/booking/v1/book-status": {
+      "post": {
+        "operationId": "BookingService_ChangeBookStatus",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ChangeBookStatusResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ChangeBookStatusRequest"
+            }
+          }
+        ],
+        "tags": [
+          "BookingService"
+        ]
+      }
+    },
     "/api/booking/v1/book-training": {
       "post": {
         "operationId": "BookingService_BookTraining",
@@ -605,6 +637,20 @@
           "format": "date-time"
         }
       }
+    },
+    "v1ChangeBookStatusRequest": {
+      "type": "object",
+      "properties": {
+        "status_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "v1ChangeBookStatusResponse": {
+      "type": "object"
     },
     "v1CreateRoleRequest": {
       "type": "object",

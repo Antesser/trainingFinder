@@ -15,6 +15,11 @@ type ListBookingsResponse struct {
 	HasNext   bool
 }
 
+type StatusBooking struct {
+	BookingID string
+	Status    Status
+}
+
 type Filter struct {
 	TrainerID  *string // чтобы тренер видел свои тренировки
 	BookedBy   *string

@@ -2,12 +2,15 @@ package booking
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 	"time"
 
 	model "github.com/Antesser/trainingFinder/internal/model/booking"
 	"github.com/Antesser/trainingFinder/internal/utils"
 	"github.com/georgysavva/scany/v2/pgxscan"
+	"github.com/jackc/pgx/v5"
 	"github.com/samber/lo"
 
 	sq "github.com/Masterminds/squirrel"
@@ -99,4 +102,54 @@ func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRe
 	fmt.Println("ARGS:", args)
 	fmt.Println("rows:", len(rows))
 	return &model.ListBookingsResponse{ModelList: out, HasNext: hasNext}, nil
+}
+
+func (r *repository) GetStatus(ctx context.Context, bookingID string) (string, error) {
+	qb := sq.Select("status").
+		From("training_booking").
+		Where(sq.Eq{"id": bookingID}).
+		PlaceholderFormat(sq.Dollar)
+
+	query, args, err := qb.ToSql()
+	if err != nil {
+		return "", fmt.Errorf("build query: %w", err)
+	}
+
+	var status string
+	err = pgxscan.Get(ctx, r.pool.Querier(ctx), &status, query, args...)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", sql.ErrNoRows
+		}
+		return "", fmt.Errorf("query status: %w", err)
+	}
+	return status, nil
+}
+
+func (r *repository) ChangeStatus(ctx context.Context, data model.StatusBooking) error {
+	qb := sq.Update("training_booking").
+		Set("status", data.Status).
+		Set("updated_at", time.Now()).
+		Where(sq.Eq{"id": data.BookingID}).
+		PlaceholderFormat(sq.Dollar)
+
+	if data.Status != "" {
+		qb = qb.Where(sq.Eq{"status": data.Status})
+	}
+	qb = qb.Suffix("RETURNING id, status")
+
+	query, args, err := qb.ToSql()
+	if err != nil {
+		return fmt.Errorf("build query: %w", err)
+	}
+
+	var out model.StatusBooking
+	err = pgxscan.Get(ctx, r.pool.Querier(ctx), &out, query, args...)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return pgx.ErrNoRows
+		}
+		return fmt.Errorf("execute update: %w", err)
+	}
+	return nil
 }

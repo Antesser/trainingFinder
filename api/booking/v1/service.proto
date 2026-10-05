@@ -20,6 +20,12 @@ service BookingService {
       body: "*"
     };
   }
+  rpc ChangeBookStatus (ChangeBookStatusRequest) returns (ChangeBookStatusResponse) {
+    option (google.api.http) = {
+      post: "/api/booking/v1/book-status"
+      body: "*"
+    };
+  }
 }
 
 message Page{
@@ -61,6 +67,14 @@ message ListBookingsRequest {
 message ListBookingsResponse {
   repeated Booking bookings = 1;
   bool has_next = 2;
+}
+
+message ChangeBookStatusRequest {
+  string  status_id = 1[(buf.validate.field).required = true, (buf.validate.field).string.uuid = true];
+  string status = 2[(buf.validate.field).required = true];
+}
+
+message ChangeBookStatusResponse {
 }
 
 enum BookingStatus {

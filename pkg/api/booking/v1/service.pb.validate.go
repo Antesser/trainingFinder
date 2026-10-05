@@ -898,6 +898,214 @@ var _ interface {
 	ErrorName() string
 } = ListBookingsResponseValidationError{}
 
+// Validate checks the field values on ChangeBookStatusRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ChangeBookStatusRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ChangeBookStatusRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ChangeBookStatusRequestMultiError, or nil if none found.
+func (m *ChangeBookStatusRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ChangeBookStatusRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for StatusId
+
+	// no validation rules for Status
+
+	if len(errors) > 0 {
+		return ChangeBookStatusRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ChangeBookStatusRequestMultiError is an error wrapping multiple validation
+// errors returned by ChangeBookStatusRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ChangeBookStatusRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ChangeBookStatusRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ChangeBookStatusRequestMultiError) AllErrors() []error { return m }
+
+// ChangeBookStatusRequestValidationError is the validation error returned by
+// ChangeBookStatusRequest.Validate if the designated constraints aren't met.
+type ChangeBookStatusRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ChangeBookStatusRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ChangeBookStatusRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ChangeBookStatusRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ChangeBookStatusRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ChangeBookStatusRequestValidationError) ErrorName() string {
+	return "ChangeBookStatusRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ChangeBookStatusRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sChangeBookStatusRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ChangeBookStatusRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ChangeBookStatusRequestValidationError{}
+
+// Validate checks the field values on ChangeBookStatusResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ChangeBookStatusResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ChangeBookStatusResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ChangeBookStatusResponseMultiError, or nil if none found.
+func (m *ChangeBookStatusResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ChangeBookStatusResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return ChangeBookStatusResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ChangeBookStatusResponseMultiError is an error wrapping multiple validation
+// errors returned by ChangeBookStatusResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ChangeBookStatusResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ChangeBookStatusResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ChangeBookStatusResponseMultiError) AllErrors() []error { return m }
+
+// ChangeBookStatusResponseValidationError is the validation error returned by
+// ChangeBookStatusResponse.Validate if the designated constraints aren't met.
+type ChangeBookStatusResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ChangeBookStatusResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ChangeBookStatusResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ChangeBookStatusResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ChangeBookStatusResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ChangeBookStatusResponseValidationError) ErrorName() string {
+	return "ChangeBookStatusResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ChangeBookStatusResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sChangeBookStatusResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ChangeBookStatusResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ChangeBookStatusResponseValidationError{}
+
 // Validate checks the field values on ListBookingsRequest_Filter with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

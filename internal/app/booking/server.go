@@ -46,6 +46,15 @@ func (s *Server) RegisterHandlerFromEndpoint(
 	return err
 }
 
+func (s *Server) ChangeStatus(ctx context.Context, req *bookingPkg.ChangeBookStatusRequest) (*bookingPkg.ChangeBookStatusResponse, error) {
+	err := s.bookingService.ChangeStatusBooking(ctx, model.StatusBooking{BookingID: req.StatusId, Status: model.Status(req.Status)})
+	if err != nil {
+		return nil, err
+	}
+
+	return &bookingPkg.ChangeBookStatusResponse{}, nil
+}
+
 func (s *Server) BookTraining(ctx context.Context, req *bookingPkg.BookTrainingRequest) (*bookingPkg.BookTrainingResponse, error) {
 	var bookFrom, bookTo *time.Time
 	if ts := req.GetBookFrom(); ts != nil {
@@ -67,8 +76,7 @@ func (s *Server) BookTraining(ctx context.Context, req *bookingPkg.BookTrainingR
 		return nil, err
 	}
 
-	return &bookingPkg.BookTrainingResponse{},
-		nil
+	return &bookingPkg.BookTrainingResponse{}, nil
 }
 
 func (s *Server) ListBookings(ctx context.Context, req *bookingPkg.ListBookingsRequest) (*bookingPkg.ListBookingsResponse, error) {
@@ -132,5 +140,6 @@ func timeToProto(t *time.Time) *timestamppb.Timestamp {
 	if t == nil {
 		return nil
 	}
+
 	return timestamppb.New(*t)
 }
