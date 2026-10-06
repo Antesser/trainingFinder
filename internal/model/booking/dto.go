@@ -15,7 +15,7 @@ type ListBookingsResponse struct {
 	HasNext   bool
 }
 
-type StatusBooking struct {
+type BookingStatus struct {
 	BookingID string
 	Status    Status
 }

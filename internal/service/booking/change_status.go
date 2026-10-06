@@ -6,7 +6,7 @@ import (
 	model "github.com/Antesser/trainingFinder/internal/model/booking"
 )
 
-func (b *service) ChangeStatusBooking(ctx context.Context, data model.StatusBooking) error {
+func (b *service) ChangeBookingStatus(ctx context.Context, data model.BookingStatus) error {
 
 	err := b.repo.InTx(ctx, func(ctx context.Context) error {
 		currentStatus, err := b.repo.GetStatus(ctx, data.BookingID)

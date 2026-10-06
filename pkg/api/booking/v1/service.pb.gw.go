@@ -83,28 +83,28 @@ func local_request_BookingService_ListBookings_0(ctx context.Context, marshaler 
 
 }
 
-func request_BookingService_ChangeBookStatus_0(ctx context.Context, marshaler runtime.Marshaler, client BookingServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq ChangeBookStatusRequest
+func request_BookingService_ChangeBookingStatus_0(ctx context.Context, marshaler runtime.Marshaler, client BookingServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq ChangeBookingStatusRequest
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := client.ChangeBookStatus(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.ChangeBookingStatus(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_BookingService_ChangeBookStatus_0(ctx context.Context, marshaler runtime.Marshaler, server BookingServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq ChangeBookStatusRequest
+func local_request_BookingService_ChangeBookingStatus_0(ctx context.Context, marshaler runtime.Marshaler, server BookingServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq ChangeBookingStatusRequest
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := server.ChangeBookStatus(ctx, &protoReq)
+	msg, err := server.ChangeBookingStatus(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -165,7 +165,7 @@ func RegisterBookingServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 
 	})
 
-	mux.Handle("POST", pattern_BookingService_ChangeBookStatus_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("PATCH", pattern_BookingService_ChangeBookingStatus_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -173,12 +173,12 @@ func RegisterBookingServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/training_booking.v1.BookingService/ChangeBookStatus", runtime.WithHTTPPathPattern("/api/booking/v1/book-status"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/training_booking.v1.BookingService/ChangeBookingStatus", runtime.WithHTTPPathPattern("/api/booking/v1/book-status"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_BookingService_ChangeBookStatus_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_BookingService_ChangeBookingStatus_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -186,7 +186,7 @@ func RegisterBookingServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			return
 		}
 
-		forward_BookingService_ChangeBookStatus_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_BookingService_ChangeBookingStatus_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -275,25 +275,25 @@ func RegisterBookingServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 
 	})
 
-	mux.Handle("POST", pattern_BookingService_ChangeBookStatus_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("PATCH", pattern_BookingService_ChangeBookingStatus_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/training_booking.v1.BookingService/ChangeBookStatus", runtime.WithHTTPPathPattern("/api/booking/v1/book-status"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/training_booking.v1.BookingService/ChangeBookingStatus", runtime.WithHTTPPathPattern("/api/booking/v1/book-status"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_BookingService_ChangeBookStatus_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_BookingService_ChangeBookingStatus_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_BookingService_ChangeBookStatus_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_BookingService_ChangeBookingStatus_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -305,7 +305,7 @@ var (
 
 	pattern_BookingService_ListBookings_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"api", "training", "v1", "list-bookings"}, ""))
 
-	pattern_BookingService_ChangeBookStatus_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"api", "booking", "v1", "book-status"}, ""))
+	pattern_BookingService_ChangeBookingStatus_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"api", "booking", "v1", "book-status"}, ""))
 )
 
 var (
@@ -313,5 +313,5 @@ var (
 
 	forward_BookingService_ListBookings_0 = runtime.ForwardResponseMessage
 
-	forward_BookingService_ChangeBookStatus_0 = runtime.ForwardResponseMessage
+	forward_BookingService_ChangeBookingStatus_0 = runtime.ForwardResponseMessage
 )

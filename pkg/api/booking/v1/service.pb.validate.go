@@ -898,46 +898,46 @@ var _ interface {
 	ErrorName() string
 } = ListBookingsResponseValidationError{}
 
-// Validate checks the field values on ChangeBookStatusRequest with the rules
-// defined in the proto definition for this message. If any rules are
+// Validate checks the field values on ChangeBookingStatusRequest with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *ChangeBookStatusRequest) Validate() error {
+func (m *ChangeBookingStatusRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on ChangeBookStatusRequest with the
+// ValidateAll checks the field values on ChangeBookingStatusRequest with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// ChangeBookStatusRequestMultiError, or nil if none found.
-func (m *ChangeBookStatusRequest) ValidateAll() error {
+// ChangeBookingStatusRequestMultiError, or nil if none found.
+func (m *ChangeBookingStatusRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *ChangeBookStatusRequest) validate(all bool) error {
+func (m *ChangeBookingStatusRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	// no validation rules for StatusId
+	// no validation rules for BookingId
 
 	// no validation rules for Status
 
 	if len(errors) > 0 {
-		return ChangeBookStatusRequestMultiError(errors)
+		return ChangeBookingStatusRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// ChangeBookStatusRequestMultiError is an error wrapping multiple validation
-// errors returned by ChangeBookStatusRequest.ValidateAll() if the designated
-// constraints aren't met.
-type ChangeBookStatusRequestMultiError []error
+// ChangeBookingStatusRequestMultiError is an error wrapping multiple
+// validation errors returned by ChangeBookingStatusRequest.ValidateAll() if
+// the designated constraints aren't met.
+type ChangeBookingStatusRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m ChangeBookStatusRequestMultiError) Error() string {
+func (m ChangeBookingStatusRequestMultiError) Error() string {
 	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -946,11 +946,11 @@ func (m ChangeBookStatusRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m ChangeBookStatusRequestMultiError) AllErrors() []error { return m }
+func (m ChangeBookingStatusRequestMultiError) AllErrors() []error { return m }
 
-// ChangeBookStatusRequestValidationError is the validation error returned by
-// ChangeBookStatusRequest.Validate if the designated constraints aren't met.
-type ChangeBookStatusRequestValidationError struct {
+// ChangeBookingStatusRequestValidationError is the validation error returned
+// by ChangeBookingStatusRequest.Validate if the designated constraints aren't met.
+type ChangeBookingStatusRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -958,24 +958,24 @@ type ChangeBookStatusRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e ChangeBookStatusRequestValidationError) Field() string { return e.field }
+func (e ChangeBookingStatusRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e ChangeBookStatusRequestValidationError) Reason() string { return e.reason }
+func (e ChangeBookingStatusRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e ChangeBookStatusRequestValidationError) Cause() error { return e.cause }
+func (e ChangeBookingStatusRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e ChangeBookStatusRequestValidationError) Key() bool { return e.key }
+func (e ChangeBookingStatusRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e ChangeBookStatusRequestValidationError) ErrorName() string {
-	return "ChangeBookStatusRequestValidationError"
+func (e ChangeBookingStatusRequestValidationError) ErrorName() string {
+	return "ChangeBookingStatusRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e ChangeBookStatusRequestValidationError) Error() string {
+func (e ChangeBookingStatusRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -987,14 +987,14 @@ func (e ChangeBookStatusRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sChangeBookStatusRequest.%s: %s%s",
+		"invalid %sChangeBookingStatusRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = ChangeBookStatusRequestValidationError{}
+var _ error = ChangeBookingStatusRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -1002,24 +1002,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = ChangeBookStatusRequestValidationError{}
+} = ChangeBookingStatusRequestValidationError{}
 
-// Validate checks the field values on ChangeBookStatusResponse with the rules
-// defined in the proto definition for this message. If any rules are
+// Validate checks the field values on ChangeBookingStatusResponse with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *ChangeBookStatusResponse) Validate() error {
+func (m *ChangeBookingStatusResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on ChangeBookStatusResponse with the
+// ValidateAll checks the field values on ChangeBookingStatusResponse with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// ChangeBookStatusResponseMultiError, or nil if none found.
-func (m *ChangeBookStatusResponse) ValidateAll() error {
+// ChangeBookingStatusResponseMultiError, or nil if none found.
+func (m *ChangeBookingStatusResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *ChangeBookStatusResponse) validate(all bool) error {
+func (m *ChangeBookingStatusResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1027,19 +1027,19 @@ func (m *ChangeBookStatusResponse) validate(all bool) error {
 	var errors []error
 
 	if len(errors) > 0 {
-		return ChangeBookStatusResponseMultiError(errors)
+		return ChangeBookingStatusResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// ChangeBookStatusResponseMultiError is an error wrapping multiple validation
-// errors returned by ChangeBookStatusResponse.ValidateAll() if the designated
-// constraints aren't met.
-type ChangeBookStatusResponseMultiError []error
+// ChangeBookingStatusResponseMultiError is an error wrapping multiple
+// validation errors returned by ChangeBookingStatusResponse.ValidateAll() if
+// the designated constraints aren't met.
+type ChangeBookingStatusResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m ChangeBookStatusResponseMultiError) Error() string {
+func (m ChangeBookingStatusResponseMultiError) Error() string {
 	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1048,11 +1048,12 @@ func (m ChangeBookStatusResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m ChangeBookStatusResponseMultiError) AllErrors() []error { return m }
+func (m ChangeBookingStatusResponseMultiError) AllErrors() []error { return m }
 
-// ChangeBookStatusResponseValidationError is the validation error returned by
-// ChangeBookStatusResponse.Validate if the designated constraints aren't met.
-type ChangeBookStatusResponseValidationError struct {
+// ChangeBookingStatusResponseValidationError is the validation error returned
+// by ChangeBookingStatusResponse.Validate if the designated constraints
+// aren't met.
+type ChangeBookingStatusResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1060,24 +1061,24 @@ type ChangeBookStatusResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e ChangeBookStatusResponseValidationError) Field() string { return e.field }
+func (e ChangeBookingStatusResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e ChangeBookStatusResponseValidationError) Reason() string { return e.reason }
+func (e ChangeBookingStatusResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e ChangeBookStatusResponseValidationError) Cause() error { return e.cause }
+func (e ChangeBookingStatusResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e ChangeBookStatusResponseValidationError) Key() bool { return e.key }
+func (e ChangeBookingStatusResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e ChangeBookStatusResponseValidationError) ErrorName() string {
-	return "ChangeBookStatusResponseValidationError"
+func (e ChangeBookingStatusResponseValidationError) ErrorName() string {
+	return "ChangeBookingStatusResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e ChangeBookStatusResponseValidationError) Error() string {
+func (e ChangeBookingStatusResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1089,14 +1090,14 @@ func (e ChangeBookStatusResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sChangeBookStatusResponse.%s: %s%s",
+		"invalid %sChangeBookingStatusResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = ChangeBookStatusResponseValidationError{}
+var _ error = ChangeBookingStatusResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -1104,7 +1105,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = ChangeBookStatusResponseValidationError{}
+} = ChangeBookingStatusResponseValidationError{}
 
 // Validate checks the field values on ListBookingsRequest_Filter with the
 // rules defined in the proto definition for this message. If any rules are

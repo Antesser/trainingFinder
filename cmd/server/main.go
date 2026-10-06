@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -58,9 +57,8 @@ func main() {
 	trainingSrv := trainingService.New(trainingRepo, your_topic_name.MarshalCreateTrainingEvent, outboxRepo)
 	bookingSrv := bookingService.New(bookingRepo, your_topic_name.MarshalCreateBookingEvent, outboxRepo)
 	cfgAuth, err := config.NewAuthConfig(cfg.Server.AuthConfigPath)
-	fmt.Println("cfgAuth", *cfgAuth)
 	if err != nil {
-		log.Fatal("failed to load auth config: %v", err)
+		log.Fatalf("failed to load auth config: %v", err)
 	}
 	//ctrl := controller.New(cfg.Server, authGRPS.NewServer(authSrv), userGRPS.NewServer(userSrv), trainingGRPS.NewServer(trainingSrv))
 	ctrl := controller.New(cfg.Server, *cfgAuth, userGRPC.NewServer(userSrv), trainingGRPC.NewServer(trainingSrv), authGRPC.NewServer(authSrv), bookingGRPC.NewServer(bookingSrv))

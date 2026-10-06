@@ -9,5 +9,5 @@ import (
 type bookingService interface {
 	BookTraining(ctx context.Context, mod booking.TrainingBooking) error
 	ListBookings(ctx context.Context, data booking.ListBookingsRequest) (*booking.ListBookingsResponse, error)
-	ChangeStatusBooking(ctx context.Context, data booking.StatusBooking) error
+	ChangeBookingStatus(ctx context.Context, data booking.BookingStatus) error
 }

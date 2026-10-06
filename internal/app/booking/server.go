@@ -46,13 +46,20 @@ func (s *Server) RegisterHandlerFromEndpoint(
 	return err
 }
 
-func (s *Server) ChangeStatus(ctx context.Context, req *bookingPkg.ChangeBookStatusRequest) (*bookingPkg.ChangeBookStatusResponse, error) {
-	err := s.bookingService.ChangeStatusBooking(ctx, model.StatusBooking{BookingID: req.StatusId, Status: model.Status(req.Status)})
-	if err != nil {
-		return nil, err
+func (s *Server) ChangeBookingStatus(ctx context.Context, req *bookingPkg.ChangeBookingStatusRequest) (*bookingPkg.ChangeBookingStatusResponse, error) {
+	stat, ok := bookingStatusToModel[req.Status]
+	if !ok {
+		return nil, status.Error(codes.InvalidArgument, "unsupported status")
+
 	}
 
-	return &bookingPkg.ChangeBookStatusResponse{}, nil
+	err := s.bookingService.ChangeBookingStatus(ctx, model.BookingStatus{BookingID: req.BookingId, Status: stat})
+	if err != nil {
+		return nil, err
+
+	}
+
+	return &bookingPkg.ChangeBookingStatusResponse{}, nil
 }
 
 func (s *Server) BookTraining(ctx context.Context, req *bookingPkg.BookTrainingRequest) (*bookingPkg.BookTrainingResponse, error) {

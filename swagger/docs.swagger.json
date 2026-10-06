@@ -154,13 +154,13 @@
       }
     },
     "/api/booking/v1/book-status": {
-      "post": {
-        "operationId": "BookingService_ChangeBookStatus",
+      "patch": {
+        "operationId": "BookingService_ChangeBookingStatus",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1ChangeBookStatusResponse"
+              "$ref": "#/definitions/v1ChangeBookingStatusResponse"
             }
           },
           "default": {
@@ -176,7 +176,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1ChangeBookStatusRequest"
+              "$ref": "#/definitions/v1ChangeBookingStatusRequest"
             }
           }
         ],
@@ -638,18 +638,31 @@
         }
       }
     },
-    "v1ChangeBookStatusRequest": {
+    "v1BookingStatus": {
+      "type": "string",
+      "enum": [
+        "BOOKING_STATUS_UNSPECIFIED",
+        "BOOKING_STATUS_AWAITING_FOR_APPROVAL",
+        "BOOKING_STATUS_APPROVED",
+        "BOOKING_STATUS_IN_PROGRESS",
+        "BOOKING_STATUS_COMPLETED",
+        "BOOKING_STATUS_CANCELLED",
+        "BOOKING_STATUS_DECLINED"
+      ],
+      "default": "BOOKING_STATUS_UNSPECIFIED"
+    },
+    "v1ChangeBookingStatusRequest": {
       "type": "object",
       "properties": {
-        "status_id": {
+        "booking_id": {
           "type": "string"
         },
         "status": {
-          "type": "string"
+          "$ref": "#/definitions/v1BookingStatus"
         }
       }
     },
-    "v1ChangeBookStatusResponse": {
+    "v1ChangeBookingStatusResponse": {
       "type": "object"
     },
     "v1CreateRoleRequest": {
