@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS users (
     id TEXT,
     login VARCHAR(20) NOT NULL,
     password TEXT NOT NULL,
+    role_id TEXT NOT NULL,
     PRIMARY KEY(id)
 );
 -- +goose StatementEnd

@@ -23,6 +23,67 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type BookingStatus int32
+
+const (
+	BookingStatus_BOOKING_STATUS_UNSPECIFIED           BookingStatus = 0
+	BookingStatus_BOOKING_STATUS_AWAITING_FOR_APPROVAL BookingStatus = 1
+	BookingStatus_BOOKING_STATUS_APPROVED              BookingStatus = 2
+	BookingStatus_BOOKING_STATUS_IN_PROGRESS           BookingStatus = 3
+	BookingStatus_BOOKING_STATUS_COMPLETED             BookingStatus = 4
+	BookingStatus_BOOKING_STATUS_CANCELLED             BookingStatus = 5
+	BookingStatus_BOOKING_STATUS_DECLINED              BookingStatus = 6
+)
+
+// Enum value maps for BookingStatus.
+var (
+	BookingStatus_name = map[int32]string{
+		0: "BOOKING_STATUS_UNSPECIFIED",
+		1: "BOOKING_STATUS_AWAITING_FOR_APPROVAL",
+		2: "BOOKING_STATUS_APPROVED",
+		3: "BOOKING_STATUS_IN_PROGRESS",
+		4: "BOOKING_STATUS_COMPLETED",
+		5: "BOOKING_STATUS_CANCELLED",
+		6: "BOOKING_STATUS_DECLINED",
+	}
+	BookingStatus_value = map[string]int32{
+		"BOOKING_STATUS_UNSPECIFIED":           0,
+		"BOOKING_STATUS_AWAITING_FOR_APPROVAL": 1,
+		"BOOKING_STATUS_APPROVED":              2,
+		"BOOKING_STATUS_IN_PROGRESS":           3,
+		"BOOKING_STATUS_COMPLETED":             4,
+		"BOOKING_STATUS_CANCELLED":             5,
+		"BOOKING_STATUS_DECLINED":              6,
+	}
+)
+
+func (x BookingStatus) Enum() *BookingStatus {
+	p := new(BookingStatus)
+	*p = x
+	return p
+}
+
+func (x BookingStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (BookingStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_api_booking_v1_service_proto_enumTypes[0].Descriptor()
+}
+
+func (BookingStatus) Type() protoreflect.EnumType {
+	return &file_api_booking_v1_service_proto_enumTypes[0]
+}
+
+func (x BookingStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use BookingStatus.Descriptor instead.
+func (BookingStatus) EnumDescriptor() ([]byte, []int) {
+	return file_api_booking_v1_service_proto_rawDescGZIP(), []int{0}
+}
+
 type Page struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -392,6 +453,99 @@ func (x *ListBookingsResponse) GetHasNext() bool {
 	return false
 }
 
+type ChangeBookingStatusRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	BookingId string        `protobuf:"bytes,1,opt,name=booking_id,json=bookingId,proto3" json:"booking_id,omitempty"`
+	Status    BookingStatus `protobuf:"varint,2,opt,name=status,proto3,enum=training_booking.v1.BookingStatus" json:"status,omitempty"`
+}
+
+func (x *ChangeBookingStatusRequest) Reset() {
+	*x = ChangeBookingStatusRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_booking_v1_service_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ChangeBookingStatusRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChangeBookingStatusRequest) ProtoMessage() {}
+
+func (x *ChangeBookingStatusRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_booking_v1_service_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChangeBookingStatusRequest.ProtoReflect.Descriptor instead.
+func (*ChangeBookingStatusRequest) Descriptor() ([]byte, []int) {
+	return file_api_booking_v1_service_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *ChangeBookingStatusRequest) GetBookingId() string {
+	if x != nil {
+		return x.BookingId
+	}
+	return ""
+}
+
+func (x *ChangeBookingStatusRequest) GetStatus() BookingStatus {
+	if x != nil {
+		return x.Status
+	}
+	return BookingStatus_BOOKING_STATUS_UNSPECIFIED
+}
+
+type ChangeBookingStatusResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *ChangeBookingStatusResponse) Reset() {
+	*x = ChangeBookingStatusResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_booking_v1_service_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ChangeBookingStatusResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChangeBookingStatusResponse) ProtoMessage() {}
+
+func (x *ChangeBookingStatusResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_booking_v1_service_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChangeBookingStatusResponse.ProtoReflect.Descriptor instead.
+func (*ChangeBookingStatusResponse) Descriptor() ([]byte, []int) {
+	return file_api_booking_v1_service_proto_rawDescGZIP(), []int{7}
+}
+
 type ListBookingsRequest_Filter struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -405,7 +559,7 @@ type ListBookingsRequest_Filter struct {
 func (x *ListBookingsRequest_Filter) Reset() {
 	*x = ListBookingsRequest_Filter{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_booking_v1_service_proto_msgTypes[6]
+		mi := &file_api_booking_v1_service_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -418,7 +572,7 @@ func (x *ListBookingsRequest_Filter) String() string {
 func (*ListBookingsRequest_Filter) ProtoMessage() {}
 
 func (x *ListBookingsRequest_Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_api_booking_v1_service_proto_msgTypes[6]
+	mi := &file_api_booking_v1_service_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -536,7 +690,33 @@ var file_api_booking_v1_service_proto_rawDesc = []byte{
 	0x67, 0x2e, 0x76, 0x31, 0x2e, 0x42, 0x6f, 0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x52, 0x08, 0x62, 0x6f,
 	0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x73, 0x12, 0x19, 0x0a, 0x08, 0x68, 0x61, 0x73, 0x5f, 0x6e, 0x65,
 	0x78, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x08, 0x52, 0x07, 0x68, 0x61, 0x73, 0x4e, 0x65, 0x78,
-	0x74, 0x32, 0xb1, 0x02, 0x0a, 0x0e, 0x42, 0x6f, 0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x53, 0x65, 0x72,
+	0x74, 0x22, 0x8c, 0x01, 0x0a, 0x1a, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x42, 0x6f, 0x6f, 0x6b,
+	0x69, 0x6e, 0x67, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x12, 0x2a, 0x0a, 0x0a, 0x62, 0x6f, 0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x5f, 0x69, 0x64, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x42, 0x0b, 0xba, 0x48, 0x08, 0xc8, 0x01, 0x01, 0x72, 0x03, 0xb0, 0x01,
+	0x01, 0x52, 0x09, 0x62, 0x6f, 0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x49, 0x64, 0x12, 0x42, 0x0a, 0x06,
+	0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x22, 0x2e, 0x74,
+	0x72, 0x61, 0x69, 0x6e, 0x69, 0x6e, 0x67, 0x5f, 0x62, 0x6f, 0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x2e,
+	0x76, 0x31, 0x2e, 0x42, 0x6f, 0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73,
+	0x42, 0x06, 0xba, 0x48, 0x03, 0xc8, 0x01, 0x01, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73,
+	0x22, 0x1d, 0x0a, 0x1b, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x42, 0x6f, 0x6f, 0x6b, 0x69, 0x6e,
+	0x67, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x2a,
+	0xef, 0x01, 0x0a, 0x0d, 0x42, 0x6f, 0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x53, 0x74, 0x61, 0x74, 0x75,
+	0x73, 0x12, 0x1e, 0x0a, 0x1a, 0x42, 0x4f, 0x4f, 0x4b, 0x49, 0x4e, 0x47, 0x5f, 0x53, 0x54, 0x41,
+	0x54, 0x55, 0x53, 0x5f, 0x55, 0x4e, 0x53, 0x50, 0x45, 0x43, 0x49, 0x46, 0x49, 0x45, 0x44, 0x10,
+	0x00, 0x12, 0x28, 0x0a, 0x24, 0x42, 0x4f, 0x4f, 0x4b, 0x49, 0x4e, 0x47, 0x5f, 0x53, 0x54, 0x41,
+	0x54, 0x55, 0x53, 0x5f, 0x41, 0x57, 0x41, 0x49, 0x54, 0x49, 0x4e, 0x47, 0x5f, 0x46, 0x4f, 0x52,
+	0x5f, 0x41, 0x50, 0x50, 0x52, 0x4f, 0x56, 0x41, 0x4c, 0x10, 0x01, 0x12, 0x1b, 0x0a, 0x17, 0x42,
+	0x4f, 0x4f, 0x4b, 0x49, 0x4e, 0x47, 0x5f, 0x53, 0x54, 0x41, 0x54, 0x55, 0x53, 0x5f, 0x41, 0x50,
+	0x50, 0x52, 0x4f, 0x56, 0x45, 0x44, 0x10, 0x02, 0x12, 0x1e, 0x0a, 0x1a, 0x42, 0x4f, 0x4f, 0x4b,
+	0x49, 0x4e, 0x47, 0x5f, 0x53, 0x54, 0x41, 0x54, 0x55, 0x53, 0x5f, 0x49, 0x4e, 0x5f, 0x50, 0x52,
+	0x4f, 0x47, 0x52, 0x45, 0x53, 0x53, 0x10, 0x03, 0x12, 0x1c, 0x0a, 0x18, 0x42, 0x4f, 0x4f, 0x4b,
+	0x49, 0x4e, 0x47, 0x5f, 0x53, 0x54, 0x41, 0x54, 0x55, 0x53, 0x5f, 0x43, 0x4f, 0x4d, 0x50, 0x4c,
+	0x45, 0x54, 0x45, 0x44, 0x10, 0x04, 0x12, 0x1c, 0x0a, 0x18, 0x42, 0x4f, 0x4f, 0x4b, 0x49, 0x4e,
+	0x47, 0x5f, 0x53, 0x54, 0x41, 0x54, 0x55, 0x53, 0x5f, 0x43, 0x41, 0x4e, 0x43, 0x45, 0x4c, 0x4c,
+	0x45, 0x44, 0x10, 0x05, 0x12, 0x1b, 0x0a, 0x17, 0x42, 0x4f, 0x4f, 0x4b, 0x49, 0x4e, 0x47, 0x5f,
+	0x53, 0x54, 0x41, 0x54, 0x55, 0x53, 0x5f, 0x44, 0x45, 0x43, 0x4c, 0x49, 0x4e, 0x45, 0x44, 0x10,
+	0x06, 0x32, 0xd4, 0x03, 0x0a, 0x0e, 0x42, 0x6f, 0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x53, 0x65, 0x72,
 	0x76, 0x69, 0x63, 0x65, 0x12, 0x8d, 0x01, 0x0a, 0x0c, 0x42, 0x6f, 0x6f, 0x6b, 0x54, 0x72, 0x61,
 	0x69, 0x6e, 0x69, 0x6e, 0x67, 0x12, 0x28, 0x2e, 0x74, 0x72, 0x61, 0x69, 0x6e, 0x69, 0x6e, 0x67,
 	0x5f, 0x62, 0x6f, 0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x2e, 0x76, 0x31, 0x2e, 0x42, 0x6f, 0x6f, 0x6b,
@@ -555,11 +735,21 @@ var file_api_booking_v1_service_proto_rawDesc = []byte{
 	0x67, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x29, 0x82, 0xd3, 0xe4, 0x93,
 	0x02, 0x23, 0x3a, 0x01, 0x2a, 0x22, 0x1e, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x74, 0x72, 0x61, 0x69,
 	0x6e, 0x69, 0x6e, 0x67, 0x2f, 0x76, 0x31, 0x2f, 0x6c, 0x69, 0x73, 0x74, 0x2d, 0x62, 0x6f, 0x6f,
-	0x6b, 0x69, 0x6e, 0x67, 0x73, 0x42, 0x37, 0x5a, 0x35, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e,
-	0x63, 0x6f, 0x6d, 0x2f, 0x41, 0x6e, 0x74, 0x65, 0x73, 0x73, 0x65, 0x72, 0x2f, 0x74, 0x72, 0x61,
-	0x69, 0x6e, 0x69, 0x6e, 0x67, 0x46, 0x69, 0x6e, 0x64, 0x65, 0x72, 0x2f, 0x70, 0x6b, 0x67, 0x2f,
-	0x61, 0x70, 0x69, 0x2f, 0x62, 0x6f, 0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x2f, 0x76, 0x31, 0x62, 0x06,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6b, 0x69, 0x6e, 0x67, 0x73, 0x12, 0xa0, 0x01, 0x0a, 0x13, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65,
+	0x42, 0x6f, 0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x2f, 0x2e,
+	0x74, 0x72, 0x61, 0x69, 0x6e, 0x69, 0x6e, 0x67, 0x5f, 0x62, 0x6f, 0x6f, 0x6b, 0x69, 0x6e, 0x67,
+	0x2e, 0x76, 0x31, 0x2e, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x42, 0x6f, 0x6f, 0x6b, 0x69, 0x6e,
+	0x67, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x30,
+	0x2e, 0x74, 0x72, 0x61, 0x69, 0x6e, 0x69, 0x6e, 0x67, 0x5f, 0x62, 0x6f, 0x6f, 0x6b, 0x69, 0x6e,
+	0x67, 0x2e, 0x76, 0x31, 0x2e, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x42, 0x6f, 0x6f, 0x6b, 0x69,
+	0x6e, 0x67, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x22, 0x26, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x20, 0x3a, 0x01, 0x2a, 0x32, 0x1b, 0x2f, 0x61, 0x70,
+	0x69, 0x2f, 0x62, 0x6f, 0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x2f, 0x76, 0x31, 0x2f, 0x62, 0x6f, 0x6f,
+	0x6b, 0x2d, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x42, 0x37, 0x5a, 0x35, 0x67, 0x69, 0x74, 0x68,
+	0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x41, 0x6e, 0x74, 0x65, 0x73, 0x73, 0x65, 0x72, 0x2f,
+	0x74, 0x72, 0x61, 0x69, 0x6e, 0x69, 0x6e, 0x67, 0x46, 0x69, 0x6e, 0x64, 0x65, 0x72, 0x2f, 0x70,
+	0x6b, 0x67, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x62, 0x6f, 0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x2f, 0x76,
+	0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -574,37 +764,44 @@ func file_api_booking_v1_service_proto_rawDescGZIP() []byte {
 	return file_api_booking_v1_service_proto_rawDescData
 }
 
-var file_api_booking_v1_service_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_api_booking_v1_service_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_api_booking_v1_service_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_api_booking_v1_service_proto_goTypes = []interface{}{
-	(*Page)(nil),                       // 0: training_booking.v1.Page
-	(*Booking)(nil),                    // 1: training_booking.v1.Booking
-	(*BookTrainingRequest)(nil),        // 2: training_booking.v1.BookTrainingRequest
-	(*BookTrainingResponse)(nil),       // 3: training_booking.v1.BookTrainingResponse
-	(*ListBookingsRequest)(nil),        // 4: training_booking.v1.ListBookingsRequest
-	(*ListBookingsResponse)(nil),       // 5: training_booking.v1.ListBookingsResponse
-	(*ListBookingsRequest_Filter)(nil), // 6: training_booking.v1.ListBookingsRequest.Filter
-	(*timestamppb.Timestamp)(nil),      // 7: google.protobuf.Timestamp
+	(BookingStatus)(0),                  // 0: training_booking.v1.BookingStatus
+	(*Page)(nil),                        // 1: training_booking.v1.Page
+	(*Booking)(nil),                     // 2: training_booking.v1.Booking
+	(*BookTrainingRequest)(nil),         // 3: training_booking.v1.BookTrainingRequest
+	(*BookTrainingResponse)(nil),        // 4: training_booking.v1.BookTrainingResponse
+	(*ListBookingsRequest)(nil),         // 5: training_booking.v1.ListBookingsRequest
+	(*ListBookingsResponse)(nil),        // 6: training_booking.v1.ListBookingsResponse
+	(*ChangeBookingStatusRequest)(nil),  // 7: training_booking.v1.ChangeBookingStatusRequest
+	(*ChangeBookingStatusResponse)(nil), // 8: training_booking.v1.ChangeBookingStatusResponse
+	(*ListBookingsRequest_Filter)(nil),  // 9: training_booking.v1.ListBookingsRequest.Filter
+	(*timestamppb.Timestamp)(nil),       // 10: google.protobuf.Timestamp
 }
 var file_api_booking_v1_service_proto_depIdxs = []int32{
-	7,  // 0: training_booking.v1.Booking.created_at:type_name -> google.protobuf.Timestamp
-	7,  // 1: training_booking.v1.Booking.book_from:type_name -> google.protobuf.Timestamp
-	7,  // 2: training_booking.v1.Booking.book_to:type_name -> google.protobuf.Timestamp
-	7,  // 3: training_booking.v1.BookTrainingRequest.book_from:type_name -> google.protobuf.Timestamp
-	7,  // 4: training_booking.v1.BookTrainingRequest.book_to:type_name -> google.protobuf.Timestamp
-	0,  // 5: training_booking.v1.ListBookingsRequest.page:type_name -> training_booking.v1.Page
-	6,  // 6: training_booking.v1.ListBookingsRequest.filter:type_name -> training_booking.v1.ListBookingsRequest.Filter
-	1,  // 7: training_booking.v1.ListBookingsResponse.bookings:type_name -> training_booking.v1.Booking
-	7,  // 8: training_booking.v1.ListBookingsRequest.Filter.booked_from:type_name -> google.protobuf.Timestamp
-	7,  // 9: training_booking.v1.ListBookingsRequest.Filter.booked_to:type_name -> google.protobuf.Timestamp
-	2,  // 10: training_booking.v1.BookingService.BookTraining:input_type -> training_booking.v1.BookTrainingRequest
-	4,  // 11: training_booking.v1.BookingService.ListBookings:input_type -> training_booking.v1.ListBookingsRequest
-	3,  // 12: training_booking.v1.BookingService.BookTraining:output_type -> training_booking.v1.BookTrainingResponse
-	5,  // 13: training_booking.v1.BookingService.ListBookings:output_type -> training_booking.v1.ListBookingsResponse
-	12, // [12:14] is the sub-list for method output_type
-	10, // [10:12] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	10, // 0: training_booking.v1.Booking.created_at:type_name -> google.protobuf.Timestamp
+	10, // 1: training_booking.v1.Booking.book_from:type_name -> google.protobuf.Timestamp
+	10, // 2: training_booking.v1.Booking.book_to:type_name -> google.protobuf.Timestamp
+	10, // 3: training_booking.v1.BookTrainingRequest.book_from:type_name -> google.protobuf.Timestamp
+	10, // 4: training_booking.v1.BookTrainingRequest.book_to:type_name -> google.protobuf.Timestamp
+	1,  // 5: training_booking.v1.ListBookingsRequest.page:type_name -> training_booking.v1.Page
+	9,  // 6: training_booking.v1.ListBookingsRequest.filter:type_name -> training_booking.v1.ListBookingsRequest.Filter
+	2,  // 7: training_booking.v1.ListBookingsResponse.bookings:type_name -> training_booking.v1.Booking
+	0,  // 8: training_booking.v1.ChangeBookingStatusRequest.status:type_name -> training_booking.v1.BookingStatus
+	10, // 9: training_booking.v1.ListBookingsRequest.Filter.booked_from:type_name -> google.protobuf.Timestamp
+	10, // 10: training_booking.v1.ListBookingsRequest.Filter.booked_to:type_name -> google.protobuf.Timestamp
+	3,  // 11: training_booking.v1.BookingService.BookTraining:input_type -> training_booking.v1.BookTrainingRequest
+	5,  // 12: training_booking.v1.BookingService.ListBookings:input_type -> training_booking.v1.ListBookingsRequest
+	7,  // 13: training_booking.v1.BookingService.ChangeBookingStatus:input_type -> training_booking.v1.ChangeBookingStatusRequest
+	4,  // 14: training_booking.v1.BookingService.BookTraining:output_type -> training_booking.v1.BookTrainingResponse
+	6,  // 15: training_booking.v1.BookingService.ListBookings:output_type -> training_booking.v1.ListBookingsResponse
+	8,  // 16: training_booking.v1.BookingService.ChangeBookingStatus:output_type -> training_booking.v1.ChangeBookingStatusResponse
+	14, // [14:17] is the sub-list for method output_type
+	11, // [11:14] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_api_booking_v1_service_proto_init() }
@@ -686,6 +883,30 @@ func file_api_booking_v1_service_proto_init() {
 			}
 		}
 		file_api_booking_v1_service_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ChangeBookingStatusRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_booking_v1_service_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ChangeBookingStatusResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_booking_v1_service_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListBookingsRequest_Filter); i {
 			case 0:
 				return &v.state
@@ -699,19 +920,20 @@ func file_api_booking_v1_service_proto_init() {
 		}
 	}
 	file_api_booking_v1_service_proto_msgTypes[4].OneofWrappers = []interface{}{}
-	file_api_booking_v1_service_proto_msgTypes[6].OneofWrappers = []interface{}{}
+	file_api_booking_v1_service_proto_msgTypes[8].OneofWrappers = []interface{}{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_api_booking_v1_service_proto_rawDesc,
-			NumEnums:      0,
-			NumMessages:   7,
+			NumEnums:      1,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_api_booking_v1_service_proto_goTypes,
 		DependencyIndexes: file_api_booking_v1_service_proto_depIdxs,
+		EnumInfos:         file_api_booking_v1_service_proto_enumTypes,
 		MessageInfos:      file_api_booking_v1_service_proto_msgTypes,
 	}.Build()
 	File_api_booking_v1_service_proto = out.File
