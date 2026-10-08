@@ -22,7 +22,7 @@ service BookingService {
   }
   rpc ChangeBookingStatus (ChangeBookingStatusRequest) returns (ChangeBookingStatusResponse) {
     option (google.api.http) = {
-      patch: "/api/booking/v1/book-status"
+      patch: "/api/booking/v1/status"
       body: "*"
     };
   }
