@@ -15,10 +15,8 @@ func (bt *Bot) HandleState(ctx context.Context, chatID int64, text string) (stri
 
 	switch s.State {
 	case telegramModel.StateIdle:
-		s.Login = strings.TrimSpace(text)
 		s.State = telegramModel.StateAwaitingLogin
-		s.State = telegramModel.StateAwaitingPass
-		return "Теперь введите пароль:", bt.cache.SaveSession(ctx, chatID, s)
+		return "Введите логин:", bt.cache.SaveSession(ctx, chatID, s)
 
 	case telegramModel.StateAwaitingLogin:
 		s.Login = strings.TrimSpace(text)
