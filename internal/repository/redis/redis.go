@@ -11,10 +11,12 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-var Rdb *redis.Client
+type cache struct {
+	Rdb *redis.Client
+}
 
-func InitRedis(ctx context.Context, cfg config.ServerConfig) {
-	Rdb = redis.NewClient(&redis.Options{
+func InitRedis(ctx context.Context, cfg config.ServerConfig) *cache {
+	Rdb := redis.NewClient(&redis.Options{
 		Addr:     cfg.RedisAddr,
 		Password: cfg.RedisPass,
 		DB:       cfg.RedisDB,
@@ -22,15 +24,16 @@ func InitRedis(ctx context.Context, cfg config.ServerConfig) {
 	if err := Rdb.Ping(ctx).Err(); err != nil {
 		log.Fatalf("redis ping failed: %v", err)
 	}
+	return &cache{Rdb: Rdb}
 }
 
-func SessionKey(chatID int64) string {
+func sessionKey(chatID int64) string {
 	return fmt.Sprintf("%s%d", redisModel.KeyPrefix, chatID)
 }
 
-func LoadSession(ctx context.Context, chatID int64) (*redisModel.Session, error) {
-	key := SessionKey(chatID)
-	data, err := Rdb.HGetAll(ctx, key).Result()
+func (r *cache) LoadSession(ctx context.Context, chatID int64) (*redisModel.Session, error) {
+	key := sessionKey(chatID)
+	data, err := r.Rdb.HGetAll(ctx, key).Result()
 	if err != nil {
 		return nil, err
 	}
@@ -45,12 +48,15 @@ func LoadSession(ctx context.Context, chatID int64) (*redisModel.Session, error)
 	}, nil
 }
 
-func SaveSession(ctx context.Context, chatID int64, s *redisModel.Session) error {
-	key := SessionKey(chatID)
-	return Rdb.HSet(ctx, key,
+func (r *cache) SaveSession(ctx context.Context, chatID int64, s *redisModel.Session) error {
+	key := sessionKey(chatID)
+	return r.Rdb.HSet(ctx, key,
 		"state", s.State,
 		"login", s.Login,
 		"password", s.Password,
 		"role", s.Role,
 	).Err()
+}
+func (r *cache) DelSession(ctx context.Context, chatID int64) error {
+	return r.Rdb.Del(ctx, sessionKey(chatID)).Err()
 }

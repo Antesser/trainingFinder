@@ -12,4 +12,5 @@ type authService interface {
 type sessionCache interface {
 	SaveSession(ctx context.Context, chatID int64, s *redisModel.Session) error
 	LoadSession(ctx context.Context, chatID int64) (*redisModel.Session, error)
+	DelSession(ctx context.Context, chatID int64) error
 }
