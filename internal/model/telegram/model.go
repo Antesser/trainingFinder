@@ -7,7 +7,8 @@ const (
 	StateAwaitingRole  = "awaiting_role"
 )
 
-type AuthRequest struct {
+type Session struct {
+	State    string `json:"state"`
 	Login    string `json:"login"`
 	Password string `json:"password"`
 	Role     string `json:"role"`

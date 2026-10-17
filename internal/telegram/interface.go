@@ -3,7 +3,7 @@ package telegram
 import (
 	"context"
 
-	redisModel "github.com/Antesser/trainingFinder/internal/model/redis"
+	redisModel "github.com/Antesser/trainingFinder/internal/model/telegram"
 )
 
 type authService interface {

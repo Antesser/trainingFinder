@@ -6,9 +6,12 @@ import (
 	"log"
 
 	"github.com/Antesser/trainingFinder/internal/config"
-	redisModel "github.com/Antesser/trainingFinder/internal/model/redis"
 	telegramModel "github.com/Antesser/trainingFinder/internal/model/telegram"
 	"github.com/redis/go-redis/v9"
+)
+
+const (
+	keyPrefix = "bot:session:"
 )
 
 type cache struct {
@@ -28,19 +31,19 @@ func InitRedis(ctx context.Context, cfg config.ServerConfig) *cache {
 }
 
 func sessionKey(chatID int64) string {
-	return fmt.Sprintf("%s%d", redisModel.KeyPrefix, chatID)
+	return fmt.Sprintf("%s%d", keyPrefix, chatID)
 }
 
-func (r *cache) LoadSession(ctx context.Context, chatID int64) (*redisModel.Session, error) {
+func (r *cache) LoadSession(ctx context.Context, chatID int64) (*telegramModel.Session, error) {
 	key := sessionKey(chatID)
 	data, err := r.Rdb.HGetAll(ctx, key).Result()
 	if err != nil {
 		return nil, err
 	}
 	if len(data) == 0 {
-		return &redisModel.Session{State: telegramModel.StateIdle}, nil
+		return &telegramModel.Session{State: telegramModel.StateIdle}, nil
 	}
-	return &redisModel.Session{
+	return &telegramModel.Session{
 		State:    data["state"],
 		Login:    data["login"],
 		Password: data["password"],
@@ -48,7 +51,7 @@ func (r *cache) LoadSession(ctx context.Context, chatID int64) (*redisModel.Sess
 	}, nil
 }
 
-func (r *cache) SaveSession(ctx context.Context, chatID int64, s *redisModel.Session) error {
+func (r *cache) SaveSession(ctx context.Context, chatID int64, s *telegramModel.Session) error {
 	key := sessionKey(chatID)
 	return r.Rdb.HSet(ctx, key,
 		"state", s.State,
