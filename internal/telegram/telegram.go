@@ -59,10 +59,10 @@ func (bt *Bot) defaultHandler(ctx context.Context, b *bot.Bot, update *models.Up
 		})
 		return
 	}
-	b.SendMessage(ctx, &bot.SendMessageParams{
-		ChatID: chatID,
-		Text:   "Введите логин",
-	})
+	//b.SendMessage(ctx, &bot.SendMessageParams{
+	//	ChatID: chatID,
+	//	Text:   "Введите логин",
+	//})
 	reply, err := bt.HandleState(ctx, chatID, text)
 	if err != nil {
 		log.Printf("state error for %d: %v", chatID, err)

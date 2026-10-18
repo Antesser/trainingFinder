@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/Antesser/trainingFinder/internal/config"
-
+	"github.com/Antesser/trainingFinder/internal/model/roles"
 	"github.com/golang-jwt/jwt/v5"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -93,9 +93,9 @@ func WithAuth(secretKey string, cfg config.AuthConfig) grpc.UnaryServerIntercept
 		id := claims["id"]
 
 		switch {
-		case IsCoach(userRoleID):
+		case roles.IsCoach(userRoleID):
 			ctx = context.WithValue(ctx, coachIDKey, id)
-		case IsUser(userRoleID):
+		case roles.IsUser(userRoleID):
 			ctx = context.WithValue(ctx, userIDKey, id)
 		}
 
@@ -121,7 +121,7 @@ func GetCoachID(ctx context.Context) *string {
 }
 
 func hasAllowedRole(userRole string, allowed map[string]struct{}) bool {
-	role := roles[userRole]
+	role := roles.Roles[userRole]
 	if _, ok := allowed[role]; ok {
 		return ok
 	}

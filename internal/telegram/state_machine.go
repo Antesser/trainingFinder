@@ -4,6 +4,7 @@ import (
 	"context"
 	"strings"
 
+	roleModel "github.com/Antesser/trainingFinder/internal/model/roles"
 	telegramModel "github.com/Antesser/trainingFinder/internal/model/telegram"
 )
 
@@ -26,10 +27,20 @@ func (bt *Bot) HandleState(ctx context.Context, chatID int64, text string) (stri
 	case telegramModel.StateAwaitingPass:
 		s.Password = strings.TrimSpace(text)
 		s.State = telegramModel.StateAwaitingRole
-		return "Введите роль (например, admin или user):", bt.cache.SaveSession(ctx, chatID, s)
+		return "Введите роль coach или user:", bt.cache.SaveSession(ctx, chatID, s)
 
 	case telegramModel.StateAwaitingRole:
-		s.Role = strings.TrimSpace(text)
+		role := strings.TrimSpace(text)
+		if role != roleModel.Coach && role != roleModel.User {
+			return "Допустимые роли: coach или user. Введите роль:", bt.cache.SaveSession(ctx, chatID, s)
+		}
+
+		roleKey, ok := roleModel.RoleKey(role)
+		if !ok {
+			return "Неизвестная роль, попробуйте ещё раз:", bt.cache.SaveSession(ctx, chatID, s)
+		}
+		s.Role = roleKey
+
 		if _, err := bt.service.SignUp(ctx, s.Login, s.Password, s.Role); err != nil {
 			return "Ошибка авторизации: " + err.Error(), nil
 		}
