@@ -17,5 +17,23 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7-alpine
+    container_name: go-redis
+    restart: always
+    command: [ "redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASS}" ]
+    environment:
+      REDIS_PASS: ${REDIS_PASS}
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli -a \"REDIS_PASS\" ping | grep -q PONG" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
   psql_data:
+  redis_data:
