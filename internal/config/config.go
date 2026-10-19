@@ -22,6 +22,10 @@ type ServerConfig struct {
 	Secret              string        `envconfig:"SECRET"`
 	AccessTokenDuration time.Duration `envconfig:"ACCESS_TOKEN_DURATION"`
 	AuthConfigPath      string        `envconfig:"AUTH_CONFIG_PATH"`
+	BotToken            string        `envconfig:"BOT_TOKEN"`
+	RedisAddr           string        `envconfig:"REDIS_ADDR"`
+	RedisPass           string        `envconfig:"REDIS_PASS"`
+	RedisDB             int           `envconfig:"REDIS_DB"`
 }
 
 type DBConfig struct {

@@ -19,7 +19,8 @@ import (
 )
 
 type Server struct { // структура для домена auth и тд
-	authPkg.UnimplementedAuthServiceServer // реализуем имплементацию, хранящуюся внутри grpc (которая там сгенерирована, не реализована)
+	// реализуем имплементацию, хранящуюся внутри grpc (которая там сгенерирована, не реализована)
+	authPkg.UnimplementedAuthServiceServer
 	authService                            authService
 }
 

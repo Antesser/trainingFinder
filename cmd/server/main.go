@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -12,20 +13,22 @@ import (
 	"github.com/Antesser/trainingFinder/internal/kafka"
 	your_topic_name "github.com/Antesser/trainingFinder/internal/kafka/producer/your-topic-name"
 	"github.com/Antesser/trainingFinder/internal/process/outbox"
+	authRepository "github.com/Antesser/trainingFinder/internal/repository/postgres/auth"
+	bookingRepository "github.com/Antesser/trainingFinder/internal/repository/postgres/booking"
+	outboxRepository "github.com/Antesser/trainingFinder/internal/repository/postgres/outbox"
+	trainingRepository "github.com/Antesser/trainingFinder/internal/repository/postgres/training"
+	userRepository "github.com/Antesser/trainingFinder/internal/repository/postgres/user"
+	"github.com/Antesser/trainingFinder/internal/repository/redis"
 
 	authGRPC "github.com/Antesser/trainingFinder/internal/app/auth"
 	bookingGRPC "github.com/Antesser/trainingFinder/internal/app/booking"
 	trainingGRPC "github.com/Antesser/trainingFinder/internal/app/training"
 	userGRPC "github.com/Antesser/trainingFinder/internal/app/users"
-	authRepository "github.com/Antesser/trainingFinder/internal/repository/auth"
-	bookingRepository "github.com/Antesser/trainingFinder/internal/repository/booking"
-	outboxRepository "github.com/Antesser/trainingFinder/internal/repository/outbox"
-	trainingRepository "github.com/Antesser/trainingFinder/internal/repository/training"
-	userRepository "github.com/Antesser/trainingFinder/internal/repository/user"
 	authService "github.com/Antesser/trainingFinder/internal/service/auth"
 	bookingService "github.com/Antesser/trainingFinder/internal/service/booking"
 	trainingService "github.com/Antesser/trainingFinder/internal/service/training"
 	userService "github.com/Antesser/trainingFinder/internal/service/users"
+	"github.com/Antesser/trainingFinder/internal/telegram"
 
 	"github.com/go-co-op/gocron/v2"
 	"github.com/golangmonster/pgxtransactor"
@@ -82,6 +85,13 @@ func main() {
 		}
 	}
 
+	newCache := redis.InitRedis(ctx, cfg.Server)
+	tgBot, err := telegram.New(cfg.Server.BotToken, authSrv, newCache)
+	if err != nil {
+		log.Fatal(err)
+	}
+	tgBot.Run(ctx)
+	fmt.Println("telegram bot started", tgBot)
 	s.Start()
 
 	c := make(chan os.Signal, 1)
