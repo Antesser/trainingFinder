@@ -14,7 +14,7 @@ var (
 	}
 )
 
-func RoleKey(role string) (string, bool) {
+func GetRoleID(role string) (string, bool) {
 	for k, v := range Roles {
 		if v == role {
 

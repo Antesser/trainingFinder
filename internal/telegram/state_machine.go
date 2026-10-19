@@ -31,15 +31,11 @@ func (bt *Bot) HandleState(ctx context.Context, chatID int64, text string) (stri
 
 	case telegramModel.StateAwaitingRole:
 		role := strings.TrimSpace(text)
-		if role != roleModel.Coach && role != roleModel.User {
-			return "Допустимые роли: coach или user. Введите роль:", bt.cache.SaveSession(ctx, chatID, s)
-		}
-
-		roleKey, ok := roleModel.RoleKey(role)
+		roleID, ok := roleModel.GetRoleID(role)
 		if !ok {
 			return "Неизвестная роль, попробуйте ещё раз:", bt.cache.SaveSession(ctx, chatID, s)
 		}
-		s.Role = roleKey
+		s.Role = roleID
 
 		if _, err := bt.service.SignUp(ctx, s.Login, s.Password, s.Role); err != nil {
 			return "Ошибка авторизации: " + err.Error(), nil
