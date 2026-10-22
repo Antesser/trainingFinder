@@ -14,7 +14,7 @@ func main() {
 	config.Producer.RequiredAcks = sarama.WaitForAll
 	config.Producer.Retry.Max = 5
 
-	brokers := []string{"localhost:9092"}
+	brokers := []string{"localhost:9094"}
 	producer, err := sarama.NewSyncProducer(brokers, config)
 	if err != nil {
 		log.Fatalf("Не удалось создать продюсер: %v", err)
