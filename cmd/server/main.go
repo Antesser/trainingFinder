@@ -114,7 +114,6 @@ func main() {
 	}
 
 	fmt.Printf("Сообщение отправлено в топик 'trainings', партиция %d, смещение %d\n", partition, offset)
-
 	workspaceBookingOutboxProcess := outbox.New(outboxRepo, producer)
 
 	scheduler, err := gocron.NewScheduler()
