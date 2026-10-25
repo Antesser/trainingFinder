@@ -13,7 +13,7 @@ import (
 	"github.com/Antesser/trainingFinder/internal/config"
 	"github.com/Antesser/trainingFinder/internal/kafka"
 	"github.com/Antesser/trainingFinder/internal/kafka/producer"
-	your_topic_name "github.com/Antesser/trainingFinder/internal/kafka/producer/your-topic-name"
+	"github.com/Antesser/trainingFinder/internal/kafka/producer/trainings"
 	"github.com/Antesser/trainingFinder/internal/process/outbox"
 	authRepository "github.com/Antesser/trainingFinder/internal/repository/postgres/auth"
 	bookingRepository "github.com/Antesser/trainingFinder/internal/repository/postgres/booking"
@@ -59,8 +59,8 @@ func main() {
 	outboxRepo := outboxRepository.New(pool)
 	authSrv := authService.New(authRepo, cfg.Server.Secret, cfg.Server.AccessTokenDuration)
 	userSrv := userService.New(userRepo)
-	trainingSrv := trainingService.New(trainingRepo, your_topic_name.MarshalCreateTrainingEvent, outboxRepo)
-	bookingSrv := bookingService.New(bookingRepo, your_topic_name.MarshalCreateBookingEvent, outboxRepo)
+	trainingSrv := trainingService.New(trainingRepo, trainings.MarshalCreateTrainingEvent, outboxRepo)
+	bookingSrv := bookingService.New(bookingRepo, trainings.MarshalCreateBookingEvent, outboxRepo)
 	cfgAuth, err := config.NewAuthConfig(cfg.Server.AuthConfigPath)
 	if err != nil {
 		log.Fatalf("failed to load auth config: %v", err)
@@ -68,24 +68,6 @@ func main() {
 	//ctrl := controller.New(cfg.Server, authGRPS.NewServer(authSrv), userGRPS.NewServer(userSrv), trainingGRPS.NewServer(trainingSrv))
 	ctrl := controller.New(cfg.Server, *cfgAuth, userGRPC.NewServer(userSrv), trainingGRPC.NewServer(trainingSrv), authGRPC.NewServer(authSrv), bookingGRPC.NewServer(bookingSrv))
 	ctrl.Run(ctx)
-
-	outboxProcess := outbox.New(outboxRepo, nil)
-
-	s, err := gocron.NewScheduler()
-	if err != nil {
-		return
-	}
-
-	if cfg.TrainingOutboxProcessEnabled {
-		_, err := s.NewJob(
-			gocron.DurationJob(cfg.TrainingOutboxProcessDuration),
-			gocron.NewTask(outboxProcess.ProduceOutboxMessages, ctx, kafka.TrainingTopic),
-			gocron.WithSingletonMode(gocron.LimitModeReschedule),
-		)
-		if err != nil {
-			return
-		}
-	}
 
 	newCache := redis.InitRedis(ctx, cfg.Server)
 	tgBot, err := telegram.New(cfg.Server.BotToken, authSrv, newCache)
@@ -105,7 +87,7 @@ func main() {
 	}()
 
 	partition, offset, err := producer.SendMessage(
-		"trainings",
+		kafka.TrainingTopic,
 		fmt.Sprintf("Дароуки, сейчас %s", time.Now().Format(time.RFC3339)),
 		"user_id",
 	)
@@ -114,7 +96,7 @@ func main() {
 	}
 
 	fmt.Printf("Сообщение отправлено в топик 'trainings', партиция %d, смещение %d\n", partition, offset)
-	workspaceBookingOutboxProcess := outbox.New(outboxRepo, producer)
+	outboxProcess := outbox.New(outboxRepo, producer)
 
 	scheduler, err := gocron.NewScheduler()
 	if err != nil {
@@ -124,9 +106,9 @@ func main() {
 	_, err = scheduler.NewJob(
 		gocron.DurationJob(cfg.Server.OutboxDuration),
 		gocron.NewTask(
-			workspaceBookingOutboxProcess.ProduceOutboxMessages,
+			outboxProcess.ProduceOutboxMessages,
 			ctx,
-			"trainings",
+			kafka.TrainingTopic,
 		),
 		gocron.WithSingletonMode(gocron.LimitModeReschedule),
 	)
@@ -134,8 +116,6 @@ func main() {
 		log.Fatal("new workspace booking outbox job: ", err)
 	}
 	scheduler.Start()
-
-	s.Start()
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)

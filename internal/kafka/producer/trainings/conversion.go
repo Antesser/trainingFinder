@@ -1,4 +1,4 @@
-package your_topic_name
+package trainings
 
 import (
 	"github.com/Antesser/trainingFinder/internal/model/booking"
