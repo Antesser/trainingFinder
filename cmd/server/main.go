@@ -107,7 +107,7 @@ func main() {
 		gocron.NewTask(
 			outboxProcess.ProduceOutboxMessages,
 			ctx,
-			kafka.TrainingTopic,
+			kafka.TrainingNotificationsTopic,
 		),
 		gocron.WithSingletonMode(gocron.LimitModeReschedule),
 	)
