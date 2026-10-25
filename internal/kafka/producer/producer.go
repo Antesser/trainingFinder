@@ -1,7 +1,6 @@
 package producer
 
 import (
-	"context"
 	"fmt"
 	"time"
 
@@ -27,12 +26,7 @@ func New(brokers []string) (*Producer, error) {
 	return &Producer{producer: p}, nil
 }
 
-func (p *Producer) Produce(ctx context.Context, topic string, msg []byte, key string) error {
-	_, _, err := p.SendMessage(topic, string(msg), key)
-	return err
-}
-
-func (p *Producer) SendMessage(topic, msg, aggregateKey string) (partition int32, offset int64, err error) {
+func (p *Producer) Produce(topic, msg, aggregateKey string) (partition int32, offset int64, err error) {
 	producerMsg := &sarama.ProducerMessage{
 		Topic:     topic,
 		Key:       sarama.StringEncoder(aggregateKey),

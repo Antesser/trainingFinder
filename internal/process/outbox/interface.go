@@ -12,5 +12,11 @@ type outboxRepository interface {
 }
 
 type producer interface {
-	Produce(ctx context.Context, topic string, msg []byte, key string) error
+	Produce(topic, msg, aggregateKey string) (partition int32, offset int64, err error)
+	Close() error
 }
+
+//type MessageSender interface {
+//	SendMessage(topic, msg, aggregateKey string) (int32, int64, error)
+//
+//}

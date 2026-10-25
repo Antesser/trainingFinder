@@ -41,7 +41,7 @@ func (p *process) ProduceOutboxMessages(ctx context.Context, topic string) error
 	deleteIDs := make([]int64, 0, len(items))
 
 	for _, item := range items {
-		if err := p.producer.Produce(ctx, item.Topic, []byte(item.Msg), item.Key); err != nil {
+		if _, _, err := p.producer.Produce(item.Topic, item.Msg, item.Key); err != nil {
 			// log.Errorf("produce outbox message %s: %v", item.MessageValue, err)
 			// Нужно выйти из цикла, чтобы сохранить порядок отправки
 			break

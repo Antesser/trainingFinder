@@ -2,12 +2,10 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/Antesser/trainingFinder/internal/app/controller"
 	"github.com/Antesser/trainingFinder/internal/config"
@@ -87,16 +85,16 @@ func main() {
 		}
 	}()
 
-	partition, offset, err := producer.SendMessage(
-		kafka.TrainingTopic,
-		fmt.Sprintf("Дароуки, сейчас %s", time.Now().Format(time.RFC3339)),
-		"user_id",
-	)
-	if err != nil {
-		log.Fatalf("send message: %v", err)
-	}
+	//partition, offset, err := producer.SendMessage(
+	//	kafka.TrainingTopic,
+	//	fmt.Sprintf("Дароуки, сейчас %s", time.Now().Format(time.RFC3339)),
+	//	"user_id",
+	//)
+	//if err != nil {
+	//	log.Fatalf("send message: %v", err)
+	//}
 
-	fmt.Printf("Сообщение отправлено в топик 'trainings', партиция %d, смещение %d\n", partition, offset)
+	//fmt.Printf("Сообщение отправлено в топик 'trainings', партиция %d, смещение %d\n", partition, offset)
 	outboxProcess := outbox.New(outboxRepo, producer)
 
 	scheduler, err := gocron.NewScheduler()
