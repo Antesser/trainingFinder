@@ -26,6 +26,9 @@ type ServerConfig struct {
 	RedisAddr           string        `envconfig:"REDIS_ADDR"`
 	RedisPass           string        `envconfig:"REDIS_PASS"`
 	RedisDB             int           `envconfig:"REDIS_DB"`
+	KafkaPort           string        `envconfig:"KAFKA_PORT"`
+	KafkaHost           string        `envconfig:"KAFKA_HOST"`
+	OutboxDuration      time.Duration `envconfig:"OUTBOX_DURATION"`
 }
 
 type DBConfig struct {

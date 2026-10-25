@@ -7,10 +7,12 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/Antesser/trainingFinder/internal/app/controller"
 	"github.com/Antesser/trainingFinder/internal/config"
 	"github.com/Antesser/trainingFinder/internal/kafka"
+	"github.com/Antesser/trainingFinder/internal/kafka/producer"
 	your_topic_name "github.com/Antesser/trainingFinder/internal/kafka/producer/your-topic-name"
 	"github.com/Antesser/trainingFinder/internal/process/outbox"
 	authRepository "github.com/Antesser/trainingFinder/internal/repository/postgres/auth"
@@ -91,7 +93,49 @@ func main() {
 		log.Fatal(err)
 	}
 	tgBot.Run(ctx)
-	fmt.Println("telegram bot started", tgBot)
+
+	producer, err := producer.New([]string{cfg.Server.KafkaHost + cfg.Server.KafkaPort})
+	if err != nil {
+		log.Fatalf("init producer: %v", err)
+	}
+	defer func() {
+		if end := producer.Close(); end != nil {
+			log.Printf("close producer: %v", end)
+		}
+	}()
+
+	partition, offset, err := producer.SendMessage(
+		"trainings",
+		fmt.Sprintf("Дароуки, сейчас %s", time.Now().Format(time.RFC3339)),
+		"user_id",
+	)
+	if err != nil {
+		log.Fatalf("send message: %v", err)
+	}
+
+	fmt.Printf("Сообщение отправлено в топик 'trainings', партиция %d, смещение %d\n", partition, offset)
+
+	workspaceBookingOutboxProcess := outbox.New(outboxRepo, producer)
+
+	scheduler, err := gocron.NewScheduler()
+	if err != nil {
+		log.Fatal("new scheduler: ", err)
+	}
+
+	_, err = scheduler.NewJob(
+		gocron.DurationJob(cfg.Server.OutboxDuration),
+		gocron.NewTask(
+			workspaceBookingOutboxProcess.ProduceOutboxMessages,
+			ctx,
+			"trainings",
+		),
+		gocron.WithSingletonMode(gocron.LimitModeReschedule),
+	)
+	if err != nil {
+		log.Fatal("new workspace booking outbox job: ", err)
+	}
+	scheduler.Start()
+
 	s.Start()
 
 	c := make(chan os.Signal, 1)

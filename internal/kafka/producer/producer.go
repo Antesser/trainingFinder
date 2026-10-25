@@ -1,36 +1,55 @@
-package main
+package producer
 
 import (
+	"context"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/IBM/sarama"
 )
 
-func main() {
+type Producer struct {
+	producer sarama.SyncProducer
+}
+
+func New(brokers []string) (*Producer, error) {
 	config := sarama.NewConfig()
 	config.Producer.Return.Successes = true
+	config.Producer.Return.Errors = true
 	config.Producer.RequiredAcks = sarama.WaitForAll
 	config.Producer.Retry.Max = 5
 
-	brokers := []string{"localhost:9094"}
-	producer, err := sarama.NewSyncProducer(brokers, config)
+	p, err := sarama.NewSyncProducer(brokers, config)
 	if err != nil {
-		log.Fatalf("Не удалось создать продюсер: %v", err)
-	}
-	defer producer.Close()
-
-	topic := "trainings"
-	msg := &sarama.ProducerMessage{
-		Topic: topic,
-		Value: sarama.StringEncoder(fmt.Sprintf("Дароуки, сейчас %s", time.Now().Format(time.RFC3339))),
+		return nil, fmt.Errorf("create sync producer: %w", err)
 	}
 
-	partition, offset, err := producer.SendMessage(msg)
+	return &Producer{producer: p}, nil
+}
+
+func (p *Producer) Produce(ctx context.Context, topic string, msg []byte, key string) error {
+	_, _, err := p.SendMessage(topic, string(msg), key)
+	return err
+}
+
+func (p *Producer) SendMessage(topic, msg, aggregateKey string) (partition int32, offset int64, err error) {
+	producerMsg := &sarama.ProducerMessage{
+		Topic:     topic,
+		Key:       sarama.StringEncoder(aggregateKey),
+		Value:     sarama.StringEncoder(msg),
+		Timestamp: time.Now(),
+	}
+
+	partition, offset, err = p.producer.SendMessage(producerMsg)
 	if err != nil {
-		log.Fatalf("Ошибка отправки: %v", err)
+
+		return 0, 0, fmt.Errorf("send message to topic %q: %w", topic, err)
 	}
 
-	fmt.Printf("Сообщение отправлено в топик '%s', партиция %d, смещение %d\n", topic, partition, offset)
+	return partition, offset, nil
+}
+
+func (p *Producer) Close() error {
+
+	return p.producer.Close()
 }
