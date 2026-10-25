@@ -13,7 +13,8 @@ import (
 	"github.com/Antesser/trainingFinder/internal/config"
 	"github.com/Antesser/trainingFinder/internal/kafka"
 	"github.com/Antesser/trainingFinder/internal/kafka/producer"
-	"github.com/Antesser/trainingFinder/internal/kafka/producer/trainings"
+	//"github.com/Antesser/trainingFinder/internal/kafka/producer/notifications"
+
 	"github.com/Antesser/trainingFinder/internal/process/outbox"
 	authRepository "github.com/Antesser/trainingFinder/internal/repository/postgres/auth"
 	bookingRepository "github.com/Antesser/trainingFinder/internal/repository/postgres/booking"
@@ -59,8 +60,8 @@ func main() {
 	outboxRepo := outboxRepository.New(pool)
 	authSrv := authService.New(authRepo, cfg.Server.Secret, cfg.Server.AccessTokenDuration)
 	userSrv := userService.New(userRepo)
-	trainingSrv := trainingService.New(trainingRepo, trainings.MarshalCreateTrainingEvent, outboxRepo)
-	bookingSrv := bookingService.New(bookingRepo, trainings.MarshalCreateBookingEvent, outboxRepo)
+	trainingSrv := trainingService.New(trainingRepo, nil, outboxRepo)
+	bookingSrv := bookingService.New(bookingRepo, nil, outboxRepo)
 	cfgAuth, err := config.NewAuthConfig(cfg.Server.AuthConfigPath)
 	if err != nil {
 		log.Fatalf("failed to load auth config: %v", err)
