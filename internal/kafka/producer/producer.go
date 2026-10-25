@@ -7,11 +7,11 @@ import (
 	"github.com/IBM/sarama"
 )
 
-type Producer struct {
+type producer struct {
 	producer sarama.SyncProducer
 }
 
-func New(brokers []string) (*Producer, error) {
+func New(brokers []string) (*producer, error) {
 	config := sarama.NewConfig()
 	config.Producer.Return.Successes = true
 	config.Producer.Return.Errors = true
@@ -23,10 +23,10 @@ func New(brokers []string) (*Producer, error) {
 		return nil, fmt.Errorf("create sync producer: %w", err)
 	}
 
-	return &Producer{producer: p}, nil
+	return &producer{producer: p}, nil
 }
 
-func (p *Producer) Produce(topic, msg, aggregateKey string) (partition int32, offset int64, err error) {
+func (p *producer) Produce(topic, msg, aggregateKey string) (partition int32, offset int64, err error) {
 	producerMsg := &sarama.ProducerMessage{
 		Topic:     topic,
 		Key:       sarama.StringEncoder(aggregateKey),
@@ -43,7 +43,7 @@ func (p *Producer) Produce(topic, msg, aggregateKey string) (partition int32, of
 	return partition, offset, nil
 }
 
-func (p *Producer) Close() error {
+func (p *producer) Close() error {
 
 	return p.producer.Close()
 }
