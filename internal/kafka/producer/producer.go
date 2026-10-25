@@ -26,7 +26,7 @@ func New(brokers []string) (*producer, error) {
 	return &producer{producer: p}, nil
 }
 
-func (p *producer) Produce(topic, msg, aggregateKey string) (partition int32, offset int64, err error) {
+func (p *producer) Produce(topic, msg, aggregateKey string) (err error) {
 	producerMsg := &sarama.ProducerMessage{
 		Topic:     topic,
 		Key:       sarama.StringEncoder(aggregateKey),
@@ -34,13 +34,13 @@ func (p *producer) Produce(topic, msg, aggregateKey string) (partition int32, of
 		Timestamp: time.Now(),
 	}
 
-	partition, offset, err = p.producer.SendMessage(producerMsg)
+	_, _, err = p.producer.SendMessage(producerMsg)
 	if err != nil {
 
-		return 0, 0, fmt.Errorf("send message to topic %q: %w", topic, err)
+		return fmt.Errorf("send message to topic %q: %w", topic, err)
 	}
 
-	return partition, offset, nil
+	return nil
 }
 
 func (p *producer) Close() error {

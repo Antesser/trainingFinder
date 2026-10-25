@@ -12,7 +12,7 @@ type outboxRepository interface {
 }
 
 type producer interface {
-	Produce(topic, msg, aggregateKey string) (partition int32, offset int64, err error)
+	Produce(topic, msg, aggregateKey string) error
 }
 
 //type MessageSender interface {

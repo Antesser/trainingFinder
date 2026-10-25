@@ -1,5 +1,5 @@
 package kafka
 
 const (
-	TrainingNotificationsTopic = "trainings"
+	TrainingNotificationsTopic = "trainings_notifications"
 )
