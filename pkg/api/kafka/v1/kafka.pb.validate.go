@@ -35,44 +35,77 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on CreateTrainingEvent with the rules
-// defined in the proto definition for this message. If any rules are
+// Validate checks the field values on TrainingNotificationMessages with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *CreateTrainingEvent) Validate() error {
+func (m *TrainingNotificationMessages) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on CreateTrainingEvent with the rules
-// defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on TrainingNotificationMessages with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// CreateTrainingEventMultiError, or nil if none found.
-func (m *CreateTrainingEvent) ValidateAll() error {
+// TrainingNotificationMessagesMultiError, or nil if none found.
+func (m *TrainingNotificationMessages) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *CreateTrainingEvent) validate(all bool) error {
+func (m *TrainingNotificationMessages) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	// no validation rules for TrainingId
+	// no validation rules for UserId
+
+	// no validation rules for Destination
+
+	if all {
+		switch v := interface{}(m.GetData()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, TrainingNotificationMessagesValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, TrainingNotificationMessagesValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return TrainingNotificationMessagesValidationError{
+				field:  "Data",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for NotificationType
 
 	if len(errors) > 0 {
-		return CreateTrainingEventMultiError(errors)
+		return TrainingNotificationMessagesMultiError(errors)
 	}
 
 	return nil
 }
 
-// CreateTrainingEventMultiError is an error wrapping multiple validation
-// errors returned by CreateTrainingEvent.ValidateAll() if the designated
-// constraints aren't met.
-type CreateTrainingEventMultiError []error
+// TrainingNotificationMessagesMultiError is an error wrapping multiple
+// validation errors returned by TrainingNotificationMessages.ValidateAll() if
+// the designated constraints aren't met.
+type TrainingNotificationMessagesMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m CreateTrainingEventMultiError) Error() string {
+func (m TrainingNotificationMessagesMultiError) Error() string {
 	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -81,219 +114,12 @@ func (m CreateTrainingEventMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m CreateTrainingEventMultiError) AllErrors() []error { return m }
+func (m TrainingNotificationMessagesMultiError) AllErrors() []error { return m }
 
-// CreateTrainingEventValidationError is the validation error returned by
-// CreateTrainingEvent.Validate if the designated constraints aren't met.
-type CreateTrainingEventValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e CreateTrainingEventValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e CreateTrainingEventValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e CreateTrainingEventValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e CreateTrainingEventValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e CreateTrainingEventValidationError) ErrorName() string {
-	return "CreateTrainingEventValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e CreateTrainingEventValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sCreateTrainingEvent.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = CreateTrainingEventValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = CreateTrainingEventValidationError{}
-
-// Validate checks the field values on DeleteTrainingEvent with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *DeleteTrainingEvent) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on DeleteTrainingEvent with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// DeleteTrainingEventMultiError, or nil if none found.
-func (m *DeleteTrainingEvent) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *DeleteTrainingEvent) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for TrainingId
-
-	if len(errors) > 0 {
-		return DeleteTrainingEventMultiError(errors)
-	}
-
-	return nil
-}
-
-// DeleteTrainingEventMultiError is an error wrapping multiple validation
-// errors returned by DeleteTrainingEvent.ValidateAll() if the designated
-// constraints aren't met.
-type DeleteTrainingEventMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m DeleteTrainingEventMultiError) Error() string {
-	msgs := make([]string, 0, len(m))
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m DeleteTrainingEventMultiError) AllErrors() []error { return m }
-
-// DeleteTrainingEventValidationError is the validation error returned by
-// DeleteTrainingEvent.Validate if the designated constraints aren't met.
-type DeleteTrainingEventValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e DeleteTrainingEventValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e DeleteTrainingEventValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e DeleteTrainingEventValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e DeleteTrainingEventValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e DeleteTrainingEventValidationError) ErrorName() string {
-	return "DeleteTrainingEventValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e DeleteTrainingEventValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sDeleteTrainingEvent.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = DeleteTrainingEventValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = DeleteTrainingEventValidationError{}
-
-// Validate checks the field values on CreateBookingEvent with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *CreateBookingEvent) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on CreateBookingEvent with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// CreateBookingEventMultiError, or nil if none found.
-func (m *CreateBookingEvent) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *CreateBookingEvent) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for BookingId
-
-	if len(errors) > 0 {
-		return CreateBookingEventMultiError(errors)
-	}
-
-	return nil
-}
-
-// CreateBookingEventMultiError is an error wrapping multiple validation errors
-// returned by CreateBookingEvent.ValidateAll() if the designated constraints
+// TrainingNotificationMessagesValidationError is the validation error returned
+// by TrainingNotificationMessages.Validate if the designated constraints
 // aren't met.
-type CreateBookingEventMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m CreateBookingEventMultiError) Error() string {
-	msgs := make([]string, 0, len(m))
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m CreateBookingEventMultiError) AllErrors() []error { return m }
-
-// CreateBookingEventValidationError is the validation error returned by
-// CreateBookingEvent.Validate if the designated constraints aren't met.
-type CreateBookingEventValidationError struct {
+type TrainingNotificationMessagesValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -301,24 +127,24 @@ type CreateBookingEventValidationError struct {
 }
 
 // Field function returns field value.
-func (e CreateBookingEventValidationError) Field() string { return e.field }
+func (e TrainingNotificationMessagesValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e CreateBookingEventValidationError) Reason() string { return e.reason }
+func (e TrainingNotificationMessagesValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e CreateBookingEventValidationError) Cause() error { return e.cause }
+func (e TrainingNotificationMessagesValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e CreateBookingEventValidationError) Key() bool { return e.key }
+func (e TrainingNotificationMessagesValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e CreateBookingEventValidationError) ErrorName() string {
-	return "CreateBookingEventValidationError"
+func (e TrainingNotificationMessagesValidationError) ErrorName() string {
+	return "TrainingNotificationMessagesValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e CreateBookingEventValidationError) Error() string {
+func (e TrainingNotificationMessagesValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -330,14 +156,14 @@ func (e CreateBookingEventValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sCreateBookingEvent.%s: %s%s",
+		"invalid %sTrainingNotificationMessages.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = CreateBookingEventValidationError{}
+var _ error = TrainingNotificationMessagesValidationError{}
 
 var _ interface {
 	Field() string
@@ -345,46 +171,72 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = CreateBookingEventValidationError{}
+} = TrainingNotificationMessagesValidationError{}
 
-// Validate checks the field values on DeleteBookingEvent with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *DeleteBookingEvent) Validate() error {
+// Validate checks the field values on TrainingData with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *TrainingData) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on DeleteBookingEvent with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// DeleteBookingEventMultiError, or nil if none found.
-func (m *DeleteBookingEvent) ValidateAll() error {
+// ValidateAll checks the field values on TrainingData with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in TrainingDataMultiError, or
+// nil if none found.
+func (m *TrainingData) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *DeleteBookingEvent) validate(all bool) error {
+func (m *TrainingData) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	// no validation rules for BookingId
+	if all {
+		switch v := interface{}(m.GetTrainingTime()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, TrainingDataValidationError{
+					field:  "TrainingTime",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, TrainingDataValidationError{
+					field:  "TrainingTime",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetTrainingTime()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return TrainingDataValidationError{
+				field:  "TrainingTime",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
-		return DeleteBookingEventMultiError(errors)
+		return TrainingDataMultiError(errors)
 	}
 
 	return nil
 }
 
-// DeleteBookingEventMultiError is an error wrapping multiple validation errors
-// returned by DeleteBookingEvent.ValidateAll() if the designated constraints
-// aren't met.
-type DeleteBookingEventMultiError []error
+// TrainingDataMultiError is an error wrapping multiple validation errors
+// returned by TrainingData.ValidateAll() if the designated constraints aren't met.
+type TrainingDataMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m DeleteBookingEventMultiError) Error() string {
+func (m TrainingDataMultiError) Error() string {
 	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -393,11 +245,11 @@ func (m DeleteBookingEventMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m DeleteBookingEventMultiError) AllErrors() []error { return m }
+func (m TrainingDataMultiError) AllErrors() []error { return m }
 
-// DeleteBookingEventValidationError is the validation error returned by
-// DeleteBookingEvent.Validate if the designated constraints aren't met.
-type DeleteBookingEventValidationError struct {
+// TrainingDataValidationError is the validation error returned by
+// TrainingData.Validate if the designated constraints aren't met.
+type TrainingDataValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -405,24 +257,22 @@ type DeleteBookingEventValidationError struct {
 }
 
 // Field function returns field value.
-func (e DeleteBookingEventValidationError) Field() string { return e.field }
+func (e TrainingDataValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e DeleteBookingEventValidationError) Reason() string { return e.reason }
+func (e TrainingDataValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e DeleteBookingEventValidationError) Cause() error { return e.cause }
+func (e TrainingDataValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e DeleteBookingEventValidationError) Key() bool { return e.key }
+func (e TrainingDataValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e DeleteBookingEventValidationError) ErrorName() string {
-	return "DeleteBookingEventValidationError"
-}
+func (e TrainingDataValidationError) ErrorName() string { return "TrainingDataValidationError" }
 
 // Error satisfies the builtin error interface
-func (e DeleteBookingEventValidationError) Error() string {
+func (e TrainingDataValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -434,14 +284,14 @@ func (e DeleteBookingEventValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sDeleteBookingEvent.%s: %s%s",
+		"invalid %sTrainingData.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = DeleteBookingEventValidationError{}
+var _ error = TrainingDataValidationError{}
 
 var _ interface {
 	Field() string
@@ -449,4 +299,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = DeleteBookingEventValidationError{}
+} = TrainingDataValidationError{}

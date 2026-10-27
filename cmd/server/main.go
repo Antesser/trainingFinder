@@ -59,7 +59,7 @@ func main() {
 	authSrv := authService.New(authRepo, cfg.Server.Secret, cfg.Server.AccessTokenDuration)
 	userSrv := userService.New(userRepo)
 	trainingSrv := trainingService.New(trainingRepo, nil, outboxRepo)
-	bookingSrv := bookingService.New(bookingRepo, nil, outboxRepo)
+	bookingSrv := bookingService.New(bookingRepo, trainingRepo, nil, outboxRepo)
 	cfgAuth, err := config.NewAuthConfig(cfg.Server.AuthConfigPath)
 	if err != nil {
 		log.Fatalf("failed to load auth config: %v", err)
@@ -85,16 +85,6 @@ func main() {
 		}
 	}()
 
-	//partition, offset, err := producer.SendMessage(
-	//	kafka.TrainingTopic,
-	//	fmt.Sprintf("Дароуки, сейчас %s", time.Now().Format(time.RFC3339)),
-	//	"user_id",
-	//)
-	//if err != nil {
-	//	log.Fatalf("send message: %v", err)
-	//}
-
-	//fmt.Printf("Сообщение отправлено в топик 'trainings', партиция %d, смещение %d\n", partition, offset)
 	outboxProcess := outbox.New(outboxRepo, producer)
 
 	scheduler, err := gocron.NewScheduler()

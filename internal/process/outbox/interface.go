@@ -14,8 +14,3 @@ type outboxRepository interface {
 type producer interface {
 	Produce(topic, msg, aggregateKey string) error
 }
-
-//type MessageSender interface {
-//	SendMessage(topic, msg, aggregateKey string) (int32, int64, error)
-//
-//}

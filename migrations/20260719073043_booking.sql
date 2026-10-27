@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS training_booking
     created_at  TIMESTAMP NOT NULL,
     status      text,
     book_from   TIMESTAMP NOT NULL,
-    book_to     TIMESTAMP NOT NULL,
+    book_to TIMESTAMP NOT NULL
 );
 -- +goose StatementEnd
 
