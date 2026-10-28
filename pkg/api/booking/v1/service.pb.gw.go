@@ -173,7 +173,7 @@ func RegisterBookingServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/training_booking.v1.BookingService/ChangeBookingStatus", runtime.WithHTTPPathPattern("/api/booking/v1/book-status"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/training_booking.v1.BookingService/ChangeBookingStatus", runtime.WithHTTPPathPattern("/api/booking/v1/status"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -281,7 +281,7 @@ func RegisterBookingServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/training_booking.v1.BookingService/ChangeBookingStatus", runtime.WithHTTPPathPattern("/api/booking/v1/book-status"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/training_booking.v1.BookingService/ChangeBookingStatus", runtime.WithHTTPPathPattern("/api/booking/v1/status"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -305,7 +305,7 @@ var (
 
 	pattern_BookingService_ListBookings_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"api", "training", "v1", "list-bookings"}, ""))
 
-	pattern_BookingService_ChangeBookingStatus_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"api", "booking", "v1", "book-status"}, ""))
+	pattern_BookingService_ChangeBookingStatus_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"api", "booking", "v1", "status"}, ""))
 )
 
 var (

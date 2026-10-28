@@ -4,15 +4,18 @@ go 1.27.1
 
 require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.11-20260415201107-50325440f8f2.1
+	github.com/IBM/sarama v1.61.1
 	github.com/Masterminds/squirrel v1.5.4
 	github.com/georgysavva/scany/v2 v2.1.4
-	github.com/go-co-op/gocron/v2 v2.21.2
+	github.com/go-co-op/gocron/v2 v2.22.0
+	github.com/go-telegram/bot v1.27.0
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/golangmonster/pgxtransactor v1.0.3
 	github.com/google/uuid v1.6.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0
 	github.com/jackc/pgx/v5 v5.9.2
 	github.com/kelseyhightower/envconfig v1.4.0
+	github.com/redis/go-redis/v9 v9.23.0
 	github.com/rs/cors v1.11.1
 	github.com/samber/lo v1.53.0
 	github.com/stretchr/testify v1.12.1
@@ -28,17 +31,24 @@ require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/chigopher/pathlib v0.19.1 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
+	github.com/eapache/go-resiliency v1.7.0 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
-	github.com/go-telegram/bot v1.27.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
+	github.com/hashicorp/go-uuid v1.0.3 // indirect
 	github.com/huandu/xstrings v1.4.0 // indirect
 	github.com/iancoleman/strcase v0.3.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
+	github.com/jcmturner/aescts/v2 v2.0.0 // indirect
+	github.com/jcmturner/dnsutils/v2 v2.0.0 // indirect
+	github.com/jcmturner/gofork v1.7.6 // indirect
+	github.com/jcmturner/gokrb5/v8 v8.4.4 // indirect
+	github.com/jcmturner/rpc/v2 v2.0.3 // indirect
 	github.com/jinzhu/copier v0.4.0 // indirect
 	github.com/jonboulle/clockwork v0.5.0 // indirect
+	github.com/klauspost/compress v1.20.1 // indirect
 	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
 	github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
@@ -46,8 +56,8 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
-	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
-	github.com/redis/go-redis/v9 v9.23.0 // indirect
+	github.com/pierrec/lz4/v4 v4.1.31 // indirect
+	github.com/rcrowley/go-metrics v0.0.0-20250401214520-65e299d6c5c9 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/rs/zerolog v1.34.0 // indirect
 	github.com/sagikazarmark/locafero v0.12.0 // indirect

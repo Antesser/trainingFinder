@@ -7,7 +7,6 @@ import (
 )
 
 func (b *service) ChangeBookingStatus(ctx context.Context, data model.BookingStatus) error {
-
 	err := b.repo.InTx(ctx, func(ctx context.Context) error {
 		currentStatus, err := b.repo.GetStatus(ctx, data.BookingID)
 		if err != nil {

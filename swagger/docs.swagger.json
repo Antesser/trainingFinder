@@ -153,38 +153,6 @@
         ]
       }
     },
-    "/api/booking/v1/book-status": {
-      "patch": {
-        "operationId": "BookingService_ChangeBookingStatus",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1ChangeBookingStatusResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1ChangeBookingStatusRequest"
-            }
-          }
-        ],
-        "tags": [
-          "BookingService"
-        ]
-      }
-    },
     "/api/booking/v1/book-training": {
       "post": {
         "operationId": "BookingService_BookTraining",
@@ -209,6 +177,38 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/v1BookTrainingRequest"
+            }
+          }
+        ],
+        "tags": [
+          "BookingService"
+        ]
+      }
+    },
+    "/api/booking/v1/status": {
+      "patch": {
+        "operationId": "BookingService_ChangeBookingStatus",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ChangeBookingStatusResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ChangeBookingStatusRequest"
             }
           }
         ],

@@ -43,7 +43,7 @@ migration:
 vet:
 	go vet ./...
 
-start-db:
+compose:
 	docker compose up -d
 start:
 	go run cmd/server/main.go

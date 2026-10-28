@@ -9,6 +9,7 @@ package v1
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 )
@@ -20,16 +21,129 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type CreateTrainingEvent struct {
+type ContactType int32
+
+const (
+	ContactType_CONTACT_TYPE_UNSPECIFIED ContactType = 0
+	ContactType_CONTACT_TYPE_TELEGRAM    ContactType = 1
+	ContactType_CONTACT_TYPE_EMAIL       ContactType = 2
+)
+
+// Enum value maps for ContactType.
+var (
+	ContactType_name = map[int32]string{
+		0: "CONTACT_TYPE_UNSPECIFIED",
+		1: "CONTACT_TYPE_TELEGRAM",
+		2: "CONTACT_TYPE_EMAIL",
+	}
+	ContactType_value = map[string]int32{
+		"CONTACT_TYPE_UNSPECIFIED": 0,
+		"CONTACT_TYPE_TELEGRAM":    1,
+		"CONTACT_TYPE_EMAIL":       2,
+	}
+)
+
+func (x ContactType) Enum() *ContactType {
+	p := new(ContactType)
+	*p = x
+	return p
+}
+
+func (x ContactType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ContactType) Descriptor() protoreflect.EnumDescriptor {
+	return file_api_kafka_v1_kafka_proto_enumTypes[0].Descriptor()
+}
+
+func (ContactType) Type() protoreflect.EnumType {
+	return &file_api_kafka_v1_kafka_proto_enumTypes[0]
+}
+
+func (x ContactType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ContactType.Descriptor instead.
+func (ContactType) EnumDescriptor() ([]byte, []int) {
+	return file_api_kafka_v1_kafka_proto_rawDescGZIP(), []int{0}
+}
+
+type EventType int32
+
+const (
+	EventType_EVENT_TYPE_TRAINING_UNSPECIFIED      EventType = 0
+	EventType_EVENT_TYPE_TRAINING_REJECTED         EventType = 1
+	EventType_EVENT_TYPE_TRAINING_APPROVED         EventType = 2
+	EventType_EVENT_TYPE_TRAINING_IN_PROGRESS      EventType = 3
+	EventType_EVENT_TYPE_TRAINING_CANCELLED        EventType = 4
+	EventType_EVENT_TYPE_TRAINING_BOOKING_CREATED  EventType = 5
+	EventType_EVENT_TYPE_TRAINING_BOOKING_DECLINED EventType = 6
+)
+
+// Enum value maps for EventType.
+var (
+	EventType_name = map[int32]string{
+		0: "EVENT_TYPE_TRAINING_UNSPECIFIED",
+		1: "EVENT_TYPE_TRAINING_REJECTED",
+		2: "EVENT_TYPE_TRAINING_APPROVED",
+		3: "EVENT_TYPE_TRAINING_IN_PROGRESS",
+		4: "EVENT_TYPE_TRAINING_CANCELLED",
+		5: "EVENT_TYPE_TRAINING_BOOKING_CREATED",
+		6: "EVENT_TYPE_TRAINING_BOOKING_DECLINED",
+	}
+	EventType_value = map[string]int32{
+		"EVENT_TYPE_TRAINING_UNSPECIFIED":      0,
+		"EVENT_TYPE_TRAINING_REJECTED":         1,
+		"EVENT_TYPE_TRAINING_APPROVED":         2,
+		"EVENT_TYPE_TRAINING_IN_PROGRESS":      3,
+		"EVENT_TYPE_TRAINING_CANCELLED":        4,
+		"EVENT_TYPE_TRAINING_BOOKING_CREATED":  5,
+		"EVENT_TYPE_TRAINING_BOOKING_DECLINED": 6,
+	}
+)
+
+func (x EventType) Enum() *EventType {
+	p := new(EventType)
+	*p = x
+	return p
+}
+
+func (x EventType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (EventType) Descriptor() protoreflect.EnumDescriptor {
+	return file_api_kafka_v1_kafka_proto_enumTypes[1].Descriptor()
+}
+
+func (EventType) Type() protoreflect.EnumType {
+	return &file_api_kafka_v1_kafka_proto_enumTypes[1]
+}
+
+func (x EventType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use EventType.Descriptor instead.
+func (EventType) EnumDescriptor() ([]byte, []int) {
+	return file_api_kafka_v1_kafka_proto_rawDescGZIP(), []int{1}
+}
+
+type TrainingNotificationMessages struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	TrainingId string `protobuf:"bytes,1,opt,name=training_id,json=trainingId,proto3" json:"training_id,omitempty"`
+	UserId           string        `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Destination      ContactType   `protobuf:"varint,2,opt,name=destination,proto3,enum=kafka.v1.ContactType" json:"destination,omitempty"`
+	Data             *TrainingData `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
+	NotificationType EventType     `protobuf:"varint,4,opt,name=notification_type,json=notificationType,proto3,enum=kafka.v1.EventType" json:"notification_type,omitempty"`
 }
 
-func (x *CreateTrainingEvent) Reset() {
-	*x = CreateTrainingEvent{}
+func (x *TrainingNotificationMessages) Reset() {
+	*x = TrainingNotificationMessages{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_api_kafka_v1_kafka_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -37,13 +151,13 @@ func (x *CreateTrainingEvent) Reset() {
 	}
 }
 
-func (x *CreateTrainingEvent) String() string {
+func (x *TrainingNotificationMessages) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CreateTrainingEvent) ProtoMessage() {}
+func (*TrainingNotificationMessages) ProtoMessage() {}
 
-func (x *CreateTrainingEvent) ProtoReflect() protoreflect.Message {
+func (x *TrainingNotificationMessages) ProtoReflect() protoreflect.Message {
 	mi := &file_api_kafka_v1_kafka_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -55,28 +169,51 @@ func (x *CreateTrainingEvent) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateTrainingEvent.ProtoReflect.Descriptor instead.
-func (*CreateTrainingEvent) Descriptor() ([]byte, []int) {
+// Deprecated: Use TrainingNotificationMessages.ProtoReflect.Descriptor instead.
+func (*TrainingNotificationMessages) Descriptor() ([]byte, []int) {
 	return file_api_kafka_v1_kafka_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *CreateTrainingEvent) GetTrainingId() string {
+func (x *TrainingNotificationMessages) GetUserId() string {
 	if x != nil {
-		return x.TrainingId
+		return x.UserId
 	}
 	return ""
 }
 
-type DeleteTrainingEvent struct {
+func (x *TrainingNotificationMessages) GetDestination() ContactType {
+	if x != nil {
+		return x.Destination
+	}
+	return ContactType_CONTACT_TYPE_UNSPECIFIED
+}
+
+func (x *TrainingNotificationMessages) GetData() *TrainingData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+func (x *TrainingNotificationMessages) GetNotificationType() EventType {
+	if x != nil {
+		return x.NotificationType
+	}
+	return EventType_EVENT_TYPE_TRAINING_UNSPECIFIED
+}
+
+type TrainingData struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	TrainingId string `protobuf:"bytes,1,opt,name=training_id,json=trainingId,proto3" json:"training_id,omitempty"`
+	//todo добавить названия тренировкам в бд
+	//  string training_type = 1;
+	TrainingTime *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=training_time,json=trainingTime,proto3" json:"training_time,omitempty"` //  string training_info = 2;
 }
 
-func (x *DeleteTrainingEvent) Reset() {
-	*x = DeleteTrainingEvent{}
+func (x *TrainingData) Reset() {
+	*x = TrainingData{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_api_kafka_v1_kafka_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -84,13 +221,13 @@ func (x *DeleteTrainingEvent) Reset() {
 	}
 }
 
-func (x *DeleteTrainingEvent) String() string {
+func (x *TrainingData) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*DeleteTrainingEvent) ProtoMessage() {}
+func (*TrainingData) ProtoMessage() {}
 
-func (x *DeleteTrainingEvent) ProtoReflect() protoreflect.Message {
+func (x *TrainingData) ProtoReflect() protoreflect.Message {
 	mi := &file_api_kafka_v1_kafka_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -102,110 +239,16 @@ func (x *DeleteTrainingEvent) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteTrainingEvent.ProtoReflect.Descriptor instead.
-func (*DeleteTrainingEvent) Descriptor() ([]byte, []int) {
+// Deprecated: Use TrainingData.ProtoReflect.Descriptor instead.
+func (*TrainingData) Descriptor() ([]byte, []int) {
 	return file_api_kafka_v1_kafka_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *DeleteTrainingEvent) GetTrainingId() string {
+func (x *TrainingData) GetTrainingTime() *timestamppb.Timestamp {
 	if x != nil {
-		return x.TrainingId
+		return x.TrainingTime
 	}
-	return ""
-}
-
-type CreateBookingEvent struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	BookingId string `protobuf:"bytes,1,opt,name=booking_id,json=bookingId,proto3" json:"booking_id,omitempty"`
-}
-
-func (x *CreateBookingEvent) Reset() {
-	*x = CreateBookingEvent{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_api_kafka_v1_kafka_proto_msgTypes[2]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CreateBookingEvent) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateBookingEvent) ProtoMessage() {}
-
-func (x *CreateBookingEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_api_kafka_v1_kafka_proto_msgTypes[2]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateBookingEvent.ProtoReflect.Descriptor instead.
-func (*CreateBookingEvent) Descriptor() ([]byte, []int) {
-	return file_api_kafka_v1_kafka_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *CreateBookingEvent) GetBookingId() string {
-	if x != nil {
-		return x.BookingId
-	}
-	return ""
-}
-
-type DeleteBookingEvent struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	BookingId string `protobuf:"bytes,1,opt,name=booking_id,json=bookingId,proto3" json:"booking_id,omitempty"`
-}
-
-func (x *DeleteBookingEvent) Reset() {
-	*x = DeleteBookingEvent{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_api_kafka_v1_kafka_proto_msgTypes[3]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *DeleteBookingEvent) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteBookingEvent) ProtoMessage() {}
-
-func (x *DeleteBookingEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_api_kafka_v1_kafka_proto_msgTypes[3]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DeleteBookingEvent.ProtoReflect.Descriptor instead.
-func (*DeleteBookingEvent) Descriptor() ([]byte, []int) {
-	return file_api_kafka_v1_kafka_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *DeleteBookingEvent) GetBookingId() string {
-	if x != nil {
-		return x.BookingId
-	}
-	return ""
+	return nil
 }
 
 var File_api_kafka_v1_kafka_proto protoreflect.FileDescriptor
@@ -213,24 +256,55 @@ var File_api_kafka_v1_kafka_proto protoreflect.FileDescriptor
 var file_api_kafka_v1_kafka_proto_rawDesc = []byte{
 	0x0a, 0x18, 0x61, 0x70, 0x69, 0x2f, 0x6b, 0x61, 0x66, 0x6b, 0x61, 0x2f, 0x76, 0x31, 0x2f, 0x6b,
 	0x61, 0x66, 0x6b, 0x61, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x08, 0x6b, 0x61, 0x66, 0x6b,
-	0x61, 0x2e, 0x76, 0x31, 0x22, 0x36, 0x0a, 0x13, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x54, 0x72,
-	0x61, 0x69, 0x6e, 0x69, 0x6e, 0x67, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x12, 0x1f, 0x0a, 0x0b, 0x74,
-	0x72, 0x61, 0x69, 0x6e, 0x69, 0x6e, 0x67, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x0a, 0x74, 0x72, 0x61, 0x69, 0x6e, 0x69, 0x6e, 0x67, 0x49, 0x64, 0x22, 0x36, 0x0a, 0x13,
-	0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x54, 0x72, 0x61, 0x69, 0x6e, 0x69, 0x6e, 0x67, 0x45, 0x76,
-	0x65, 0x6e, 0x74, 0x12, 0x1f, 0x0a, 0x0b, 0x74, 0x72, 0x61, 0x69, 0x6e, 0x69, 0x6e, 0x67, 0x5f,
-	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x74, 0x72, 0x61, 0x69, 0x6e, 0x69,
-	0x6e, 0x67, 0x49, 0x64, 0x22, 0x33, 0x0a, 0x12, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x42, 0x6f,
-	0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x12, 0x1d, 0x0a, 0x0a, 0x62, 0x6f,
-	0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09,
-	0x62, 0x6f, 0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x49, 0x64, 0x22, 0x33, 0x0a, 0x12, 0x44, 0x65, 0x6c,
-	0x65, 0x74, 0x65, 0x42, 0x6f, 0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x12,
-	0x1d, 0x0a, 0x0a, 0x62, 0x6f, 0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x09, 0x62, 0x6f, 0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x49, 0x64, 0x42, 0x35,
-	0x5a, 0x33, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x41, 0x6e, 0x74,
-	0x65, 0x73, 0x73, 0x65, 0x72, 0x2f, 0x74, 0x72, 0x61, 0x69, 0x6e, 0x69, 0x6e, 0x67, 0x46, 0x69,
-	0x6e, 0x64, 0x65, 0x72, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x6b, 0x61, 0x66,
-	0x6b, 0x61, 0x2f, 0x76, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x61, 0x2e, 0x76, 0x31, 0x1a, 0x1f, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xde, 0x01, 0x0a, 0x1c, 0x54, 0x72, 0x61, 0x69, 0x6e, 0x69,
+	0x6e, 0x67, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x4d, 0x65,
+	0x73, 0x73, 0x61, 0x67, 0x65, 0x73, 0x12, 0x17, 0x0a, 0x07, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x69,
+	0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x12,
+	0x37, 0x0a, 0x0b, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x0e, 0x32, 0x15, 0x2e, 0x6b, 0x61, 0x66, 0x6b, 0x61, 0x2e, 0x76, 0x31, 0x2e,
+	0x43, 0x6f, 0x6e, 0x74, 0x61, 0x63, 0x74, 0x54, 0x79, 0x70, 0x65, 0x52, 0x0b, 0x64, 0x65, 0x73,
+	0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x2a, 0x0a, 0x04, 0x64, 0x61, 0x74, 0x61,
+	0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x16, 0x2e, 0x6b, 0x61, 0x66, 0x6b, 0x61, 0x2e, 0x76,
+	0x31, 0x2e, 0x54, 0x72, 0x61, 0x69, 0x6e, 0x69, 0x6e, 0x67, 0x44, 0x61, 0x74, 0x61, 0x52, 0x04,
+	0x64, 0x61, 0x74, 0x61, 0x12, 0x40, 0x0a, 0x11, 0x6e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x74, 0x79, 0x70, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0e, 0x32,
+	0x13, 0x2e, 0x6b, 0x61, 0x66, 0x6b, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x45, 0x76, 0x65, 0x6e, 0x74,
+	0x54, 0x79, 0x70, 0x65, 0x52, 0x10, 0x6e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x54, 0x79, 0x70, 0x65, 0x22, 0x4f, 0x0a, 0x0c, 0x54, 0x72, 0x61, 0x69, 0x6e, 0x69,
+	0x6e, 0x67, 0x44, 0x61, 0x74, 0x61, 0x12, 0x3f, 0x0a, 0x0d, 0x74, 0x72, 0x61, 0x69, 0x6e, 0x69,
+	0x6e, 0x67, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e,
+	0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e,
+	0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x0c, 0x74, 0x72, 0x61, 0x69, 0x6e,
+	0x69, 0x6e, 0x67, 0x54, 0x69, 0x6d, 0x65, 0x2a, 0x5e, 0x0a, 0x0b, 0x43, 0x6f, 0x6e, 0x74, 0x61,
+	0x63, 0x74, 0x54, 0x79, 0x70, 0x65, 0x12, 0x1c, 0x0a, 0x18, 0x43, 0x4f, 0x4e, 0x54, 0x41, 0x43,
+	0x54, 0x5f, 0x54, 0x59, 0x50, 0x45, 0x5f, 0x55, 0x4e, 0x53, 0x50, 0x45, 0x43, 0x49, 0x46, 0x49,
+	0x45, 0x44, 0x10, 0x00, 0x12, 0x19, 0x0a, 0x15, 0x43, 0x4f, 0x4e, 0x54, 0x41, 0x43, 0x54, 0x5f,
+	0x54, 0x59, 0x50, 0x45, 0x5f, 0x54, 0x45, 0x4c, 0x45, 0x47, 0x52, 0x41, 0x4d, 0x10, 0x01, 0x12,
+	0x16, 0x0a, 0x12, 0x43, 0x4f, 0x4e, 0x54, 0x41, 0x43, 0x54, 0x5f, 0x54, 0x59, 0x50, 0x45, 0x5f,
+	0x45, 0x4d, 0x41, 0x49, 0x4c, 0x10, 0x02, 0x2a, 0x8f, 0x02, 0x0a, 0x09, 0x45, 0x76, 0x65, 0x6e,
+	0x74, 0x54, 0x79, 0x70, 0x65, 0x12, 0x23, 0x0a, 0x1f, 0x45, 0x56, 0x45, 0x4e, 0x54, 0x5f, 0x54,
+	0x59, 0x50, 0x45, 0x5f, 0x54, 0x52, 0x41, 0x49, 0x4e, 0x49, 0x4e, 0x47, 0x5f, 0x55, 0x4e, 0x53,
+	0x50, 0x45, 0x43, 0x49, 0x46, 0x49, 0x45, 0x44, 0x10, 0x00, 0x12, 0x20, 0x0a, 0x1c, 0x45, 0x56,
+	0x45, 0x4e, 0x54, 0x5f, 0x54, 0x59, 0x50, 0x45, 0x5f, 0x54, 0x52, 0x41, 0x49, 0x4e, 0x49, 0x4e,
+	0x47, 0x5f, 0x52, 0x45, 0x4a, 0x45, 0x43, 0x54, 0x45, 0x44, 0x10, 0x01, 0x12, 0x20, 0x0a, 0x1c,
+	0x45, 0x56, 0x45, 0x4e, 0x54, 0x5f, 0x54, 0x59, 0x50, 0x45, 0x5f, 0x54, 0x52, 0x41, 0x49, 0x4e,
+	0x49, 0x4e, 0x47, 0x5f, 0x41, 0x50, 0x50, 0x52, 0x4f, 0x56, 0x45, 0x44, 0x10, 0x02, 0x12, 0x23,
+	0x0a, 0x1f, 0x45, 0x56, 0x45, 0x4e, 0x54, 0x5f, 0x54, 0x59, 0x50, 0x45, 0x5f, 0x54, 0x52, 0x41,
+	0x49, 0x4e, 0x49, 0x4e, 0x47, 0x5f, 0x49, 0x4e, 0x5f, 0x50, 0x52, 0x4f, 0x47, 0x52, 0x45, 0x53,
+	0x53, 0x10, 0x03, 0x12, 0x21, 0x0a, 0x1d, 0x45, 0x56, 0x45, 0x4e, 0x54, 0x5f, 0x54, 0x59, 0x50,
+	0x45, 0x5f, 0x54, 0x52, 0x41, 0x49, 0x4e, 0x49, 0x4e, 0x47, 0x5f, 0x43, 0x41, 0x4e, 0x43, 0x45,
+	0x4c, 0x4c, 0x45, 0x44, 0x10, 0x04, 0x12, 0x27, 0x0a, 0x23, 0x45, 0x56, 0x45, 0x4e, 0x54, 0x5f,
+	0x54, 0x59, 0x50, 0x45, 0x5f, 0x54, 0x52, 0x41, 0x49, 0x4e, 0x49, 0x4e, 0x47, 0x5f, 0x42, 0x4f,
+	0x4f, 0x4b, 0x49, 0x4e, 0x47, 0x5f, 0x43, 0x52, 0x45, 0x41, 0x54, 0x45, 0x44, 0x10, 0x05, 0x12,
+	0x28, 0x0a, 0x24, 0x45, 0x56, 0x45, 0x4e, 0x54, 0x5f, 0x54, 0x59, 0x50, 0x45, 0x5f, 0x54, 0x52,
+	0x41, 0x49, 0x4e, 0x49, 0x4e, 0x47, 0x5f, 0x42, 0x4f, 0x4f, 0x4b, 0x49, 0x4e, 0x47, 0x5f, 0x44,
+	0x45, 0x43, 0x4c, 0x49, 0x4e, 0x45, 0x44, 0x10, 0x06, 0x42, 0x35, 0x5a, 0x33, 0x67, 0x69, 0x74,
+	0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x41, 0x6e, 0x74, 0x65, 0x73, 0x73, 0x65, 0x72,
+	0x2f, 0x74, 0x72, 0x61, 0x69, 0x6e, 0x69, 0x6e, 0x67, 0x46, 0x69, 0x6e, 0x64, 0x65, 0x72, 0x2f,
+	0x70, 0x6b, 0x67, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x6b, 0x61, 0x66, 0x6b, 0x61, 0x2f, 0x76, 0x31,
+	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -245,19 +319,25 @@ func file_api_kafka_v1_kafka_proto_rawDescGZIP() []byte {
 	return file_api_kafka_v1_kafka_proto_rawDescData
 }
 
-var file_api_kafka_v1_kafka_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_api_kafka_v1_kafka_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_api_kafka_v1_kafka_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_api_kafka_v1_kafka_proto_goTypes = []interface{}{
-	(*CreateTrainingEvent)(nil), // 0: kafka.v1.CreateTrainingEvent
-	(*DeleteTrainingEvent)(nil), // 1: kafka.v1.DeleteTrainingEvent
-	(*CreateBookingEvent)(nil),  // 2: kafka.v1.CreateBookingEvent
-	(*DeleteBookingEvent)(nil),  // 3: kafka.v1.DeleteBookingEvent
+	(ContactType)(0),                     // 0: kafka.v1.ContactType
+	(EventType)(0),                       // 1: kafka.v1.EventType
+	(*TrainingNotificationMessages)(nil), // 2: kafka.v1.TrainingNotificationMessages
+	(*TrainingData)(nil),                 // 3: kafka.v1.TrainingData
+	(*timestamppb.Timestamp)(nil),        // 4: google.protobuf.Timestamp
 }
 var file_api_kafka_v1_kafka_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0, // 0: kafka.v1.TrainingNotificationMessages.destination:type_name -> kafka.v1.ContactType
+	3, // 1: kafka.v1.TrainingNotificationMessages.data:type_name -> kafka.v1.TrainingData
+	1, // 2: kafka.v1.TrainingNotificationMessages.notification_type:type_name -> kafka.v1.EventType
+	4, // 3: kafka.v1.TrainingData.training_time:type_name -> google.protobuf.Timestamp
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_api_kafka_v1_kafka_proto_init() }
@@ -267,7 +347,7 @@ func file_api_kafka_v1_kafka_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_api_kafka_v1_kafka_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateTrainingEvent); i {
+			switch v := v.(*TrainingNotificationMessages); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -279,31 +359,7 @@ func file_api_kafka_v1_kafka_proto_init() {
 			}
 		}
 		file_api_kafka_v1_kafka_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteTrainingEvent); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_api_kafka_v1_kafka_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateBookingEvent); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_api_kafka_v1_kafka_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteBookingEvent); i {
+			switch v := v.(*TrainingData); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -320,13 +376,14 @@ func file_api_kafka_v1_kafka_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_api_kafka_v1_kafka_proto_rawDesc,
-			NumEnums:      0,
-			NumMessages:   4,
+			NumEnums:      2,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_api_kafka_v1_kafka_proto_goTypes,
 		DependencyIndexes: file_api_kafka_v1_kafka_proto_depIdxs,
+		EnumInfos:         file_api_kafka_v1_kafka_proto_enumTypes,
 		MessageInfos:      file_api_kafka_v1_kafka_proto_msgTypes,
 	}.Build()
 	File_api_kafka_v1_kafka_proto = out.File

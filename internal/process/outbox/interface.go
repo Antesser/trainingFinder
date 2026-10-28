@@ -12,5 +12,5 @@ type outboxRepository interface {
 }
 
 type producer interface {
-	Produce(ctx context.Context, topic string, msg []byte, key string) error
+	Produce(topic, msg, aggregateKey string) error
 }
