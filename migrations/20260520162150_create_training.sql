@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS training
     available_to    TIMESTAMP NOT NULL,
     duration BIGINT NOT NULL,
     additional_info TEXT      NOT NULL,
+    training_name TEXT NOT NULL,
     PRIMARY KEY (id)
 );
 -- +goose StatementEnd

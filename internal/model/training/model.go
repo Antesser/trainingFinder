@@ -16,6 +16,7 @@ type Training struct {
 	EndedAt        time.Time
 	AdditionalInfo string
 	Duration       int64
+	Name           string
 }
 
 type CreateTrainingEvent struct {

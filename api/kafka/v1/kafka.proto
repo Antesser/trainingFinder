@@ -12,11 +12,11 @@ enum ContactType {
 }
 
 enum EventType {
-  EVENT_TYPE_TRAINING_UNSPECIFIED = 0;
-  EVENT_TYPE_TRAINING_REJECTED = 1;
-  EVENT_TYPE_TRAINING_APPROVED = 2;
-  EVENT_TYPE_TRAINING_IN_PROGRESS = 3;
-  EVENT_TYPE_TRAINING_CANCELLED = 4;
+  EVENT_TYPE_UNSPECIFIED = 0;
+  EVENT_TYPE_TRAINING_BOOKING_REJECTED = 1;
+  EVENT_TYPE_TRAINING_BOOKING_APPROVED = 2;
+  EVENT_TYPE_TRAINING_BOOKING_IN_PROGRESS = 3;
+  EVENT_TYPE_TRAINING_BOOKING_CANCELLED = 4;
   EVENT_TYPE_TRAINING_BOOKING_CREATED = 5;
   EVENT_TYPE_TRAINING_BOOKING_DECLINED = 6;
 }
@@ -32,6 +32,7 @@ message TrainingNotificationMessages {
 message TrainingData{
   //todo добавить названия тренировкам в бд
   //  string training_type = 1;
-  google.protobuf.Timestamp training_time = 1;
+  int64 training_time = 1;
   //  string training_info = 2;
+  string training_name = 2;
 }

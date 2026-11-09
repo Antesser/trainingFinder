@@ -13,6 +13,7 @@ type UpdateTrainingRequest struct {
 	StartedAt      *time.Time
 	EndedAt        *time.Time
 	AdditionalInfo *string
+	Name           *string
 }
 
 type TrainingFilter struct {

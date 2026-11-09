@@ -392,6 +392,8 @@ func (m *CreateTrainingRequest) validate(all bool) error {
 
 	// no validation rules for Duration
 
+	// no validation rules for TrainingName
+
 	if len(errors) > 0 {
 		return CreateTrainingRequestMultiError(errors)
 	}
@@ -880,6 +882,10 @@ func (m *UpdateTrainingRequest) validate(all bool) error {
 
 	if m.AdditionalInfo != nil {
 		// no validation rules for AdditionalInfo
+	}
+
+	if m.TrainingName != nil {
+		// no validation rules for TrainingName
 	}
 
 	if len(errors) > 0 {

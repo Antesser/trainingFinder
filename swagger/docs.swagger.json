@@ -522,6 +522,9 @@
         },
         "additional_info": {
           "type": "string"
+        },
+        "training_name": {
+          "type": "string"
         }
       }
     },
@@ -700,6 +703,9 @@
         "duration": {
           "type": "string",
           "format": "int64"
+        },
+        "training_name": {
+          "type": "string"
         }
       }
     },
