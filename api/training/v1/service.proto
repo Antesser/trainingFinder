@@ -85,7 +85,7 @@ message UpdateTrainingRequest {
   optional string additional_info = 6[
     (buf.validate.field).string = {min_len: 1, max_len: 1000}
   ];
-  optional string training_name = 7 [(buf.validate.field).required = true];
+  optional string training_name = 7;
 }
 
 message UpdateTrainingResponse {
