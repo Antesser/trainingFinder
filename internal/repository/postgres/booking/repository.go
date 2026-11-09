@@ -118,7 +118,7 @@ func (r *repository) GetStatus(ctx context.Context, bookingID string) (model.Sta
 	err = pgxscan.Get(ctx, r.pool.Querier(ctx), &status, query, args...)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return "", model.ErrBookingNoRows
+			return "", model.ErrBookingNotFound
 		}
 
 		return "", fmt.Errorf("query status: %w", err)
@@ -143,7 +143,7 @@ func (r *repository) ChangeStatus(ctx context.Context, data model.BookingStatus)
 	err = pgxscan.Get(ctx, r.pool.Querier(ctx), &out, query, args...)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return model.ErrBookingNoRows
+			return model.ErrBookingNotFound
 		}
 
 		return fmt.Errorf("execute update: %w", err)

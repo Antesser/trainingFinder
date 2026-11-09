@@ -9,7 +9,7 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-func MarshalTrainingNotification(model *training.Training) ([]byte, error){
+func MarshalTrainingNotification(model *training.Training) ([]byte, error) {
 
 	msg := toProtoMessage(model)
 
@@ -23,7 +23,7 @@ func MarshalTrainingNotification(model *training.Training) ([]byte, error){
 
 func toProtoMessage(training *training.Training) *kafkapb.TrainingData {
 	return &kafkapb.TrainingData{
-TrainingTime: training.Duration,
-TrainingName: training.Name
+		TrainingTime: training.Duration,
+		TrainingName: training.Name,
 	}
 }

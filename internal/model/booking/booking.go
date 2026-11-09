@@ -4,9 +4,8 @@ import (
 	"errors"
 	"slices"
 	"time"
-	"uuid"
+	"github.com/google/uuid"
 )
-
 type (
 	Status string
 )

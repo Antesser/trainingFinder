@@ -3,6 +3,7 @@ package outbox
 import (
 	"context"
 	"fmt"
+	"github.com/google/uuid"
 
 	"github.com/Antesser/trainingFinder/internal/model/outbox"
 	model "github.com/Antesser/trainingFinder/internal/model/training"
@@ -75,7 +76,7 @@ func (r *repository) ListOutboxItems(ctx context.Context, topic string, limit ui
 	return result, nil
 }
 
-func (r *repository) DeleteOutboxItem(ctx context.Context, id []int64) error {
+func (r *repository) DeleteOutboxItem(ctx context.Context, id []uuid.UUID) error {
 	qb := sq.Delete("outbox").
 		Where(sq.Eq{"id": id}).
 		PlaceholderFormat(sq.Dollar)

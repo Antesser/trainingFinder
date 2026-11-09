@@ -4,10 +4,11 @@ import (
 	"context"
 
 	"github.com/Antesser/trainingFinder/internal/model/outbox"
+	"github.com/google/uuid"
 )
 
 type outboxRepository interface {
-	DeleteOutboxItem(ctx context.Context, id []int64) error
+	DeleteOutboxItem(ctx context.Context, id []uuid.UUID) error
 	ListOutboxItems(ctx context.Context, topic string, limit uint64) ([]outbox.OutboxItem, error)
 }
 
