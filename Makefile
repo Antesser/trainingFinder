@@ -1,8 +1,9 @@
 include .env
 export # делает доступными переменные окружения для гуся
 
-GOLANGCI_BIN := $(shell go env GOPATH)/bin/golangci-lint
+
 LOCAL_BIN := $(CURDIR)/bin
+GOLANGCI_BIN := $(LOCAL_BIN)/golangci-lint
 PROTOC_VERSION := 31.1
 PROTOC_ZIP := protoc-$(PROTOC_VERSION)-linux-x86_64.zip
 migrations_dir:= $(CURDIR)/migrations

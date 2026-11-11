@@ -5,10 +5,10 @@ import (
 	"log"
 	"time"
 
+	"github.com/Antesser/trainingFinder/internal/config"
+	authPkg "github.com/Antesser/trainingFinder/pkg/api/auth"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"trainingFinder/internal/config"
-	authPkg "trainingFinder/pkg/api/auth"
 )
 
 func startClient() {
