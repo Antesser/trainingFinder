@@ -3,6 +3,7 @@ package booking
 import (
 	"time"
 
+	model "github.com/Antesser/trainingFinder/internal/model/booking"
 	"github.com/google/uuid"
 )
 
@@ -13,5 +14,5 @@ type booking struct {
 	CreatedAt  time.Time `db:"created_at"`
 	BookFrom   time.Time `db:"book_from"`
 	BookTo     time.Time `db:"book_to"`
-	Status     string    `db:"status"`
+	Status     model.Status    `db:"status"`
 }
