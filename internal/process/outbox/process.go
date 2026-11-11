@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"sort"
+
+	"github.com/google/uuid"
 )
 
 const (
@@ -35,13 +37,13 @@ func (p *process) ProduceOutboxMessages(ctx context.Context, topic string) error
 	}
 
 	sort.Slice(items, func(i, j int) bool {
-		return items[i].ID < items[j].ID
+		return items[i].CreatedAt.Before(*items[j].CreatedAt)
 	})
 
-	deleteIDs := make([]int64, 0, len(items))
+	deleteIDs := make([]uuid.UUID, 0, len(items))
 
 	for _, item := range items {
-		if err := p.producer.Produce(ctx, item.Topic, []byte(item.Msg), item.Key); err != nil {
+		if err := p.producer.Produce(item.Topic, item.Msg, item.Key); err != nil {
 			// log.Errorf("produce outbox message %s: %v", item.MessageValue, err)
 			// Нужно выйти из цикла, чтобы сохранить порядок отправки
 			break

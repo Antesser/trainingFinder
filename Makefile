@@ -3,6 +3,7 @@ export # делает доступными переменные окружени
 
 
 LOCAL_BIN := $(CURDIR)/bin
+GOLANGCI_BIN := $(LOCAL_BIN)/golangci-lint
 PROTOC_VERSION := 31.1
 PROTOC_ZIP := protoc-$(PROTOC_VERSION)-linux-x86_64.zip
 migrations_dir:= $(CURDIR)/migrations
@@ -19,6 +20,7 @@ bin-deps:
 	cp /tmp/protoc/bin/protoc $(LOCAL_BIN)/
 	cp -r /tmp/protoc/include $(LOCAL_BIN)/include
 	rm -rf /tmp/$(PROTOC_ZIP) /tmp/protoc
+	GOBIN=$(LOCAL_BIN) go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
 	GOBIN=$(LOCAL_BIN) go install github.com/easyp-tech/easyp/cmd/easyp@v0.7.15
 	GOBIN=$(LOCAL_BIN) go install github.com/pressly/goose/v3/cmd/goose@v3.25.0
 	GOBIN=$(LOCAL_BIN) go install github.com/envoyproxy/protoc-gen-validate@v1.2.1
@@ -43,7 +45,13 @@ migration:
 vet:
 	go vet ./...
 
-start-db:
+lint:
+	$(info Running lint against all project files...)
+	$(GOLANGCI_BIN)  --version
+	$(GOLANGCI_BIN) fmt
+	$(GOLANGCI_BIN) run --config=.golangci.yml ./...
+
+compose:
 	docker compose up -d
 start:
 	go run cmd/server/main.go

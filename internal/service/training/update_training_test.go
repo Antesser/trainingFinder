@@ -7,9 +7,7 @@ import (
 	"time"
 
 	model "github.com/Antesser/trainingFinder/internal/model/training"
-
 	"github.com/Antesser/trainingFinder/internal/service/training/mocks"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )

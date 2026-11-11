@@ -25,8 +25,8 @@ func New(pool *pgxtransactor.Pool) *repository {
 
 func (r *repository) CreateTraining(ctx context.Context, training model.Training) error {
 	qb := sq.Insert("training").
-		Columns("id", "trainer_id", "user_id", "started_at", "ended_at", "additional_info").
-		Values(training.ID, training.TrainerID, training.UserID, training.StartedAt, training.EndedAt, training.AdditionalInfo).
+		Columns("id", "trainer_id", "user_id", "started_at", "ended_at", "additional_info", "training_name").
+		Values(training.ID, training.TrainerID, training.UserID, training.StartedAt, training.EndedAt, training.AdditionalInfo, training.Name).
 		PlaceholderFormat(sq.Dollar)
 
 	query, args, err := qb.ToSql()
@@ -39,10 +39,11 @@ func (r *repository) CreateTraining(ctx context.Context, training model.Training
 	}
 	return nil
 }
+
 func (r *repository) GetTraining(ctx context.Context, id string) (*model.Training, error) {
 	qb := sq.Select(
 		"id",
-		"trainer_id", "user_id", "started_at", "ended_at", "additional_info",
+		"trainer_id", "user_id", "started_at", "ended_at", "additional_info", "training_name",
 	).From("training").
 		Where(sq.Eq{"id": id}).
 		PlaceholderFormat(sq.Dollar)
@@ -62,6 +63,7 @@ func (r *repository) GetTraining(ctx context.Context, id string) (*model.Trainin
 
 	return &model.Training{ID: t.ID, UserID: t.UserID, TrainerID: t.TrainerID, StartedAt: t.StartedAt, EndedAt: t.EndedAt}, nil
 }
+
 func (r *repository) UpdateTraining(ctx context.Context, updateTraining model.UpdateTrainingRequest) error {
 	qb := sq.Update("training").
 		Where(sq.Eq{"id": updateTraining.ID})
@@ -79,6 +81,9 @@ func (r *repository) UpdateTraining(ctx context.Context, updateTraining model.Up
 	}
 	if updateTraining.EndedAt != nil {
 		qb = qb.Set("ended_at", updateTraining.EndedAt)
+	}
+	if updateTraining.Name != nil {
+		qb = qb.Set("training_name", updateTraining.Name)
 	}
 
 	query, args, err := qb.PlaceholderFormat(sq.Dollar).ToSql()
@@ -120,7 +125,7 @@ func (r *repository) ListTrainings(ctx context.Context, data model.ListTrainingR
 	limit := int(data.Page.Limit)
 	qb := sq.Select(
 		"id",
-		"trainer_id", "user_id", "started_at", "ended_at", "additional_info", "duration",
+		"trainer_id", "user_id", "started_at", "ended_at", "additional_info", "duration", "training_name",
 	).From("training").
 		Limit(data.Page.Limit + 1).
 		Offset(data.Page.Offset).
@@ -153,6 +158,7 @@ func (r *repository) ListTrainings(ctx context.Context, data model.ListTrainingR
 			EndedAt:        t.EndedAt,
 			AdditionalInfo: t.AdditionalInfo,
 			Duration:       t.Duration,
+			Name:           t.Name,
 		}
 	})
 	return model.ListTrainingResponse{ModelList: out, HasNext: hasNext}, nil

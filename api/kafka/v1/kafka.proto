@@ -3,19 +3,37 @@ syntax = "proto3";
 package kafka.v1;
 
 option go_package = "github.com/Antesser/trainingFinder/pkg/api/kafka/v1";
+import  "google/protobuf/timestamp.proto";
 
-
-message CreateTrainingEvent {
-  string training_id = 1;
+enum ContactType {
+  CONTACT_TYPE_UNSPECIFIED = 0;
+  CONTACT_TYPE_TELEGRAM = 1;
+  CONTACT_TYPE_EMAIL = 2;
 }
 
-message DeleteTrainingEvent {
-  string training_id = 1;
-}
-message CreateBookingEvent {
-  string booking_id = 1;
+enum EventType {
+  EVENT_TYPE_UNSPECIFIED = 0;
+  EVENT_TYPE_TRAINING_BOOKING_REJECTED = 1;
+  EVENT_TYPE_TRAINING_BOOKING_APPROVED = 2;
+  EVENT_TYPE_TRAINING_BOOKING_IN_PROGRESS = 3;
+  EVENT_TYPE_TRAINING_BOOKING_CANCELLED = 4;
+  EVENT_TYPE_TRAINING_BOOKING_CREATED = 5;
+  EVENT_TYPE_TRAINING_BOOKING_DECLINED = 6;
+  EVENT_TYPE_TRAINING_BOOKING_COMPLETED = 7;
 }
 
-message DeleteBookingEvent {
-  string booking_id = 1;
+message TrainingNotificationMessages {
+  string user_id = 1;
+  ContactType destination = 2;
+  TrainingData data = 3;
+  EventType notification_type = 4;
+}
+
+
+message TrainingData{
+  //todo добавить названия тренировкам в бд
+  //  string training_type = 1;
+  int64 training_time = 1;
+  //  string training_info = 2;
+  string training_name = 2;
 }

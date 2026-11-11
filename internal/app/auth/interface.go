@@ -4,7 +4,6 @@ import (
 	"context"
 
 	model "github.com/Antesser/trainingFinder/internal/model/auth"
-
 	"github.com/google/uuid"
 )
 

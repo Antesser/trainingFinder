@@ -19,7 +19,13 @@ type BookingStatus struct {
 	BookingID string
 	Status    Status
 }
-
+type TrainingBookingStatus struct {
+	TrainingName string
+	BookingID    string
+	Status       Status
+	UserId       string
+	Duration     int64
+}
 type Filter struct {
 	TrainerID  *string // чтобы тренер видел свои тренировки
 	BookedBy   *string

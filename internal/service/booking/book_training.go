@@ -4,7 +4,6 @@ import (
 	"context"
 
 	model "github.com/Antesser/trainingFinder/internal/model/booking"
-	"github.com/Antesser/trainingFinder/internal/model/outbox"
 	"github.com/Antesser/trainingFinder/internal/model/page"
 )
 
@@ -24,24 +23,12 @@ func (b *service) BookTraining(ctx context.Context, booking model.TrainingBookin
 		if len(res.ModelList) != 0 {
 			return model.ErrBookingAlreadyExists
 		}
-		if err := b.repo.CreateTrainingBooking(ctx, booking); err != nil {
+		booking.Status = model.StatusAwaitingForApproval
+		id, err := b.repo.CreateTrainingBooking(ctx, booking)
+		if err != nil {
 			return err
 		}
-		//event := model.CreateBookingEvent{
-		//	BookingID: booking.TrainingID,
-		//}
-
-		//msg, err := b.bookingMarshaller(event)
-		//if err != nil {
-		//	return err
-		//}
-
-		err = b.outboxRepo.CreateOutboxItem(ctx, outbox.OutboxItem{
-			//Msg:   string(msg),
-			Msg:   "Later",
-			Key:   booking.TrainingID,
-			Topic: "someTopic",
-		})
+		err = b.sendNotification(ctx, model.BookingStatus{BookingID: id, Status: booking.Status})
 		if err != nil {
 			return err
 		}

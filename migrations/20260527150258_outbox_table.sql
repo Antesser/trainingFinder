@@ -2,7 +2,7 @@
 -- +goose StatementBegin
 CREATE TABLE outbox
 (
-    id BIGSERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     channel  TEXT NOT NULL,
     key TEXT NOT NULL,
     message_value  TEXT NOT NULL,

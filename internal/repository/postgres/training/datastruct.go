@@ -10,4 +10,5 @@ type training struct {
 	EndedAt        time.Time `db:"ended_at"`
 	AdditionalInfo string    `db:"additional_info"`
 	Duration       int64     `db:"duration"`
+	Name           string    `db:"training_name"`
 }

@@ -9,12 +9,11 @@ import (
 
 	model "github.com/Antesser/trainingFinder/internal/model/booking"
 	"github.com/Antesser/trainingFinder/internal/utils"
+	sq "github.com/Masterminds/squirrel"
 	"github.com/georgysavva/scany/v2/pgxscan"
+	"github.com/golangmonster/pgxtransactor"
 	"github.com/jackc/pgx/v5"
 	"github.com/samber/lo"
-
-	sq "github.com/Masterminds/squirrel"
-	"github.com/golangmonster/pgxtransactor"
 )
 
 type repository struct {
@@ -26,27 +25,27 @@ func New(pool *pgxtransactor.Pool) *repository {
 	return &repository{pool: pool, Transactor: pool}
 }
 
-func (r *repository) CreateTrainingBooking(ctx context.Context, booking model.TrainingBooking) error {
+func (r *repository) CreateTrainingBooking(ctx context.Context, booking model.TrainingBooking) (string, error) {
 	qb := sq.Insert("training_booking").
-		Columns("training_id", "booked_by", "book_to", "book_from", "created_at").
-		Values(booking.TrainingID, booking.UserID, booking.BookTo, booking.BookFrom, time.Now()).
-		PlaceholderFormat(sq.Dollar)
+		Columns("training_id", "booked_by", "book_to", "book_from", "created_at", "status").
+		Values(booking.TrainingID, booking.UserID, booking.BookTo, booking.BookFrom, time.Now(), booking.Status).
+		PlaceholderFormat(sq.Dollar).
+		Suffix("returning id")
 	query, args, err := qb.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
-		return err
+		return "", err
 	}
-
-	_, err = r.pool.Querier(ctx).Exec(ctx, query, args...)
+	var id string
+	err = pgxscan.Get(ctx, r.pool.Querier(ctx), &id, query, args...)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return id, nil
 }
 
 func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRequest) (*model.ListBookingsResponse, error) {
 	limit := int(data.Page.Limit)
-	fmt.Println("data", data.Filter.BookedBy)
 	qb := sq.Select(
 		"id",
 		"training_id",
@@ -118,7 +117,7 @@ func (r *repository) GetStatus(ctx context.Context, bookingID string) (model.Sta
 	err = pgxscan.Get(ctx, r.pool.Querier(ctx), &status, query, args...)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return "", model.ErrBookingNoRows
+			return "", model.ErrBookingNotFound
 		}
 
 		return "", fmt.Errorf("query status: %w", err)
@@ -143,7 +142,7 @@ func (r *repository) ChangeStatus(ctx context.Context, data model.BookingStatus)
 	err = pgxscan.Get(ctx, r.pool.Querier(ctx), &out, query, args...)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return model.ErrBookingNoRows
+			return model.ErrBookingNotFound
 		}
 
 		return fmt.Errorf("execute update: %w", err)

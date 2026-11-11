@@ -2,34 +2,34 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
 
+	authGRPC "github.com/Antesser/trainingFinder/internal/app/auth"
+	bookingGRPC "github.com/Antesser/trainingFinder/internal/app/booking"
 	"github.com/Antesser/trainingFinder/internal/app/controller"
+	trainingGRPC "github.com/Antesser/trainingFinder/internal/app/training"
+	userGRPC "github.com/Antesser/trainingFinder/internal/app/users"
 	"github.com/Antesser/trainingFinder/internal/config"
 	"github.com/Antesser/trainingFinder/internal/kafka"
-	your_topic_name "github.com/Antesser/trainingFinder/internal/kafka/producer/your-topic-name"
+	"github.com/Antesser/trainingFinder/internal/kafka/producer"
+	//"github.com/Antesser/trainingFinder/internal/kafka/producer/notifications"
+	"github.com/Antesser/trainingFinder/internal/kafka/producer/training_notifications"
 	"github.com/Antesser/trainingFinder/internal/process/outbox"
 	authRepository "github.com/Antesser/trainingFinder/internal/repository/postgres/auth"
 	bookingRepository "github.com/Antesser/trainingFinder/internal/repository/postgres/booking"
 	outboxRepository "github.com/Antesser/trainingFinder/internal/repository/postgres/outbox"
 	trainingRepository "github.com/Antesser/trainingFinder/internal/repository/postgres/training"
+	trainingBookingRepository "github.com/Antesser/trainingFinder/internal/repository/postgres/training-booking"
 	userRepository "github.com/Antesser/trainingFinder/internal/repository/postgres/user"
 	"github.com/Antesser/trainingFinder/internal/repository/redis"
-
-	authGRPC "github.com/Antesser/trainingFinder/internal/app/auth"
-	bookingGRPC "github.com/Antesser/trainingFinder/internal/app/booking"
-	trainingGRPC "github.com/Antesser/trainingFinder/internal/app/training"
-	userGRPC "github.com/Antesser/trainingFinder/internal/app/users"
 	authService "github.com/Antesser/trainingFinder/internal/service/auth"
 	bookingService "github.com/Antesser/trainingFinder/internal/service/booking"
 	trainingService "github.com/Antesser/trainingFinder/internal/service/training"
 	userService "github.com/Antesser/trainingFinder/internal/service/users"
 	"github.com/Antesser/trainingFinder/internal/telegram"
-
 	"github.com/go-co-op/gocron/v2"
 	"github.com/golangmonster/pgxtransactor"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -54,11 +54,12 @@ func main() {
 	bookingRepo := bookingRepository.New(pool)
 	userRepo := userRepository.New(pool)
 	trainingRepo := trainingRepository.New(pool)
+	trainingBookingRepo := trainingBookingRepository.New(pool)
 	outboxRepo := outboxRepository.New(pool)
 	authSrv := authService.New(authRepo, cfg.Server.Secret, cfg.Server.AccessTokenDuration)
 	userSrv := userService.New(userRepo)
-	trainingSrv := trainingService.New(trainingRepo, your_topic_name.MarshalCreateTrainingEvent, outboxRepo)
-	bookingSrv := bookingService.New(bookingRepo, your_topic_name.MarshalCreateBookingEvent, outboxRepo)
+	trainingSrv := trainingService.New(trainingRepo, nil, outboxRepo)
+	bookingSrv := bookingService.New(bookingRepo, trainingBookingRepo, training_notifications.MarshalTrainingNotification, outboxRepo)
 	cfgAuth, err := config.NewAuthConfig(cfg.Server.AuthConfigPath)
 	if err != nil {
 		log.Fatalf("failed to load auth config: %v", err)
@@ -67,36 +68,47 @@ func main() {
 	ctrl := controller.New(cfg.Server, *cfgAuth, userGRPC.NewServer(userSrv), trainingGRPC.NewServer(trainingSrv), authGRPC.NewServer(authSrv), bookingGRPC.NewServer(bookingSrv))
 	ctrl.Run(ctx)
 
-	outboxProcess := outbox.New(outboxRepo, nil)
-
-	s, err := gocron.NewScheduler()
-	if err != nil {
-		return
-	}
-
-	if cfg.TrainingOutboxProcessEnabled {
-		_, err := s.NewJob(
-			gocron.DurationJob(cfg.TrainingOutboxProcessDuration),
-			gocron.NewTask(outboxProcess.ProduceOutboxMessages, ctx, kafka.TrainingTopic),
-			gocron.WithSingletonMode(gocron.LimitModeReschedule),
-		)
-		if err != nil {
-			return
-		}
-	}
-
 	newCache := redis.InitRedis(ctx, cfg.Server)
 	tgBot, err := telegram.New(cfg.Server.BotToken, authSrv, newCache)
 	if err != nil {
 		log.Fatal(err)
 	}
 	tgBot.Run(ctx)
-	fmt.Println("telegram bot started", tgBot)
-	s.Start()
+
+	producer, err := producer.New([]string{cfg.Server.KafkaHost + cfg.Server.KafkaPort})
+	if err != nil {
+		log.Fatalf("init producer: %v", err)
+	}
+	defer func() {
+		if end := producer.Close(); end != nil {
+			log.Printf("close producer: %v", end)
+		}
+	}()
+
+	outboxProcess := outbox.New(outboxRepo, producer)
+
+	scheduler, err := gocron.NewScheduler()
+	if err != nil {
+		log.Fatal("new scheduler: ", err)
+	}
+
+	_, err = scheduler.NewJob(
+		gocron.DurationJob(cfg.Server.OutboxDuration),
+		gocron.NewTask(
+			outboxProcess.ProduceOutboxMessages,
+			ctx,
+			kafka.TrainingNotificationsTopic,
+		),
+		gocron.WithSingletonMode(gocron.LimitModeReschedule),
+	)
+	if err != nil {
+		log.Fatal("new workspace booking outbox job: ", err)
+	}
+	scheduler.Start()
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	<-c
-
+	producer.Close()
 	log.Println("Application ex")
 }

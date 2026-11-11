@@ -1,16 +1,17 @@
 package booking
 
 import (
-	model "github.com/Antesser/trainingFinder/internal/model/booking"
+	"github.com/Antesser/trainingFinder/internal/model/booking"
 )
 
 type service struct {
-	repo              bookingRepository
-	outboxRepo        outboxRepository
-	bookingMarshaller bookingMarshaller
+	repo                bookingRepository
+	trainingBookingRepo trainingBookingRepository
+	outboxRepo          outboxRepository
+	bookingMarshaller   marshalTrainingNotification
 }
-type bookingMarshaller func(event model.CreateBookingEvent) ([]byte, error)
+type marshalTrainingNotification func(model *booking.TrainingBookingStatus) ([]byte, error)
 
-func New(bookingRepo bookingRepository, bookingMarshaller bookingMarshaller, outboxRepo outboxRepository) *service {
-	return &service{repo: bookingRepo, outboxRepo: outboxRepo, bookingMarshaller: bookingMarshaller}
+func New(bookingRepo bookingRepository, trainingBookingRepo trainingBookingRepository, bookingMarshaller marshalTrainingNotification, outboxRepo outboxRepository) *service {
+	return &service{repo: bookingRepo, trainingBookingRepo: trainingBookingRepo, outboxRepo: outboxRepo, bookingMarshaller: bookingMarshaller}
 }

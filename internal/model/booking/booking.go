@@ -1,6 +1,12 @@
 package booking
 
-import "slices"
+import (
+	"errors"
+	"slices"
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type (
 	Status string
@@ -29,4 +35,22 @@ var (
 
 func StatusTransitionAllowed(from, to Status) bool {
 	return slices.Contains(allowedStatusTransitions[from], to)
+}
+
+var ErrBookingNotFound = errors.New("booking not found")
+var ErrBookingAlreadyExists = errors.New("booking already exists")
+var ErrBookingStatusTransition = errors.New("not allowed to change to that status")
+
+type TrainingBooking struct {
+	ID         uuid.UUID
+	TrainingID string
+	UserID     string
+	BookFrom   time.Time
+	BookTo     time.Time
+	Status     Status
+	BookedBy   string
+	CreatedAt  time.Time
+}
+type CreateBookingEvent struct {
+	BookingID string
 }
