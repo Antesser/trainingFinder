@@ -1,0 +1,137 @@
+version: "2"
+
+run:
+  modules-download-mode: readonly
+  issues-exit-code: 1
+  go: "1.27"
+
+formatters:
+  enable:
+    - goimports
+    - gci
+
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/golangmonster/workspace-booking-service
+
+    gci:
+      sections:
+        - standard
+        - default
+        - prefix(github.com/golangmonster/workspace-booking-service)
+      custom-order: true
+
+linters:
+  default: none
+  enable:
+    # Корректность и предотвращение ошибок
+    - errcheck                   # Игнорирование возвращаемых ошибок
+    - errorlint                  # Корректность errors.Is/As и wrapping ошибок
+    - govet                      # Подозрительные конструкции и потенциальные ошибки
+    - staticcheck                # Баги, некорректный код и упрощения
+    - ineffassign                # Бесполезные присваивания переменным
+    - unused                     # Неиспользуемые функции, типы и переменные
+    - nilerr                     # Возврат nil вместо обнаруженной ошибки
+    - nilnil                     # Подозрительный возврат (nil, nil)
+    - durationcheck              # Ошибочные операции с time.Duration
+    - makezero                   # Некорректная инициализация слайсов перед append
+    - forcetypeassert            # Type assertion без проверки ok
+    - errchkjson                 # Непроверенные ошибки JSON-кодирования
+
+    # Безопасность и конкурентность
+    - gosec                      # Потенциальные уязвимости безопасности
+    - noctx                      # HTTP-запросы и другие операции без context
+    - contextcheck               # Потеря или неправильная передача context
+    - fatcontext                 # Накопление вложенных context в циклах
+    - containedctx               # Хранение context.Context в структурах
+    - bodyclose                  # Незакрытые HTTP response body
+    - sqlclosecheck              # Незакрытые SQL rows и statements
+    - rowserrcheck               # Отсутствие проверки rows.Err()
+    - spancheck                  # Незавершённые tracing spans
+    - bidichk                    # Опасные управляющие Unicode-символы
+
+    # Качество и поддерживаемость
+    - gocritic                   # Подозрительные и неудачные конструкции
+    - revive                     # Стиль и соглашения Go
+    - gocognit                   # Когнитивная сложность функций
+    - unparam                    # Неиспользуемые или постоянные параметры функций
+    - unconvert                  # Лишние преобразования типов
+    - modernize                  # Устаревшие конструкции и возможности нового Go
+    - nakedret                   # Голый return в слишком длинных функциях
+    - misspell                   # Опечатки в комментариях и строках
+    - prealloc                   # Возможность предварительной аллокации слайсов
+    - perfsprint                 # Неэффективное использование fmt.Sprintf
+    - usestdlibvars              # Литералы вместо констант стандартной библиотеки
+    - loggercheck                # Некорректные аргументы структурированных логгеров
+
+    # Архитектура и командные соглашения
+    - forbidigo                  # Использование запрещённых функций
+    - wrapcheck                  # Отсутствие оборачивания внешних ошибок
+    - errname                    # Неправильное именование sentinel errors
+    - testifylint                # Ошибки использования библиотеки testify
+    - embeddedstructfieldcheck   # Правила embedding, включая запрет embedding mutex
+
+    # Дополнительные полезные проверки
+    - musttag                    # Отсутствующие обязательные теги структур
+    - reassign                   # Повторное присваивание глобальным переменным
+    - usetesting                 # Устаревшие подходы вместо возможностей testing
+
+  settings:
+    errcheck:
+      check-type-assertions: true # Небезопасные type assertion
+
+    wrapcheck:
+      report-internal-errors: false # Не оборачивать ошибки внутри пакета
+      extra-ignore-sigs:
+        - .InTx(
+
+    govet:
+      enable:
+        - nilness
+        - atomicalign
+
+    gocritic:
+      disabled-checks:
+        - singleCaseSwitch
+
+    embeddedstructfieldcheck:
+      forbid-mutex: true
+
+    revive:
+      rules:
+        - name: unexported-return
+          disabled: true
+
+    forbidigo:
+      forbid:
+        - pattern: ^fmt\.Print
+          msg: "не оставлять fmt.Print в сервисе"
+        - pattern: ^print(ln)?$
+          msg: "builtin print запрещён"
+        - pattern: ^panic$
+          msg: "panic только в main, не в бизнес-слое"
+      analyze-types: true
+
+  exclusions:
+    generated: lax
+    presets:
+      - comments # Замечания об отсутствии или неправильном формате комментариев
+      - common-false-positives # gosec: G103, G204, G304
+      - std-error-handling # Замечания errcheck о непроверенных ошибках у вызовов вроде
+    paths:
+      - internal/pb$
+      - pkg/api$
+    rules:
+      - linters:
+          - wrapcheck
+        text: "error returned from external package is unwrapped"
+
+      - linters:
+          - wrapcheck
+        path: "^internal/(app|kafka|client/grpc|repository)/"
+
+      - linters:
+          - forbidigo
+          - wrapcheck
+        path: "cmd"

@@ -3,10 +3,9 @@ package auth
 import (
 	"context"
 
-	"github.com/google/uuid"
-
 	model "github.com/Antesser/trainingFinder/internal/model/auth"
 	"github.com/Antesser/trainingFinder/internal/utils"
+	"github.com/google/uuid"
 )
 
 func (s *service) RefreshSession(ctx context.Context, refreshToken uuid.UUID) (accessToken string, err error) {

@@ -8,9 +8,7 @@ import (
 	authMiddlewere "github.com/Antesser/trainingFinder/internal/app/controller/middleware/grpc"
 	modelPage "github.com/Antesser/trainingFinder/internal/model/page"
 	model "github.com/Antesser/trainingFinder/internal/model/training"
-
 	trainingPkg "github.com/Antesser/trainingFinder/pkg/api/training/v1"
-
 	"github.com/google/uuid"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/samber/lo"

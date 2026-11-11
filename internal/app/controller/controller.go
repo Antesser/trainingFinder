@@ -7,10 +7,8 @@ import (
 	"net/http"
 
 	authMiddlewere "github.com/Antesser/trainingFinder/internal/app/controller/middleware/grpc"
-
 	loggerMiddlewere "github.com/Antesser/trainingFinder/internal/app/controller/middleware/logger"
 	"github.com/Antesser/trainingFinder/internal/config"
-
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/rs/cors"
 	"go.uber.org/multierr"

@@ -1,7 +1,6 @@
 package outbox
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"sort"
@@ -38,7 +37,7 @@ func (p *process) ProduceOutboxMessages(ctx context.Context, topic string) error
 	}
 
 	sort.Slice(items, func(i, j int) bool {
-		return bytes.Compare(items[i].ID[:], items[j].ID[:]) < 0
+		return items[i].CreatedAt.Before(*items[j].CreatedAt)
 	})
 
 	deleteIDs := make([]uuid.UUID, 0, len(items))

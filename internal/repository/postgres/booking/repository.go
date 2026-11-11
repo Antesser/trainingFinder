@@ -9,12 +9,11 @@ import (
 
 	model "github.com/Antesser/trainingFinder/internal/model/booking"
 	"github.com/Antesser/trainingFinder/internal/utils"
+	sq "github.com/Masterminds/squirrel"
 	"github.com/georgysavva/scany/v2/pgxscan"
+	"github.com/golangmonster/pgxtransactor"
 	"github.com/jackc/pgx/v5"
 	"github.com/samber/lo"
-
-	sq "github.com/Masterminds/squirrel"
-	"github.com/golangmonster/pgxtransactor"
 )
 
 type repository struct {

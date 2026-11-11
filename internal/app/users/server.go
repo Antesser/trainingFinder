@@ -7,11 +7,10 @@ import (
 
 	model "github.com/Antesser/trainingFinder/internal/model/user"
 	userPkg "github.com/Antesser/trainingFinder/pkg/api/users/v1"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type Server struct { // структура для домена auth и тд

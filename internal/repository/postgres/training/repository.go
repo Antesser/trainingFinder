@@ -39,6 +39,7 @@ func (r *repository) CreateTraining(ctx context.Context, training model.Training
 	}
 	return nil
 }
+
 func (r *repository) GetTraining(ctx context.Context, id string) (*model.Training, error) {
 	qb := sq.Select(
 		"id",
@@ -62,6 +63,7 @@ func (r *repository) GetTraining(ctx context.Context, id string) (*model.Trainin
 
 	return &model.Training{ID: t.ID, UserID: t.UserID, TrainerID: t.TrainerID, StartedAt: t.StartedAt, EndedAt: t.EndedAt}, nil
 }
+
 func (r *repository) UpdateTraining(ctx context.Context, updateTraining model.UpdateTrainingRequest) error {
 	qb := sq.Update("training").
 		Where(sq.Eq{"id": updateTraining.ID})

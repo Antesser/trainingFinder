@@ -3,14 +3,14 @@ package outbox
 import (
 	"context"
 	"fmt"
-	"github.com/google/uuid"
+	"time"
 
 	"github.com/Antesser/trainingFinder/internal/model/outbox"
 	model "github.com/Antesser/trainingFinder/internal/model/training"
-
 	sq "github.com/Masterminds/squirrel"
 	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/golangmonster/pgxtransactor"
+	"github.com/google/uuid"
 )
 
 type repository struct {
@@ -18,10 +18,11 @@ type repository struct {
 }
 
 type outboxItem struct {
-	ID           string `db:"id"`
-	Topic        string `db:"topic"`
-	Key          string `db:"key"`
-	MessageValue string `db:"message_value"`
+	ID           string    `db:"id"`
+	Topic        string    `db:"topic"`
+	Key          string    `db:"key"`
+	MessageValue string    `db:"message_value"`
+	CreatedAt    time.Time `db:"created_at"`
 }
 
 func New(pool *pgxtransactor.Pool) *repository {
@@ -47,7 +48,7 @@ func (r *repository) CreateOutboxItem(ctx context.Context, item outbox.OutboxIte
 }
 
 func (r *repository) ListOutboxItems(ctx context.Context, topic string, limit uint64) ([]outbox.OutboxItem, error) {
-	qb := sq.Select("message_value", "channel", "key").
+	qb := sq.Select("message_value", "channel", "key", "created_at").
 		From("outbox").
 		Where(sq.Eq{"topic": topic}).
 		Limit(limit).
@@ -67,9 +68,10 @@ func (r *repository) ListOutboxItems(ctx context.Context, topic string, limit ui
 	result := make([]outbox.OutboxItem, 0, len(items))
 	for _, i := range items {
 		result = append(result, outbox.OutboxItem{
-			Msg:   i.MessageValue,
-			Topic: i.Topic,
-			Key:   i.Key,
+			Msg:       i.MessageValue,
+			Topic:     i.Topic,
+			Key:       i.Key,
+			CreatedAt: &i.CreatedAt,
 		})
 	}
 

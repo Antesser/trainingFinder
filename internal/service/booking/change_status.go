@@ -13,10 +13,11 @@ func (b *service) ChangeBookingStatus(ctx context.Context, data model.BookingSta
 			return err
 		}
 
-		if !model.StatusTransitionAllowed(model.Status(currentStatus), data.Status) {
+		if !model.StatusTransitionAllowed(currentStatus, data.Status) {
 			return model.ErrBookingStatusTransition
 		}
-
+		// sendNotification
+		b.bookingMarshaller
 		err = b.repo.ChangeStatus(ctx, data)
 		if err != nil {
 			return err

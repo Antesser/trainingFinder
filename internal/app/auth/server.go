@@ -6,10 +6,8 @@ import (
 	"log"
 	"net/http"
 
-	authPkg "github.com/Antesser/trainingFinder/pkg/api/auth/v1"
-
 	model "github.com/Antesser/trainingFinder/internal/model/training"
-
+	authPkg "github.com/Antesser/trainingFinder/pkg/api/auth/v1"
 	"github.com/google/uuid"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
@@ -21,7 +19,7 @@ import (
 type Server struct { // структура для домена auth и тд
 	// реализуем имплементацию, хранящуюся внутри grpc (которая там сгенерирована, не реализована)
 	authPkg.UnimplementedAuthServiceServer
-	authService                            authService
+	authService authService
 }
 
 func NewServer(s authService) *Server {

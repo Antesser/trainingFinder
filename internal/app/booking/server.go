@@ -10,13 +10,12 @@ import (
 	model "github.com/Antesser/trainingFinder/internal/model/booking"
 	modelPage "github.com/Antesser/trainingFinder/internal/model/page"
 	bookingPkg "github.com/Antesser/trainingFinder/pkg/api/booking/v1"
-	"github.com/samber/lo"
-	"google.golang.org/protobuf/types/known/timestamppb"
-
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/samber/lo"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Server struct { // структура для домена
