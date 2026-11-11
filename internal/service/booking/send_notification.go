@@ -11,9 +11,10 @@ import (
 
 // читаем таблицу тренировок и пишем в оутбокс (два метода),
 // приватный, в каждой сервисной ручке пихать и ХЕРАЧИТЬ, предварительно обогатив, но ХЕРАЧИТЬ ЖОСКА!!!11
-func (b *service) SendNotification(ctx context.Context, trainingID string, bookingStatus modelBooking.BookingStatus) error {
+func (b *service) sendNotification(ctx context.Context, bookingStatus modelBooking.BookingStatus) error {
 	return b.repo.InTx(ctx, func(ctx context.Context) error {
-		training, err := b.trainingRepo.GetTraining(ctx, trainingID)
+
+		training, err := b.trainingBookingRepo.GetTrainingByBookingID(ctx, bookingStatus.BookingID)
 		if err != nil {
 			return fmt.Errorf("get training: %w", err)
 		}

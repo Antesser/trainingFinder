@@ -22,6 +22,7 @@ import (
 	bookingRepository "github.com/Antesser/trainingFinder/internal/repository/postgres/booking"
 	outboxRepository "github.com/Antesser/trainingFinder/internal/repository/postgres/outbox"
 	trainingRepository "github.com/Antesser/trainingFinder/internal/repository/postgres/training"
+	trainingBookingRepository "github.com/Antesser/trainingFinder/internal/repository/postgres/training-booking"
 	userRepository "github.com/Antesser/trainingFinder/internal/repository/postgres/user"
 	"github.com/Antesser/trainingFinder/internal/repository/redis"
 	authService "github.com/Antesser/trainingFinder/internal/service/auth"
@@ -53,11 +54,12 @@ func main() {
 	bookingRepo := bookingRepository.New(pool)
 	userRepo := userRepository.New(pool)
 	trainingRepo := trainingRepository.New(pool)
+	trainingBookingRepo := trainingBookingRepository.New(pool)
 	outboxRepo := outboxRepository.New(pool)
 	authSrv := authService.New(authRepo, cfg.Server.Secret, cfg.Server.AccessTokenDuration)
 	userSrv := userService.New(userRepo)
 	trainingSrv := trainingService.New(trainingRepo, nil, outboxRepo)
-	bookingSrv := bookingService.New(bookingRepo, trainingRepo, training_notifications.MarshalTrainingNotification, outboxRepo)
+	bookingSrv := bookingService.New(bookingRepo, trainingBookingRepo, training_notifications.MarshalTrainingNotification, outboxRepo)
 	cfgAuth, err := config.NewAuthConfig(cfg.Server.AuthConfigPath)
 	if err != nil {
 		log.Fatalf("failed to load auth config: %v", err)

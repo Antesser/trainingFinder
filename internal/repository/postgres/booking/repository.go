@@ -25,27 +25,27 @@ func New(pool *pgxtransactor.Pool) *repository {
 	return &repository{pool: pool, Transactor: pool}
 }
 
-func (r *repository) CreateTrainingBooking(ctx context.Context, booking model.TrainingBooking) error {
+func (r *repository) CreateTrainingBooking(ctx context.Context, booking model.TrainingBooking) (string, error) {
 	qb := sq.Insert("training_booking").
-		Columns("training_id", "booked_by", "book_to", "book_from", "created_at").
-		Values(booking.TrainingID, booking.UserID, booking.BookTo, booking.BookFrom, time.Now()).
-		PlaceholderFormat(sq.Dollar)
+		Columns("training_id", "booked_by", "book_to", "book_from", "created_at", "status").
+		Values(booking.TrainingID, booking.UserID, booking.BookTo, booking.BookFrom, time.Now(), booking.Status).
+		PlaceholderFormat(sq.Dollar).
+		Suffix("returning id")
 	query, args, err := qb.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
-		return err
+		return "", err
 	}
-
-	_, err = r.pool.Querier(ctx).Exec(ctx, query, args...)
+	var id string
+	err = pgxscan.Get(ctx, r.pool.Querier(ctx), &id, query, args...)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return id, nil
 }
 
 func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRequest) (*model.ListBookingsResponse, error) {
 	limit := int(data.Page.Limit)
-	fmt.Println("data", data.Filter.BookedBy)
 	qb := sq.Select(
 		"id",
 		"training_id",

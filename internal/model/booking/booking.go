@@ -47,7 +47,7 @@ type TrainingBooking struct {
 	UserID     string
 	BookFrom   time.Time
 	BookTo     time.Time
-	Status     string
+	Status     Status
 	BookedBy   string
 	CreatedAt  time.Time
 }
