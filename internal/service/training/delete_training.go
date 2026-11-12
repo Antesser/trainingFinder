@@ -1,11 +1,13 @@
 package training
 
-import "context"
+import (
+	"context"
+	"fmt"
+)
 
 func (t *trainingService) DeleteTraining(ctx context.Context, id string) error {
-	err := t.repo.DeleteTraining(ctx, id)
-	if err != nil {
-		return err
+	if err := t.repo.DeleteTraining(ctx, id); err != nil {
+		return fmt.Errorf("delete training: %w", err)
 	}
 	return nil
 }

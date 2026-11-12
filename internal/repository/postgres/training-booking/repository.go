@@ -12,8 +12,9 @@ import (
 )
 
 type repository struct {
-	pool *pgxtransactor.Pool
 	pgxtransactor.Transactor
+
+	pool *pgxtransactor.Pool
 }
 
 func New(pool *pgxtransactor.Pool) *repository {

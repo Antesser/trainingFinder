@@ -15,7 +15,6 @@ import (
 	"github.com/Antesser/trainingFinder/internal/config"
 	"github.com/Antesser/trainingFinder/internal/kafka"
 	"github.com/Antesser/trainingFinder/internal/kafka/producer"
-	//"github.com/Antesser/trainingFinder/internal/kafka/producer/notifications"
 	"github.com/Antesser/trainingFinder/internal/kafka/producer/training_notifications"
 	"github.com/Antesser/trainingFinder/internal/process/outbox"
 	authRepository "github.com/Antesser/trainingFinder/internal/repository/postgres/auth"
@@ -62,22 +61,27 @@ func main() {
 	bookingSrv := bookingService.New(bookingRepo, trainingBookingRepo, training_notifications.MarshalTrainingNotification, outboxRepo)
 	cfgAuth, err := config.NewAuthConfig(cfg.Server.AuthConfigPath)
 	if err != nil {
-		log.Fatalf("failed to load auth config: %v", err)
+		log.Printf("failed to load auth config: %v", err)
 	}
-	//ctrl := controller.New(cfg.Server, authGRPS.NewServer(authSrv), userGRPS.NewServer(userSrv), trainingGRPS.NewServer(trainingSrv))
+	// ctrl := controller.New(cfg.Server, authGRPS.NewServer(authSrv), userGRPS.NewServer(userSrv), trainingGRPS.NewServer(trainingSrv))
 	ctrl := controller.New(cfg.Server, *cfgAuth, userGRPC.NewServer(userSrv), trainingGRPC.NewServer(trainingSrv), authGRPC.NewServer(authSrv), bookingGRPC.NewServer(bookingSrv))
 	ctrl.Run(ctx)
 
 	newCache := redis.InitRedis(ctx, cfg.Server)
 	tgBot, err := telegram.New(cfg.Server.BotToken, authSrv, newCache)
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		return
 	}
-	tgBot.Run(ctx)
+	if err = tgBot.Run(ctx); err != nil {
+		log.Print(err)
+		return
+	}
 
 	producer, err := producer.New([]string{cfg.Server.KafkaHost + cfg.Server.KafkaPort})
 	if err != nil {
-		log.Fatalf("init producer: %v", err)
+		log.Printf("init producer: %v", err)
+		return
 	}
 	defer func() {
 		if end := producer.Close(); end != nil {
@@ -89,7 +93,8 @@ func main() {
 
 	scheduler, err := gocron.NewScheduler()
 	if err != nil {
-		log.Fatal("new scheduler: ", err)
+		log.Printf("new scheduler: %v", err)
+		return
 	}
 
 	_, err = scheduler.NewJob(
@@ -102,13 +107,17 @@ func main() {
 		gocron.WithSingletonMode(gocron.LimitModeReschedule),
 	)
 	if err != nil {
-		log.Fatal("new workspace booking outbox job: ", err)
+		log.Printf("new workspace booking outbox job: %v", err)
+		return
 	}
 	scheduler.Start()
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	<-c
-	producer.Close()
+	err = producer.Close()
+	if err != nil {
+		return
+	}
 	log.Println("Application ex")
 }

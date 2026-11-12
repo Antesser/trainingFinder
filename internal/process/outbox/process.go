@@ -55,5 +55,8 @@ func (p *process) ProduceOutboxMessages(ctx context.Context, topic string) error
 	// Если не получится удалить сообщение из outbox-таблицы,
 	// попробуем в следующей итерации.
 	// Гарантия доставки – at least once.
-	return p.repo.DeleteOutboxItem(ctx, deleteIDs)
+	if err := p.repo.DeleteOutboxItem(ctx, deleteIDs); err != nil {
+		return fmt.Errorf("delete outbox items: %w", err)
+	}
+	return nil
 }

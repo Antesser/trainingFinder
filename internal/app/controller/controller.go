@@ -2,9 +2,11 @@ package controller
 
 import (
 	"context"
+	"errors"
 	"log"
 	"net"
 	"net/http"
+	"time"
 
 	authMiddlewere "github.com/Antesser/trainingFinder/internal/app/controller/middleware/grpc"
 	loggerMiddlewere "github.com/Antesser/trainingFinder/internal/app/controller/middleware/logger"
@@ -15,7 +17,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
-	"google.golang.org/protobuf/encoding/protojson"
 )
 
 type ImplementationAdapter interface {
@@ -25,7 +26,7 @@ type ImplementationAdapter interface {
 
 type Controller interface {
 	ServeHTTP(ctx context.Context)
-	ServeGRPC()
+	ServeGRPC(ctx context.Context)
 	Run(ctx context.Context)
 }
 
@@ -44,12 +45,13 @@ func New(cfg config.ServerConfig, authCfg config.AuthConfig, implementations ...
 }
 
 func (c *controller) Run(ctx context.Context) {
-	c.ServeGRPC()
+	c.ServeGRPC(ctx)
 	c.ServeHTTP(ctx)
 }
 
-func (c *controller) ServeGRPC() {
-	lis, err := net.Listen("tcp", c.cfg.GRPCPort)
+func (c *controller) ServeGRPC(ctx context.Context) {
+	lc := net.ListenConfig{}
+	lis, err := lc.Listen(ctx, "tcp", c.cfg.GRPCPort)
 	if err != nil {
 		log.Fatalf("failed with error %v to listen grpc port: %s", err, c.cfg.GRPCPort)
 	}
@@ -76,7 +78,7 @@ func (c *controller) ServeGRPC() {
 func (c *controller) ServeHTTP(ctx context.Context) {
 	runtimeMux := runtime.NewServeMux(
 		runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{
-			MarshalOptions: protojson.MarshalOptions{UseProtoNames: true, EmitUnpopulated: true},
+			UseProtoNames: true, EmitUnpopulated: true,
 		}),
 	)
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
@@ -97,13 +99,20 @@ func (c *controller) ServeHTTP(ctx context.Context) {
 	fs := http.FileServer(http.Dir("./swagger/"))
 	httpMux.Handle(prefix, http.StripPrefix(prefix, fs))
 
-	// main http
+	srv := &http.Server{
+		Addr:              c.cfg.HTTPPort,
+		Handler:           cors.AllowAll().Handler(httpMux),
+		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       10 * time.Second,
+		WriteTimeout:      10 * time.Second,
+		IdleTimeout:       60 * time.Second,
+	}
+
 	go func() {
 		log.Printf("http addr: %s", c.cfg.HTTPPort)
 		log.Printf("swagger addr: %s/docs", c.cfg.HTTPPort)
-		if err = http.ListenAndServe(c.cfg.HTTPPort,
-			cors.AllowAll().Handler(httpMux)); err != nil {
-			log.Fatal(err, "failed to serve http")
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Printf("failed to serve http: %v", err)
 		}
 	}()
 }

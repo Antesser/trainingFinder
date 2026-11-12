@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	model "github.com/Antesser/trainingFinder/internal/model/auth"
@@ -13,22 +14,29 @@ import (
 func (s *service) SignIn(ctx context.Context, login, password string) (model.Tokens, error) {
 	authInfo, err := s.authRepo.GetUserAuthInfoByLogin(ctx, login)
 	if err != nil {
-		return model.Tokens{}, err
+		return model.Tokens{}, fmt.Errorf("get user auth info by login: %w", err)
 	}
-	err = bcrypt.CompareHashAndPassword([]byte(authInfo.Password), []byte(password))
-	if err != nil {
+
+	if err = bcrypt.CompareHashAndPassword([]byte(authInfo.Password), []byte(password)); err != nil {
 		return model.Tokens{}, model.ErrInvalidPass
 	}
+
 	aToken, err := utils.GenerateToken(authInfo.ID, authInfo.RoleID, []byte(s.secretKey), s.accessTokenDuration)
 	if err != nil {
-		return model.Tokens{}, err
+		return model.Tokens{}, fmt.Errorf("generate access token: %w", err)
 	}
+
 	refToken := uuid.New()
-	createdAt := time.Now().UTC()
-	refreshTokenModel := model.Session{Token: refToken, UserID: authInfo.ID, Active: true, CreatedAt: createdAt, ExpiresAt: time.Now().Add(s.accessTokenDuration)}
-	err = s.authRepo.CreateSession(ctx, refreshTokenModel)
-	if err != nil {
-		return model.Tokens{}, err
+	refreshTokenModel := model.Session{
+		Token:     refToken,
+		UserID:    authInfo.ID,
+		Active:    true,
+		CreatedAt: time.Now().UTC(),
+		ExpiresAt: time.Now().Add(s.accessTokenDuration),
 	}
+	if err = s.authRepo.CreateSession(ctx, refreshTokenModel); err != nil {
+		return model.Tokens{}, fmt.Errorf("create session: %w", err)
+	}
+
 	return model.Tokens{AccessToken: aToken, RefreshToken: refToken.String()}, nil
 }

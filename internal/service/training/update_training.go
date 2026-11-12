@@ -2,14 +2,14 @@ package training
 
 import (
 	"context"
+	"fmt"
 
 	model "github.com/Antesser/trainingFinder/internal/model/training"
 )
 
 func (t *trainingService) UpdateTraining(ctx context.Context, updateTraining model.UpdateTrainingRequest) error {
-	err := t.repo.UpdateTraining(ctx, updateTraining)
-	if err != nil {
-		return err
+	if err := t.repo.UpdateTraining(ctx, updateTraining); err != nil {
+		return fmt.Errorf("update training: %w", err)
 	}
 	return nil
 }

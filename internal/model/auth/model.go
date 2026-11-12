@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"fmt"
+	"errors"
 )
 
 type UserAuthInfo struct {
@@ -12,6 +12,6 @@ type UserAuthInfo struct {
 }
 
 var (
-	ErrNotFound    error = fmt.Errorf("user not found")
-	ErrInvalidPass error = fmt.Errorf("password is invalid")
+	ErrNotFound    = errors.New("user not found")
+	ErrInvalidPass = errors.New("password is invalid")
 )

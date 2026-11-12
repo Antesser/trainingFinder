@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 
 	model "github.com/Antesser/trainingFinder/internal/model/training"
 	"github.com/Antesser/trainingFinder/internal/utils"
@@ -15,8 +14,9 @@ import (
 )
 
 type repository struct {
-	pool *pgxtransactor.Pool
 	pgxtransactor.Transactor
+
+	pool *pgxtransactor.Pool
 }
 
 func New(pool *pgxtransactor.Pool) *repository {
@@ -122,7 +122,7 @@ func (r *repository) DeleteTraining(ctx context.Context, id string) error {
 }
 
 func (r *repository) ListTrainings(ctx context.Context, data model.ListTrainingRequest) (model.ListTrainingResponse, error) {
-	limit := int(data.Page.Limit)
+	limit := data.Page.Limit
 	qb := sq.Select(
 		"id",
 		"trainer_id", "user_id", "started_at", "ended_at", "additional_info", "duration", "training_name",
@@ -134,9 +134,6 @@ func (r *repository) ListTrainings(ctx context.Context, data model.ListTrainingR
 	if data.Filter.Duration != nil {
 		qb = qb.Where(sq.Eq{"duration": *data.Filter.Duration})
 	}
-	//if data.Filter.UserID != nil {
-	//	qb = qb.Where(sq.Eq{"user_id": *data.Filter.UserID})
-	//}
 
 	query, args, err := qb.ToSql()
 	if err != nil {
@@ -147,8 +144,12 @@ func (r *repository) ListTrainings(ctx context.Context, data model.ListTrainingR
 	if err := pgxscan.Select(ctx, r.pool.Querier(ctx), &rows, query, args...); err != nil {
 		return model.ListTrainingResponse{}, err
 	}
-	rows, hasNext := utils.TruncateForHasNext(rows, limit)
-	fmt.Println("roror", rows)
+	const maxInt = int(^uint(0) >> 1)
+
+	if limit > uint64(maxInt) {
+		limit = uint64(maxInt)
+	}
+	rows, hasNext := utils.TruncateForHasNext(rows, int(limit))
 	out := lo.Map(rows, func(t training, _ int) model.Training {
 		return model.Training{
 			ID:             t.ID,

@@ -48,29 +48,32 @@ func (bt *Bot) defaultHandler(ctx context.Context, b *bot.Bot, update *models.Up
 			log.Printf("state error %v", err)
 			return
 		}
-		b.SendMessage(ctx, &bot.SendMessageParams{
+		if _, err = b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: chatID,
 			Text:   "Сессия сброшена. Введите логин:",
-		})
+		}); err != nil {
+			log.Printf("send message error %v", err)
+		}
 		reply, _ := bt.HandleState(ctx, chatID, "")
-		b.SendMessage(ctx, &bot.SendMessageParams{
+		if _, err = b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: chatID,
 			Text:   reply,
-		})
+		}); err != nil {
+			log.Printf("send message error %v", err)
+		}
 		return
 	}
-	//b.SendMessage(ctx, &bot.SendMessageParams{
-	//	ChatID: chatID,
-	//	Text:   "Введите логин",
-	//})
+
 	reply, err := bt.HandleState(ctx, chatID, text)
 	if err != nil {
 		log.Printf("state error for %d: %v", chatID, err)
 		reply = "Внутренняя ошибка, попробуйте позже."
 	}
 
-	b.SendMessage(ctx, &bot.SendMessageParams{
+	if _, err = b.SendMessage(ctx, &bot.SendMessageParams{
 		ChatID: chatID,
 		Text:   reply,
-	})
+	}); err != nil {
+		log.Printf("send message error %v", err)
+	}
 }

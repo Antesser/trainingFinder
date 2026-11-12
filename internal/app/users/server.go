@@ -15,7 +15,8 @@ import (
 
 type Server struct { // структура для домена auth и тд
 	userPkg.UnimplementedUserServiceServer // реализуем имплементацию, хранящуюся внутри grpc (которая там сгенерирована, не реализована)
-	userService                            userService
+
+	userService userService
 }
 
 func NewServer(s userService) *Server {
@@ -40,7 +41,7 @@ func (s *Server) RegisterHandlerFromEndpoint(
 	return err
 }
 
-func (s *Server) UpdateUser(ctx context.Context, req *userPkg.UpdateUserRequest) (*userPkg.UpdateUserResponse, error) { //вынести в отдельные файлы, ибо надо
+func (s *Server) UpdateUser(ctx context.Context, req *userPkg.UpdateUserRequest) (*userPkg.UpdateUserResponse, error) { // вынести в отдельные файлы, ибо надо
 	err := s.userService.UpdateUser(ctx, req.GetId(), req.GetLogin())
 	if err != nil {
 		return nil, err
