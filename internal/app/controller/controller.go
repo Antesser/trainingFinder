@@ -113,6 +113,7 @@ func (c *controller) ServeHTTP(ctx context.Context) {
 		log.Printf("swagger addr: %s/docs", c.cfg.HTTPPort)
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Printf("failed to serve http: %v", err)
+			return
 		}
 	}()
 }

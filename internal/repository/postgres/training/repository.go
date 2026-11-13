@@ -144,12 +144,7 @@ func (r *repository) ListTrainings(ctx context.Context, data model.ListTrainingR
 	if err := pgxscan.Select(ctx, r.pool.Querier(ctx), &rows, query, args...); err != nil {
 		return model.ListTrainingResponse{}, err
 	}
-	const maxInt = int(^uint(0) >> 1)
-
-	if limit > uint64(maxInt) {
-		limit = uint64(maxInt)
-	}
-	rows, hasNext := utils.TruncateForHasNext(rows, int(limit))
+	rows, hasNext := utils.TruncateForHasNext(rows, int(limit)) // nolint
 	out := lo.Map(rows, func(t training, _ int) model.Training {
 		return model.Training{
 			ID:             t.ID,

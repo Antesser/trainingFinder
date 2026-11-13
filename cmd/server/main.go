@@ -63,7 +63,6 @@ func main() {
 	if err != nil {
 		log.Printf("failed to load auth config: %v", err)
 	}
-	// ctrl := controller.New(cfg.Server, authGRPS.NewServer(authSrv), userGRPS.NewServer(userSrv), trainingGRPS.NewServer(trainingSrv))
 	ctrl := controller.New(cfg.Server, *cfgAuth, userGRPC.NewServer(userSrv), trainingGRPC.NewServer(trainingSrv), authGRPC.NewServer(authSrv), bookingGRPC.NewServer(bookingSrv))
 	ctrl.Run(ctx)
 
@@ -86,6 +85,7 @@ func main() {
 	defer func() {
 		if end := producer.Close(); end != nil {
 			log.Printf("close producer: %v", end)
+			return
 		}
 	}()
 

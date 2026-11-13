@@ -85,12 +85,8 @@ func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRe
 	if err := pgxscan.Select(ctx, r.pool.Querier(ctx), &rows, query, args...); err != nil {
 		return nil, err
 	}
-	const maxInt = int(^uint(0) >> 1)
 
-	if limit > uint64(maxInt) {
-		limit = uint64(maxInt)
-	}
-	rows, hasNext := utils.TruncateForHasNext(rows, int(limit))
+	rows, hasNext := utils.TruncateForHasNext(rows, int(limit)) // nolint
 
 	out := lo.Map(rows, func(b booking, _ int) model.TrainingBooking {
 		return model.TrainingBooking{
