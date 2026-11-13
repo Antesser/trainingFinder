@@ -62,6 +62,7 @@ func main() {
 	cfgAuth, err := config.NewAuthConfig(cfg.Server.AuthConfigPath)
 	if err != nil {
 		log.Printf("failed to load auth config: %v", err)
+		return
 	}
 	ctrl := controller.New(cfg.Server, *cfgAuth, userGRPC.NewServer(userSrv), trainingGRPC.NewServer(trainingSrv), authGRPC.NewServer(authSrv), bookingGRPC.NewServer(bookingSrv))
 	ctrl.Run(ctx)
