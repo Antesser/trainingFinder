@@ -59,6 +59,8 @@ func (c *controller) ServeGRPC(ctx context.Context) {
 		grpc.ChainUnaryInterceptor(
 			authMiddlewere.WithAuth(c.cfg.Secret, c.authCfg),
 			loggerMiddlewere.WithLogging(),
+			authMiddlewere.WithValidation(),
+			authMiddlewere.WithRecovery(),
 		),
 	)
 
