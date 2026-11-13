@@ -20,7 +20,8 @@ import (
 
 type Server struct { // структура для домена
 	trainingPkg.UnimplementedTrainingServiceServer // реализуем имплементацию, хранящуюся внутри grpc (которая там сгенерирована, не реализована)
-	trainingService                                trainingService
+
+	trainingService trainingService
 }
 
 func NewServer(s trainingService) *Server {
@@ -119,9 +120,6 @@ func (s *Server) ListTrainings(ctx context.Context, req *trainingPkg.ListTrainin
 	}
 	userID := authMiddlewere.GetUserID(ctx)
 
-	//if f := req.GetFilter(); f != nil && userID != "" {
-	//	userID = &u
-	//}
 	mod, err := s.trainingService.ListTrainings(ctx, model.ListTrainingRequest{
 		Page: modelPage.Page{
 			Limit:  req.GetPage().GetLimit(),

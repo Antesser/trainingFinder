@@ -17,8 +17,9 @@ import (
 )
 
 type repository struct {
-	pool *pgxtransactor.Pool
 	pgxtransactor.Transactor
+
+	pool *pgxtransactor.Pool
 }
 
 func New(pool *pgxtransactor.Pool) *repository {
@@ -45,7 +46,7 @@ func (r *repository) CreateTrainingBooking(ctx context.Context, booking model.Tr
 }
 
 func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRequest) (*model.ListBookingsResponse, error) {
-	limit := int(data.Page.Limit)
+	limit := data.Page.Limit
 	qb := sq.Select(
 		"id",
 		"training_id",
@@ -84,7 +85,8 @@ func (r *repository) ListBookings(ctx context.Context, data model.ListBookingsRe
 	if err := pgxscan.Select(ctx, r.pool.Querier(ctx), &rows, query, args...); err != nil {
 		return nil, err
 	}
-	rows, hasNext := utils.TruncateForHasNext(rows, limit)
+
+	rows, hasNext := utils.TruncateForHasNext(rows, int(limit)) // nolint
 
 	out := lo.Map(rows, func(b booking, _ int) model.TrainingBooking {
 		return model.TrainingBooking{

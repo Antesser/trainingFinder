@@ -2,7 +2,7 @@ package grpc
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"strings"
 
 	"github.com/Antesser/trainingFinder/internal/config"
@@ -74,18 +74,18 @@ func WithAuth(secretKey string, cfg config.AuthConfig) grpc.UnaryServerIntercept
 			return nil, errInvalidToken
 		}
 		claims, ok := jwToken.Claims.(jwt.MapClaims)
-		fmt.Println("claims", claims)
+
 		if !ok {
 			return nil, errFailedToDecodeClaims
 		}
 		userRole, ok := claims["role"]
 		if !ok {
-			fmt.Println("userRole", claims["role"])
+			log.Printf("userRole: %s", claims["role"])
 		}
-		fmt.Println("userRole", userRole)
+
 		userRoleID, ok := userRole.(string)
 		if !ok {
-			fmt.Println("userRoleID", userRoleID)
+			log.Printf("userRoleID: %s", userRoleID)
 		}
 		if !hasAllowedRole(userRoleID, allowedRoles) {
 			return nil, errAccessDenied

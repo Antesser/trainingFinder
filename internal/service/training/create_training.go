@@ -2,6 +2,7 @@ package training
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/Antesser/trainingFinder/internal/model/outbox"
 	model "github.com/Antesser/trainingFinder/internal/model/training"
@@ -10,31 +11,20 @@ import (
 func (t *trainingService) CreateTraining(ctx context.Context, trainingModel *model.Training) error {
 	err := t.repo.InTx(ctx, func(ctx context.Context) error {
 		if err := t.repo.CreateTraining(ctx, *trainingModel); err != nil {
-			return err
+			return fmt.Errorf("create training: %w", err)
 		}
 
-		//event := model.CreateTrainingEvent{
-		//	TrainingID: trainingModel.ID,
-		//}
-		//
-		//msg, err := t.trainingMarshaller(event)
-		//if err != nil {
-		//	return err
-		//}
-
-		err := t.outboxRepo.CreateOutboxItem(ctx, outbox.OutboxItem{
-			//Msg:   string(msg),
+		if err := t.outboxRepo.CreateOutboxItem(ctx, outbox.OutboxItem{
 			Msg:   "Later",
 			Key:   trainingModel.ID,
 			Topic: "someTopic",
-		})
-		if err != nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf("create outbox item: %w", err)
 		}
 		return nil
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("create training (in tx): %w", err)
 	}
 	return nil
 }

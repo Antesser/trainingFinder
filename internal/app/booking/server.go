@@ -20,7 +20,8 @@ import (
 
 type Server struct { // структура для домена
 	bookingPkg.UnimplementedBookingServiceServer // реализуем имплементацию, хранящуюся внутри grpc (которая там сгенерирована, не реализована)
-	bookingService                               bookingService
+
+	bookingService bookingService
 }
 
 func NewServer(s bookingService) *Server {

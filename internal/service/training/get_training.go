@@ -2,14 +2,15 @@ package training
 
 import (
 	"context"
+	"fmt"
 
 	model "github.com/Antesser/trainingFinder/internal/model/training"
 )
 
 func (t *trainingService) GetTraining(ctx context.Context, id string) (*model.Training, error) {
-	model, err := t.repo.GetTraining(ctx, id)
+	training, err := t.repo.GetTraining(ctx, id)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get training: %w", err)
 	}
-	return model, nil
+	return training, nil
 }

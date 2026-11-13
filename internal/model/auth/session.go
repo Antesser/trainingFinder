@@ -1,14 +1,14 @@
 package auth
 
 import (
-	"fmt"
+	"errors"
 	"time"
 
 	"github.com/google/uuid"
 )
 
-var ErrSessionNotFound error = fmt.Errorf("session not found")
-var ErrSessionExpired error = fmt.Errorf("session is expired")
+var ErrSessionNotFound = errors.New("session not found")
+var ErrSessionExpired = errors.New("session is expired")
 
 type Session struct {
 	Token     uuid.UUID

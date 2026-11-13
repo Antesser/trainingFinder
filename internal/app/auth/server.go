@@ -19,6 +19,7 @@ import (
 type Server struct { // структура для домена auth и тд
 	// реализуем имплементацию, хранящуюся внутри grpc (которая там сгенерирована, не реализована)
 	authPkg.UnimplementedAuthServiceServer
+
 	authService authService
 }
 
@@ -63,7 +64,9 @@ func (s *Server) SignIn(ctx context.Context, req *authPkg.SignInRequest) (*authP
 	}
 	cookieStr := cookie.String()
 	header := metadata.Pairs("Set-Cookie", cookieStr)
-	grpc.SendHeader(ctx, header)
+	if err = grpc.SendHeader(ctx, header); err != nil {
+		return nil, err
+	}
 	return &authPkg.SignInResponse{
 		AccessToken: tokens.AccessToken,
 	}, nil
