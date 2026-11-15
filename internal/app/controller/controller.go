@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	authMiddlewere "github.com/Antesser/trainingFinder/internal/app/controller/middleware/grpc"
+	grpcMiddleware "github.com/Antesser/trainingFinder/internal/app/controller/middleware/grpc"
 	loggerMiddlewere "github.com/Antesser/trainingFinder/internal/app/controller/middleware/logger"
 	"github.com/Antesser/trainingFinder/internal/config"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -57,10 +57,10 @@ func (c *controller) ServeGRPC(ctx context.Context) {
 	}
 	s := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
-			authMiddlewere.WithAuth(c.cfg.Secret, c.authCfg),
+			grpcMiddleware.WithAuth(c.cfg.Secret, c.authCfg),
 			loggerMiddlewere.WithLogging(),
-			authMiddlewere.WithValidation(),
-			authMiddlewere.WithRecovery(),
+			grpcMiddleware.WithValidation(),
+			grpcMiddleware.WithRecovery(),
 		),
 	)
 
